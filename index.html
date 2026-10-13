@@ -145,6 +145,18 @@ h1{margin:0;font-family:var(--display);font-size:28px;font-weight:700;line-heigh
 @media (max-width:1100px){.irow{grid-template-columns:44px minmax(0,1fr) 70px 104px 130px}.irow .c-loc{display:none}}
 @media (max-width:860px){.locs{grid-template-columns:minmax(0,1fr)}.irow{grid-template-columns:44px minmax(0,1fr) auto;padding:10px 16px}.irow .c-t,.irow .c-v{display:none}.irow.hd{display:none}.sizes{padding:4px 16px 14px}}
 
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(22,22,29,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal .box2{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal h3{margin:0;font-family:var(--display);font-size:20px}
+.field{display:flex;flex-direction:column;gap:6px}
+#m-body{display:flex;flex-direction:column;gap:18px}
+.field .inp{width:100%}
+.imgedit{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.imgedit .ph{width:96px;height:96px;border-radius:12px;font-size:28px}
+.actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:4px}
+.edit-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
 /* login */
 .login{display:flex;flex-wrap:wrap;min-height:100vh}
 .login .l{flex:1 1 420px;background:var(--side);color:#F3F3EF;padding:56px;display:flex;flex-direction:column;justify-content:space-between;gap:40px}
@@ -244,6 +256,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
         <nav class="crumb" id="crumb" aria-label="ตำแหน่ง"></nav>
         <h1 id="title">Total Sales</h1>
         <div class="muted" style="margin-top:4px" id="subtitle">ยอดรวม VAT ไม่รวมค่าส่ง ไม่นับออเดอร์ที่ยกเลิก/คืนเงิน</div>
+        <div class="edit-row" id="edit-row" hidden></div>
       </div>
       <div class="controls">
         <div class="seg" id="ranges" role="group" aria-label="ช่วงเวลา"></div>
@@ -335,6 +348,17 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
   </div>
 </div>
 
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="box2">
+    <h3 id="m-title">แก้ไข</h3>
+    <div id="m-body"></div>
+    <p class="note" id="m-err" style="margin:0;color:var(--bad)" hidden></p>
+    <div class="actions"><button class="btn" id="m-cancel" type="button">ยกเลิก</button><button class="btn btn-p" id="m-save" type="button">บันทึก</button></div>
+  </div>
+</div>
+<input type="file" id="imgfile" accept="image/*" hidden>
+<datalist id="coll-list"></datalist>
+
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -366,7 +390,7 @@ function chg(a, b){ if (!b) return a ? '<span class="chg up">ใหม่</span>
 function thumb(img, name, cls=''){
   const ini = esc((String(name||'?').replace(/^[\[\(]/,'').trim()[0]||'?').toUpperCase());
   if (!img) return `<div class="ph ${cls}" aria-hidden="true">${ini}</div>`;
-  const src = img + (img.includes('?') ? '&' : '?') + 'width=176';
+  const src = /shopify|\/cdn\/shop\//.test(img) ? img + (img.includes('?') ? '&' : '?') + 'width=176' : img;
   return `<div class="ph ${cls}"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.parentNode.textContent='${ini}'"></div>`;
 }
 
@@ -385,6 +409,15 @@ const API = DEMO ? DEMO.api : {
   sales: p => rpc('dash_sales', { d_from:p.from, d_to:p.to, p_compare:p.compare, p_collection:p.collection ?? null, p_product:p.product ?? null }),
   sources: () => rpc('dash_sources'),
   inventory: () => rpc('dash_inventory', { p_idle_days: 90 }),
+  updateProduct: (id, name, coll, img) => rpc('update_product', { p_id:id, p_name:name, p_collection:coll, p_image:img }),
+  renameCollection: (o, n) => rpc('rename_collection', { p_old:o, p_new:n }),
+  collections: () => rpc('list_collections'),
+  async uploadImage(id, blob){
+    const path = `${id}/${Date.now()}.webp`;
+    const { error } = await sb.storage.from('product-images').upload(path, blob, { contentType:'image/webp' });
+    if (error) throw error;
+    return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+  },
   async upload(file){
     const safe = file.name.replace(/[^\w.\-]+/g, '_');
     const { error } = await sb.storage.from('imports').upload(`${new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')}_${safe}`, file);
@@ -474,6 +507,13 @@ function renderAll(){
     $('hero').innerHTML = `${thumb(pr.img, pr.name, 'big')}<div style="min-width:0"><div class="lbl">${esc(pr.brand||'')}</div><div class="h" style="font-size:18px;font-weight:600">${esc(pr.name)}</div><a class="btn btn-sm" style="margin-top:8px" href="#/sales/c/${encodeURIComponent(pr.coll)}">ดู Collection ${esc(pr.coll)}</a></div>`;
     $('hero').querySelector('.ph').style.cssText='width:88px;height:88px;border-radius:14px;font-size:28px';
   } else $('hero').hidden = true;
+  // ปุ่มแก้ไข (เฉพาะ admin / editor)
+  const er = $('edit-row'); er.hidden = !st.canEdit || st.view==='home';
+  if (!er.hidden) er.innerHTML = st.view==='coll'
+    ? `<button class="btn btn-sm" type="button" id="ed-coll">✎ แก้ชื่อ Collection</button>`
+    : `<button class="btn btn-sm" type="button" id="ed-prod">✎ แก้ไขสินค้า (ชื่อ · Collection · รูป)</button>`;
+  if ($('ed-coll')) $('ed-coll').onclick = () => editCollection(st.coll);
+  if ($('ed-prod')) $('ed-prod').onclick = () => editProduct({ id:d.product.id, name:d.product.name, coll:d.product.coll, img:d.product.img });
   // KPIs
   const aov = k.orders ? k.net/k.orders : 0, paov = p.orders ? p.net/p.orders : 0;
   $('range-text').textContent = `${thDate(r.from)} – ${thDate(r.to)}`;
@@ -530,21 +570,20 @@ function renderChart(){
   });
   // เส้นช่วงเทียบ
   const pts = keys.map((k,i) => `${L + i*bw + bw/2},${y(P[k]||0)}`);
-  if (d.ptrend.length) s += `<polyline points="${pts.join(' ')}" fill="none" stroke="var(--c-cmp)" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round" opacity=".75"/>`;
-  keys.forEach((k,i) => s += `<rect class="hit" data-i="${i}" x="${L+i*bw}" y="${T}" width="${bw}" height="${H-T-B}" fill="transparent"/>`);
-  s += `<line x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}" stroke="#D6D5CE"/><rect id="hl" fill="#16161D" opacity=".05" hidden/>`;
+  if (d.ptrend.length) s += `<polyline points="${pts.join(' ')}" fill="none" stroke="var(--c-cmp)" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round" opacity=".75" pointer-events="none"/>`;
+  s = `<rect id="hl" fill="#16161D" opacity=".06" pointer-events="none" style="display:none"/>` + s + `<line x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}" stroke="#D6D5CE"/>`;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.innerHTML = s;
   const tip = $('tip'), hl = svg.querySelector('#hl'), fv = v => m==='net' ? baht(v) : fmt(v)+' ชิ้น';
   const showTip = (i, cx) => { const k=keys[i];
-    hl.setAttribute('x', L+i*bw); hl.setAttribute('y', T); hl.setAttribute('width', bw); hl.setAttribute('height', H-T-B); hl.removeAttribute('hidden');
+    hl.setAttribute('x', L+i*bw); hl.setAttribute('y', T); hl.setAttribute('width', bw); hl.setAttribute('height', H-T-B); hl.style.display = '';
     const title = unit==='day' ? thDate(k) : `${TM[+k.slice(5,7)-1]} ${k.slice(0,4)}`;
     tip.innerHTML = `<b class="h">${title}</b>` + gs.slice().reverse().map(g=>`<div class="r"><span><i style="background:${g.c}"></i>${g.n}</span><span>${fv(M[k]?.[g.k]||0)}</span></div>`).join('') + `<div class="r t"><span>รวม</span><span>${fv(tot[i])}</span></div><div class="r"><span>${cmpTxt}</span><span>${fv(P[k]||0)} ${chg(tot[i], P[k]||0)}</span></div>`;
     tip.hidden = false; const b = box.getBoundingClientRect(); let tx = cx-b.left+14; if (tx+210 > b.width) tx = cx-b.left-220; tip.style.left = Math.max(0,tx)+'px'; };
-  svg.querySelectorAll('.hit').forEach(r => {
-    r.addEventListener('mousemove', e => showTip(+r.dataset.i, e.clientX));
-    r.addEventListener('touchstart', e => showTip(+r.dataset.i, e.touches[0].clientX), {passive:true});
-    r.addEventListener('mouseleave', () => { tip.hidden = true; hl.setAttribute('hidden',''); });
-  });
+  const idxAt = cx => { const r = svg.getBoundingClientRect(); const x = (cx - r.left) * (W / r.width); const i = Math.floor((x - L) / bw); return i >= 0 && i < keys.length ? i : -1; };
+  const hide = () => { tip.hidden = true; hl.style.display = 'none'; };
+  svg.onmousemove = e => { const i = idxAt(e.clientX); i < 0 ? hide() : showTip(i, e.clientX); };
+  svg.onmouseleave = hide;
+  svg.ontouchstart = e => { const t = e.touches[0]; const i = idxAt(t.clientX); if (i >= 0) showTip(i, t.clientX); };
 }
 
 function renderList(){
@@ -693,14 +732,15 @@ function renderStockList(){
     const z = v => v ? fmt(v) : '<span style="color:#C3C2BB">–</span>';
     let sz = '';
     if (open) { const by = {}; for (const r of p.rows) { const k = r.sku || r.size; (by[k] ??= { size:r.size, sku:r.sku, wh:0, office:0, event:0 })[r.loc] += r.q; }
-      sz = `<div class="sizes"><table><thead><tr><th>ไซซ์ / SKU</th><th>MyCloud</th><th>ออฟฟิศ</th><th>EVENT</th><th>รวม</th><th>ขาย 30 วัน</th></tr></thead><tbody>${Object.values(by).sort((a,b)=>a.size.localeCompare(b.size)).map(r=>`<tr><td>${esc(r.size)} <span class="muted">${esc(r.sku||'')}</span></td><td>${z(r.wh)}</td><td>${z(r.office)}</td><td>${z(r.event)}</td><td><b>${fmt(r.wh+r.office+r.event)}</b></td><td>${z(d.sku30?.[r.sku])}</td></tr>`).join('')}</tbody></table>${p.id?`<p style="margin:10px 0 0"><a class="btn btn-sm" href="#/sales/p/${p.id}">ดูยอดขายสินค้านี้</a></p>`:''}</div>`; }
+      sz = `<div class="sizes"><table><thead><tr><th>ไซซ์ / SKU</th><th>MyCloud</th><th>ออฟฟิศ</th><th>EVENT</th><th>รวม</th><th>ขาย 30 วัน</th></tr></thead><tbody>${Object.values(by).sort((a,b)=>a.size.localeCompare(b.size)).map(r=>`<tr><td>${esc(r.size)} <span class="muted">${esc(r.sku||'')}</span></td><td>${z(r.wh)}</td><td>${z(r.office)}</td><td>${z(r.event)}</td><td><b>${fmt(r.wh+r.office+r.event)}</b></td><td>${z(d.sku30?.[r.sku])}</td></tr>`).join('')}</tbody></table>${p.id?`<p style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-sm" href="#/sales/p/${p.id}">ดูยอดขายสินค้านี้</a>${st.canEdit?`<button class="btn btn-sm" type="button" data-edit="${p.id}">✎ แก้ไขสินค้า</button>`:''}</p>`:''}</div>`; }
     return `<button class="irow" type="button" data-k="${esc(p.key)}" aria-expanded="${open}">${thumb(p.img,p.name)}<div style="min-width:0"><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.coll)} · ขาย 30 วัน ${fmt(p.u30)}</div></div><div class="num c-loc">${z(p.wh)}</div><div class="num c-loc">${z(p.office)}</div><div class="num c-loc">${z(p.event)}</div><div class="num c-t" style="font-weight:600">${fmt(p.q)}</div><div class="num c-v">${baht(p.value)}</div><div class="st">${pill(p.stt[0])}<span>${esc(p.stt[1])}</span><span class="m-only">${fmt(p.q)} ชิ้น</span></div></button>${sz}`;
   };
   $('inv-list').innerHTML = list.length ? hd + list.map(row).join('') : '<div class="empty">ไม่มีสินค้าในมุมมองนี้</div>';
   $('inv-more').innerHTML = `แสดง ${list.length} จาก ${items.length} รายการ` + (items.length > list.length ? ` <button class="btn btn-sm" id="inv-morebtn" type="button">แสดงเพิ่มอีก 40</button>` : '');
   if (items.length > list.length) $('inv-morebtn').onclick = () => { inv.limit += 40; renderStockList(); };
 }
-$('inv-list').onclick = e => { const b = e.target.closest('button.irow'); if (!b) return; const k = b.dataset.k; inv.open.has(k) ? inv.open.delete(k) : inv.open.add(k); renderStockList(); };
+$('inv-list').onclick = e => { const ed = e.target.closest('[data-edit]'); if (ed) { const p = inv.data.products.find(x => String(x.id)===ed.dataset.edit); if (p) editProduct({ id:p.id, name:p.name, coll:p.coll, img:p.img }); return; }
+  const b = e.target.closest('button.irow'); if (!b) return; const k = b.dataset.k; inv.open.has(k) ? inv.open.delete(k) : inv.open.add(k); renderStockList(); };
 $('inv-tabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; inv.tab = b.dataset.t; inv.limit = 40; document.querySelectorAll('#inv-tabs button').forEach(x=>x.setAttribute('aria-pressed', x===b)); renderStockList(); };
 $('inv-locsel').onclick = e => { const b = e.target.closest('button'); if (!b) return; inv.loc = b.dataset.l; document.querySelectorAll('#inv-locsel button').forEach(x=>x.setAttribute('aria-pressed', x===b)); renderStockList(); };
 $('inv-coll').onchange = e => { inv.coll = e.target.value; inv.limit = 40; renderStockList(); };
@@ -713,6 +753,48 @@ $('inv-csv').onclick = () => { const d = inv.data; if (!d) return;
     for (const r of Object.values(by)) rows.push([p.name, p.coll, r.size, r.sku, r.wh, r.office, r.event, r.wh+r.office+r.event, d.sku30?.[r.sku]||0, '']); }
   const csv = '﻿' + rows.map(r => r.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = `cuteboy-stock_${String(d.as_of).slice(0,10)}.csv`; a.click(); };
+
+
+// ===== Edit (ชื่อสินค้า / Collection / รูป) =====
+let modalSave = null;
+function openModal(title, html, onSave){ $('m-title').textContent = title; $('m-body').innerHTML = html; $('m-err').hidden = true; modalSave = onSave; $('modal').hidden = false; setTimeout(()=>$('m-body').querySelector('input')?.focus(), 30); }
+function closeModal(){ $('modal').hidden = true; modalSave = null; }
+$('m-cancel').onclick = closeModal;
+$('modal').onclick = e => { if (e.target.id==='modal') closeModal(); };
+addEventListener('keydown', e => { if (e.key==='Escape' && !$('modal').hidden) closeModal(); });
+$('m-save').onclick = async () => { if (!modalSave) return; const b = $('m-save'); b.disabled = true; b.textContent = 'กำลังบันทึก…';
+  try { await modalSave(); closeModal(); cache.clear(); inv.data = null; toast('บันทึกแล้ว'); if (st.page==='stock') loadStock(true); else load(); }
+  catch(e){ const m = e.message||String(e); $('m-err').textContent = /no_permission/.test(m) ? 'บัญชีนี้ไม่มีสิทธิ์แก้ไข (ต้องเป็น admin หรือ editor)' : m; $('m-err').hidden = false; }
+  finally { b.disabled = false; b.textContent = 'บันทึก'; } };
+async function fillCollections(){ try { const c = await API.collections(); $('coll-list').innerHTML = c.map(x=>`<option value="${esc(x)}">`).join(''); } catch(e){} }
+function resizeImage(file){ return new Promise((res, rej) => { const img = new Image(); img.onload = () => {
+  const s = Math.min(1, 900 / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); c.toBlob(b => b ? res(b) : rej(new Error('แปลงรูปไม่สำเร็จ')), 'image/webp', .86); };
+  img.onerror = () => rej(new Error('เปิดไฟล์รูปไม่ได้')); img.src = URL.createObjectURL(file); }); }
+function editProduct(p){
+  fillCollections();
+  let newImg = null;   // null = ไม่เปลี่ยน · '' = กลับไปใช้รูปจาก Shopify · url = รูปใหม่
+  openModal('แก้ไขสินค้า', `
+    <div class="imgedit"><div id="m-img">${thumb(p.img, p.name)}</div>
+      <div style="display:flex;flex-direction:column;gap:8px"><button class="btn btn-sm" type="button" id="m-pick">อัปโหลดรูปใหม่</button><button class="btn btn-sm" type="button" id="m-reset">ใช้รูปจาก Shopify</button><span class="note">รูปจะถูกย่อให้เหลือไม่เกิน 900px อัตโนมัติ</span></div></div>
+    <div class="field"><label class="lbl" for="m-name">ชื่อสินค้าที่แสดง</label><input class="inp" id="m-name" value="${esc(p.name)}"><span class="note">เว้นว่าง = ใช้ชื่อจาก Shopify (ชื่อเดิมยังใช้จับคู่ยอดขายตามปกติ)</span></div>
+    <div class="field"><label class="lbl" for="m-coll">Collection</label><input class="inp" id="m-coll" list="coll-list" value="${esc(p.coll==='ยังไม่ระบุ Collection'?'':p.coll)}" placeholder="พิมพ์ชื่อใหม่ หรือเลือกจากรายการ"></div>`,
+    async () => { await API.updateProduct(p.id, $('m-name').value, $('m-coll').value, newImg); });
+  $('m-img').querySelector('.ph').style.cssText = 'width:96px;height:96px;border-radius:12px;font-size:28px';
+  $('m-pick').onclick = () => $('imgfile').click();
+  $('m-reset').onclick = () => { newImg = ''; $('m-img').innerHTML = '<div class="ph" style="width:96px;height:96px;border-radius:12px;font-size:13px;text-align:center">รูปจาก Shopify</div>'; };
+  $('imgfile').onchange = async e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    const pb = $('m-pick'); pb.disabled = true; pb.textContent = 'กำลังอัปโหลด…';
+    try { const blob = await resizeImage(f); newImg = await API.uploadImage(p.id, blob);
+          $('m-img').innerHTML = `<div class="ph" style="width:96px;height:96px;border-radius:12px"><img src="${esc(newImg)}" alt=""></div>`; }
+    catch(err){ $('m-err').textContent = 'อัปโหลดรูปไม่สำเร็จ: ' + (err.message||err); $('m-err').hidden = false; }
+    finally { pb.disabled = false; pb.textContent = 'อัปโหลดรูปใหม่'; } };
+}
+function editCollection(name){
+  if (name === 'ยังไม่ระบุ Collection') { toast('กลุ่มนี้แก้ชื่อไม่ได้ ให้กดเข้าไปที่สินค้าแล้วกำหนด Collection ทีละรายการ'); return; }
+  openModal('แก้ชื่อ Collection', `<div class="field"><label class="lbl" for="m-cname">ชื่อ Collection</label><input class="inp" id="m-cname" value="${esc(name)}"><span class="note">ทุกสินค้าใน Collection นี้จะเปลี่ยนตาม ถ้าใส่ชื่อที่มีอยู่แล้ว สินค้าจะถูกรวมเข้า Collection นั้น</span></div>`,
+    async () => { const n = $('m-cname').value.trim(); await API.renameCollection(name, n); history.replaceState(null, '', `#/sales/c/${encodeURIComponent(n)}`); parseHash(); });
+}
 
 // ===== menu (mobile) =====
 const closeMenu = () => { $('side').classList.remove('open'); $('scrim').classList.remove('open'); $('btn-menu').setAttribute('aria-expanded','false'); };
@@ -738,6 +820,7 @@ async function boot2(){
   }
   $('me-name').textContent = prof.name || name;
   $('me-role').textContent = 'Role: ' + (prof.role || 'member');
+  st.canEdit = !!prof.can_edit;
   if (meta.avatar_url) $('me-av').outerHTML = `<img src="${esc(meta.avatar_url)}" alt="" width="36" height="36">`; else $('me-av').textContent = (prof.name || name).slice(0,1);
   show('v-app'); parseHash(); renderControls(); route(); loadSources();
   if (DEMO) { $('demo-note').hidden = false; $('demo-note').textContent = DEMO.note; }
