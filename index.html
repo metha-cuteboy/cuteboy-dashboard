@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CuteBoy Team Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* Layout: sidebar มืดซ้าย + เนื้อหา (ตาม mockup Team Dashboard) · จอแคบ sidebar ย่อเป็นแถบบน */
+:root{
+  --bg:#F3F3EF; --card:#FFFFFF; --line:#E3E2DC; --line2:#EFEEE9; --ink:#16161D; --ink2:#4A4953; --muted:#5E5D66;
+  --accent:#4B32D9; --accent-d:#3420A8; --brand:#FF7A3D; --side:#16161D; --side2:#24232C; --side-ink:#C9C8D2; --side-muted:#8E8D99;
+  --good:#17663A; --good-bg:#E3F4EA; --bad:#9A3412; --bad-bg:#FDE8DD; --warn-bg:#FFF8F4; --warn-line:#F2C3A8;
+  --c-web:#4B32D9; --c-mkt:#EB6834; --c-pos:#1BAF7A; --c-live:#EDA100; --c-oth:#9AA1AB;
+  --display:'Bai Jamjuree','IBM Plex Sans Thai',system-ui,sans-serif; --body:'IBM Plex Sans Thai',system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.55}
+a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent-d)}
+button{font:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.h{font-family:var(--display)}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;min-width:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 16px;border-radius:10px;border:1px solid #D6D5CE;background:#fff;color:var(--ink);font-size:14px;font-weight:500;cursor:pointer}
+.btn:hover{border-color:#B9B8B0}
+.btn-p{background:var(--accent);border-color:var(--accent);color:#fff}.btn-p:hover{background:var(--accent-d)}
+.btn-sm{min-height:34px;padding:0 12px;font-size:13px}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid #D6D5CE;border-radius:10px;overflow:hidden;background:#fff}
+.seg button{border:0;background:transparent;font-size:13px;padding:0 14px;min-height:38px;color:var(--ink2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.lbl{font-size:12px;color:var(--muted);font-weight:500}
+.inp{min-height:40px;border:1px solid #D6D5CE;border-radius:10px;padding:6px 12px;font:inherit;font-size:14px;background:#fff;color:var(--ink)}
+.kpi{font-family:var(--display);font-size:28px;font-weight:600;line-height:1.15;font-variant-numeric:tabular-nums;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec{margin:0;font-family:var(--display);font-size:17px;font-weight:600}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.up{color:var(--good)}.down{color:var(--bad)}
+.pill{display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:500;line-height:18px}
+
+/* app shell */
+.shell{display:flex;min-height:100vh}
+.side{width:248px;flex:0 0 248px;background:var(--side);color:#F3F3EF;padding:24px 14px 28px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.logo{display:flex;align-items:center;gap:10px;padding:0 8px}
+.logo .m{width:38px;height:38px;border-radius:10px;background:var(--brand);color:#2A1405;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:15px}
+.logo b{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.05em;display:block}
+.logo span{font-size:12px;color:#A9A8B4}
+.me{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:var(--side2)}
+.me img,.me .av{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;object-fit:cover}
+.me .n{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.me .r{font-size:12px;color:#A9A8B4}
+.me button{margin-left:auto;background:none;border:0;color:var(--side-ink);font-size:12px;cursor:pointer}
+.grp-l{font-size:11px;letter-spacing:.08em;color:var(--side-muted);padding:0 10px 6px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a,.nav span{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:38px;padding:0 10px;border-radius:9px;color:var(--side-ink)}
+.nav a[aria-current="page"]{background:#33303F;color:#fff;font-weight:600}
+.nav span{color:#6E6D78;cursor:default}
+.nav span small{font-size:11px;color:#6E6D78}
+.syncbox{margin-top:auto;padding:12px;border-radius:12px;border:1px solid #2F2E38;font-size:12px;color:#B9B8C4;display:flex;flex-direction:column;gap:5px}
+.syncbox b{color:#F3F3EF;font-weight:500}
+main{flex:1;min-width:0;padding:28px 32px 56px;display:flex;flex-direction:column;gap:20px;max-width:1280px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+h1{margin:0;font-family:var(--display);font-size:28px;font-weight:700;line-height:1.2}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.kpis .card{padding:18px 20px}
+.delta{font-size:13px;margin-top:4px;font-variant-numeric:tabular-nums}
+.chrow{display:grid;grid-template-columns:120px minmax(0,1fr) 190px;gap:12px;align-items:center}
+.bar{height:14px;border-radius:99px;background:#EEEEEA;overflow:hidden}.bar>div{height:100%;border-radius:99px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.chartbox{position:relative}
+.chartbox svg text{fill:#7A7983;font-size:10.5px;font-family:var(--body)}
+.tip{position:absolute;top:8px;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;box-shadow:0 8px 24px rgba(22,22,29,.12);min-width:180px;z-index:3}
+.tip .r{display:flex;justify-content:space-between;gap:14px;font-variant-numeric:tabular-nums}
+.tip .r span:first-child{display:inline-flex;align-items:center;gap:6px;color:var(--ink2)}
+.tip i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.tip .t{border-top:1px solid var(--line2);margin-top:4px;padding-top:4px;font-weight:600}
+.scroll{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:500;color:var(--muted);font-size:12px;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl th.num,.tbl td.num{text-align:right}
+.tbl td.z{color:#C3C2BB}
+.src{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.src>div{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.src>div.warn{border-color:var(--warn-line);background:var(--warn-bg)}
+.src b{font-weight:600}
+.src small{display:block;font-size:13px;color:var(--muted)}
+.src small.ok{color:var(--good)}.src small.bad{color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:12px;padding:12px 18px;font-size:14px;z-index:20;max-width:calc(100% - 32px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.custom{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.note{font-size:12.5px;color:var(--muted)}
+.empty{padding:28px 20px;text-align:center;color:var(--muted)}
+.skeleton{opacity:.45}
+
+/* login */
+.login{display:flex;flex-wrap:wrap;min-height:100vh}
+.login .l{flex:1 1 420px;background:var(--side);color:#F3F3EF;padding:56px;display:flex;flex-direction:column;justify-content:space-between;gap:40px}
+.login .l h2{font-family:var(--display);font-size:44px;line-height:1.15;margin:0;font-weight:700;text-wrap:balance}
+.login .l p{color:#B9B8C4;font-size:17px;max-width:520px;margin:18px 0 0}
+.login .chips{display:flex;flex-wrap:wrap;gap:8px;font-size:13px}
+.login .chips span{border:1px solid #3A3944;border-radius:99px;padding:6px 14px}
+.login .r{flex:1 1 420px;display:flex;align-items:center;justify-content:center;padding:56px 24px}
+.login .box{width:100%;max-width:440px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:36px;display:flex;flex-direction:column;gap:20px}
+.dbtn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;border-radius:12px;background:#4752C4;color:#fff;font-weight:600;font-size:16px;border:0;cursor:pointer;width:100%}
+.dbtn:hover{background:#3C45A5}
+code.id{font-size:15px;background:#F3F3EF;border:1px solid var(--line);padding:4px 8px;border-radius:8px;user-select:all}
+pre.sql{background:#16161D;color:#E8E7F0;border-radius:10px;padding:12px;font-size:12.5px;overflow-x:auto;margin:0;white-space:pre-wrap;word-break:break-all}
+
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){
+  .shell{flex-direction:column}
+  .side{width:auto;flex:none;height:auto;position:static;padding:14px 16px;gap:12px}
+  .side .grp,.syncbox{display:none}
+  .side-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .me{padding:6px 10px}
+  main{padding:20px 16px 48px}
+  .chrow{grid-template-columns:96px minmax(0,1fr) 150px;gap:8px}
+  .login .l{padding:32px 24px}.login .l h2{font-size:32px}
+}
+@media (max-width:420px){.kpis{grid-template-columns:minmax(0,1fr)}.chrow{grid-template-columns:84px minmax(0,1fr);}.chrow .num{grid-column:1/-1;text-align:left}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- หน้า Login -->
+<section id="v-login" class="login" hidden>
+  <div class="l">
+    <div class="logo"><div class="m">CB</div><b style="font-size:20px">CUTEBOY TEAM</b></div>
+    <div>
+      <h2>ทุกทีมเห็นงานเดียวกัน<br>รู้ว่าต้องทำอะไรต่อทันที</h2>
+      <p>Project → Design → Supplier → Inventory → Sales อยู่ในที่เดียว อัปเดตครั้งเดียว ทุกทีมเห็นพร้อมกัน</p>
+    </div>
+    <div class="chips"><span>Project</span><span>Design</span><span>Supplier</span><span>Inventory</span><span>Marketing</span><span>PR</span><span>Admin</span></div>
+  </div>
+  <div class="r">
+    <div class="box">
+      <div><h3 class="h" style="margin:0;font-size:24px">เข้าสู่ระบบ</h3><p class="muted" style="margin:6px 0 0">ใช้บัญชี Discord ของคุณ</p></div>
+      <button class="dbtn" id="btn-login" type="button">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7c2.7-.9 5.3-.9 8 0M7 17c3.3 1.3 6.7 1.3 10 0"/><path d="M15.5 17l1 2c2.4-.7 4.2-1.8 5.5-3 .3-3.8-.6-7.4-2.8-10.6C17.8 4.6 16.4 4.2 15 4l-.6 1.4M8.5 17l-1 2C5.1 18.3 3.3 17.2 2 16c-.3-3.8.6-7.4 2.8-10.6C6.2 4.6 7.6 4.2 9 4l.6 1.4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg>
+        เข้าสู่ระบบด้วย Discord
+      </button>
+      <p class="note" style="margin:0">เข้าได้เฉพาะคนที่แอดมินเพิ่มชื่อไว้ในทีมแล้ว</p>
+      <p class="note" id="login-err" style="margin:0;color:var(--bad)" hidden></p>
+    </div>
+  </div>
+</section>
+
+<!-- หน้า ยังไม่มีสิทธิ์ -->
+<section id="v-denied" class="login" hidden>
+  <div class="r" style="flex-basis:100%">
+    <div class="box" style="max-width:560px">
+      <div><h3 class="h" style="margin:0;font-size:24px">ยังไม่มีสิทธิ์เข้า Dashboard</h3>
+        <p class="muted" style="margin:6px 0 0">ส่ง Discord ID นี้ให้แอดมินเพื่อเพิ่มคุณเข้าทีม</p></div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px"><code class="id" id="my-id"></code><button class="btn btn-sm" id="btn-copy" type="button">คัดลอก</button></div>
+      <div>
+        <div class="lbl" style="margin-bottom:6px">สำหรับแอดมิน: รันคำสั่งนี้ใน Supabase SQL Editor</div>
+        <pre class="sql" id="add-sql"></pre>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-p" id="btn-retry" type="button">ลองอีกครั้ง</button><button class="btn" id="btn-logout2" type="button">ออกจากระบบ</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- แอปหลัก -->
+<div id="v-app" class="shell" hidden>
+  <nav class="side" aria-label="เมนูหลัก">
+    <div class="side-top" style="display:flex;flex-direction:column;gap:18px">
+      <div class="logo"><div class="m">CB</div><div><b>CUTEBOY</b><span>Team Dashboard</span></div></div>
+      <div class="me"><div id="me-av" class="av">?</div><div style="min-width:0"><div class="n" id="me-name">-</div><div class="r" id="me-role">-</div></div><button id="btn-logout" type="button">ออก</button></div>
+    </div>
+    <div class="grp"><div class="grp-l">ทั่วไป</div><div class="nav"><span>งานของฉัน <small>เร็วๆ นี้</small></span><span>Overview <small>เร็วๆ นี้</small></span></div></div>
+    <div class="grp"><div class="grp-l">PROJECT</div><div class="nav"><span>Project <small>Phase 2</small></span><span>Design <small>Phase 3</small></span><span>Supplier <small>Phase 3</small></span><span>Forecast <small>Phase 4</small></span><span>Inventory <small>Phase 3</small></span><span>Marketing <small>Phase 4</small></span></div></div>
+    <div class="grp"><div class="grp-l">รายงานรวม</div><div class="nav"><a href="#sales" aria-current="page">Total Sales</a><span>Inventory คงเหลือ <small>เร็วๆ นี้</small></span></div></div>
+    <div class="syncbox" id="syncbox"><b>สถานะการซิงก์ข้อมูล</b><div>กำลังโหลด…</div></div>
+  </nav>
+
+  <main id="sales">
+    <header class="top">
+      <div style="min-width:0"><h1>Total Sales</h1><div class="muted" style="margin-top:4px">ยอดขายทุกสินค้า ทุกช่องทาง ตามช่วงเวลาที่เลือก · ยอดรวม VAT ไม่รวมค่าส่ง ไม่นับออเดอร์ที่ยกเลิก/คืนเงิน</div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+        <div class="seg" id="ranges" role="group" aria-label="ช่วงเวลา"></div>
+        <button class="btn" id="btn-csv" type="button">Export CSV</button>
+      </div>
+    </header>
+    <div class="custom" id="custom" hidden>
+      <label class="lbl" for="d-from">ตั้งแต่</label><input class="inp" type="date" id="d-from">
+      <label class="lbl" for="d-to">ถึง</label><input class="inp" type="date" id="d-to">
+      <button class="btn btn-p btn-sm" id="btn-apply" type="button">ดูยอด</button>
+    </div>
+    <div class="note" id="demo-note" hidden></div>
+
+    <section class="kpis" id="kpis"></section>
+
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:baseline">
+        <h2 class="sec" id="trend-title">ยอดขายรายวัน</h2><div class="legend" id="legend"></div>
+      </div>
+      <div class="chartbox" id="chartbox" style="margin-top:10px"><svg id="chart" width="100%" height="260" role="img" aria-label="กราฟยอดขายแยกช่องทาง"></svg><div class="tip" id="tip" hidden></div></div>
+    </section>
+
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><h2 class="sec">แยกตามช่องทางการขาย</h2><span class="muted" style="font-size:13px" id="range-text"></span></div>
+      <div id="channels" style="display:flex;flex-direction:column;gap:12px;margin-top:14px"></div>
+      <div class="note" id="cancel-note" style="margin-top:14px"></div>
+    </section>
+
+    <section class="card" style="padding:0">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center;padding:16px 20px">
+        <h2 class="sec">ยอดขายต่อสินค้า (จำนวนชิ้นตามช่องทาง)</h2>
+        <input class="inp" id="q" style="width:240px;max-width:100%" placeholder="ค้นหาสินค้า" aria-label="ค้นหาสินค้า">
+      </div>
+      <div class="scroll"><table class="tbl" style="min-width:900px">
+        <thead><tr><th style="padding-left:20px">#</th><th>สินค้า</th><th class="num">Shopify เว็บ</th><th class="num">Shopee</th><th class="num">Event / POS</th><th class="num">Live</th><th class="num">แชต/อื่นๆ</th><th class="num">รวมชิ้น</th><th class="num" style="padding-right:20px">ยอดเงิน</th></tr></thead>
+        <tbody id="prods"></tbody>
+      </table></div>
+      <div class="note" id="prod-note" style="padding:12px 20px 16px"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="sec">ที่มาของข้อมูล</h2>
+      <div class="src" id="sources"></div>
+      <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+      <p class="note" style="margin:12px 0 0">อัปโหลดไฟล์ export จาก Shopee (Order.all) หรือ Shipnity ได้ทุกเมื่อ ไฟล์ที่ช่วงวันซ้อนกันจะไม่ทำให้ยอดซ้ำ ระบบนำเข้าภายใน 15 นาที</p>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+// ===== ตั้งค่า (แก้ 2 บรรทัดนี้) =====
+const SUPABASE_URL = 'https://jqcygffbaisjxbvazuel.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxY3lnZmZiYWlzanhidmF6dWVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0NTEyMDksImV4cCI6MjEwNzAyNzIwOX0.IHghYaLrUDSwM3OoT8OYEfqxfayKsqVZpr-NSfsbW3I';   // Project Settings → API Keys (ใช้ได้เฉพาะ key แบบ public เท่านั้น)
+// =====================================
+
+const G = [
+  { k:'web',  n:'Shopify เว็บ', c:'var(--c-web)' },
+  { k:'mkt',  n:'Shopee',      c:'var(--c-mkt)' },
+  { k:'pos',  n:'Event / POS', c:'var(--c-pos)' },
+  { k:'live', n:'Live',        c:'var(--c-live)' },
+  { k:'oth',  n:'แชต/อื่นๆ',    c:'var(--c-oth)' },
+];
+const TM = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const $ = id => document.getElementById(id);
+const fmt = n => Math.round(Number(n)||0).toLocaleString('en-US');
+const baht = n => '฿' + fmt(n);
+const short = n => { const a=Math.abs(n); return a>=1e6 ? (n/1e6).toFixed(a>=1e7?0:1)+'M' : a>=1e3 ? Math.round(n/1e3)+'K' : String(Math.round(n)); };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const thDate = d => { const x = new Date(d+'T00:00:00'); return `${x.getDate()} ${TM[x.getMonth()]} ${x.getFullYear()}`; };
+const iso = d => d.toISOString().slice(0,10);
+function bkkToday(){ return new Date(Date.now() + 7*3600e3).toISOString().slice(0,10); }
+function addDays(s, n){ const d = new Date(s+'T00:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return iso(d); }
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true, 4500); }
+function show(v){ for (const id of ['v-login','v-denied','v-app']) $(id).hidden = id !== v; }
+
+// ===== data layer (Supabase จริง หรือข้อมูลตัวอย่างในโหมด preview) =====
+const DEMO = window.CB_DEMO || null;
+const sb = DEMO ? null : supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const API = DEMO ? DEMO.api : {
+  async profile(){ const { data, error } = await sb.rpc('my_profile'); if (error) throw error; return data; },
+  async sales(from, to){ const { data, error } = await sb.rpc('dash_sales', { d_from: from, d_to: to }); if (error) throw error; return data; },
+  async sources(){ const { data, error } = await sb.rpc('dash_sources'); if (error) throw error; return data; },
+  async upload(file){
+    const safe = file.name.replace(/[^\w.\-]+/g, '_');
+    const { error } = await sb.storage.from('imports').upload(`${new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')}_${safe}`, file);
+    if (error) throw error;
+  },
+};
+
+// ===== state =====
+const today = DEMO ? DEMO.today : bkkToday();
+const st = { range:'30', from:null, to:null, data:null, q:'', user:null, limit:30 };
+const RANGES = [['7','7 วัน'],['30','30 วัน'],['mtd','เดือนนี้'],['ytd','ปีนี้'],['all','ทั้งหมด'],['c','กำหนดเอง']];
+function rangeDates(r){
+  if (r==='7') return [addDays(today,-6), today];
+  if (r==='30') return [addDays(today,-29), today];
+  if (r==='mtd') return [today.slice(0,8)+'01', today];
+  if (r==='ytd') return [today.slice(0,5)+'01-01', today];
+  if (r==='all') return ['2023-01-01', today];
+  return [st.from || addDays(today,-29), st.to || today];
+}
+
+function renderRanges(){
+  $('ranges').innerHTML = RANGES.map(([k,l]) => `<button type="button" id="r-${k}" aria-pressed="${st.range===k}">${l}</button>`).join('');
+  RANGES.forEach(([k]) => $('r-'+k).onclick = () => { st.range = k; $('custom').hidden = k!=='c'; renderRanges(); if (k!=='c') load(); });
+}
+
+async function load(){
+  const [f,t] = rangeDates(st.range);
+  if (st.range==='c'){ $('d-from').value=f; $('d-to').value=t; }
+  document.querySelectorAll('#kpis,#channels,#prods,#chart').forEach(e=>e.classList.add('skeleton'));
+  try {
+    st.data = await API.sales(f, t); st.limit = 30;
+    renderAll();
+  } catch(e){ toast('โหลดข้อมูลไม่สำเร็จ: ' + (e.message||e)); }
+  document.querySelectorAll('.skeleton').forEach(e=>e.classList.remove('skeleton'));
+}
+
+function pct(a,b){ if (!b) return ''; const p=(a/b-1)*100; return `<span class="${p>=0?'up':'down'}">${p>=0?'▲':'▼'} ${Math.abs(p).toFixed(1)}%</span>`; }
+function renderAll(){
+  const d = st.data, r = d.range, k = d.kpi, p = d.prev;
+  $('range-text').textContent = `${thDate(r.from)} – ${thDate(r.to)} · ${r.days} วัน`;
+  const aov = k.orders ? k.net/k.orders : 0, paov = p.orders ? p.net/p.orders : 0;
+  const cmp = `เทียบ ${r.days} วันก่อนหน้า`;
+  $('kpis').innerHTML = [
+    ['ยอดขาย', baht(k.net), `${pct(k.net,p.net)} ${cmp} ${baht(p.net)}`],
+    ['ออเดอร์', fmt(k.orders), `${pct(k.orders,p.orders)} ${cmp}`],
+    ['จำนวนชิ้น', fmt(k.units), `${pct(k.units,p.units)} ${cmp}`],
+    ['เฉลี่ยต่อออเดอร์', baht(aov), `${pct(aov,paov)} ${cmp}`],
+  ].map(([l,v,s]) => `<div class="card"><div class="lbl">${l}</div><div class="kpi" title="${v}">${v}</div><div class="delta muted">${s}</div></div>`).join('');
+
+  const max = Math.max(1, ...d.channels.map(c => +c.net));
+  const tot = d.channels.reduce((s,c)=>s+ +c.net,0) || 1;
+  $('channels').innerHTML = d.channels.length ? d.channels.map(c => { const g = G.find(x=>x.k===c.g);
+    return `<div class="chrow"><div style="font-weight:500">${g.n}</div><div class="bar"><div style="width:${(c.net/max*100).toFixed(1)}%;background:${g.c}"></div></div><div class="num">${baht(c.net)} <span class="muted">· ${(c.net/tot*100).toFixed(1)}% · ${fmt(c.orders)} ออเดอร์</span></div></div>`; }).join('')
+    : '<div class="empty">ไม่มียอดขายในช่วงนี้</div>';
+  $('cancel-note').textContent = d.cancelled.orders ? `ไม่นับ: ออเดอร์ที่ยกเลิก/คืนเงิน ${fmt(d.cancelled.orders)} ออเดอร์ มูลค่า ${baht(d.cancelled.net)}` : '';
+  renderChart(); renderProducts();
+}
+
+function renderChart(){
+  const d = st.data, unit = d.range.unit, svg = $('chart'), box = $('chartbox');
+  // ทุกช่วงเวลาในแกน x
+  const keys = [];
+  if (unit==='day'){ for (let x=d.range.from; x<=d.range.to; x=addDays(x,1)) keys.push(x); }
+  else { let [y,m] = d.range.from.split('-').map(Number); const [ty,tm] = d.range.to.split('-').map(Number);
+         while (y<ty || (y===ty && m<=tm)) { keys.push(`${y}-${String(m).padStart(2,'0')}`); m++; if (m>12){m=1;y++;} } }
+  const M = {}; for (const t of d.trend) (M[t.k] ??= {})[t.g] = +t.net;
+  const gs = G.filter(g => d.trend.some(t => t.g===g.k));
+  $('legend').innerHTML = gs.map(g=>`<span><i style="background:${g.c}"></i>${g.n}</span>`).join('');
+  $('trend-title').textContent = unit==='day' ? 'ยอดขายรายวัน' : 'ยอดขายรายเดือน';
+  const W = box.clientWidth || 800, H = 260, L = 44, R = 6, T = 10, B = 26;
+  const tot = keys.map(k => gs.reduce((s,g)=>s+(M[k]?.[g.k]||0),0));
+  const max = Math.max(...tot, 1);
+  const step = [1e3,2e3,5e3,1e4,2e4,5e4,1e5,2e5,5e5,1e6,2e6,5e6,1e7].find(s => max/s <= 5) || 2e7;
+  const top = Math.ceil(max/step)*step, y = v => T + (H-T-B)*(1 - v/top);
+  const bw = (W-L-R)/keys.length, gap = Math.max(1, Math.min(6, bw*.25)), w = Math.max(1, bw-gap);
+  let s = '';
+  for (let v=0; v<=top+1; v+=step) s += `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="#EFEEE9"/><text x="${L-6}" y="${y(v)+3.5}" text-anchor="end">${short(v)}</text>`;
+  const every = Math.ceil(keys.length / (W<520 ? 6 : 12));
+  keys.forEach((k,i) => {
+    const x = L + i*bw + gap/2; let acc = 0;
+    const present = gs.filter(g => (M[k]?.[g.k]||0) > 0);
+    present.forEach((g,j) => { const v = M[k][g.k], y0 = y(acc), y1 = y(acc+v); acc += v;
+      const isTop = j===present.length-1, h = Math.max(0, y0-y1-(isTop?0:1.5));
+      s += isTop && h>4 && w>6 ? `<path d="M${x},${y0} V${y1+3} q0,-3 3,-3 H${x+w-3} q3,0 3,3 V${y0} Z" fill="${g.c}"/>` : `<rect x="${x}" y="${y1+(isTop?0:1.5)}" width="${w}" height="${h}" fill="${g.c}"/>`; });
+    if (i % every === 0) { const lab = unit==='day' ? `${+k.slice(8)} ${TM[+k.slice(5,7)-1]}` : `${TM[+k.slice(5,7)-1]} ${k.slice(2,4)}`; s += `<text x="${x+w/2}" y="${H-8}" text-anchor="middle">${lab}</text>`; }
+    s += `<rect class="hit" data-i="${i}" x="${L+i*bw}" y="${T}" width="${bw}" height="${H-T-B}" fill="transparent"/>`;
+  });
+  s += `<line x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}" stroke="#D6D5CE"/><rect id="hl" fill="#16161D" opacity=".05" hidden/>`;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.innerHTML = s;
+  const tip = $('tip'), hl = svg.querySelector('#hl');
+  svg.querySelectorAll('.hit').forEach(r => {
+    r.addEventListener('mousemove', e => { const i=+r.dataset.i, k=keys[i];
+      hl.setAttribute('x', L+i*bw); hl.setAttribute('y', T); hl.setAttribute('width', bw); hl.setAttribute('height', H-T-B); hl.removeAttribute('hidden');
+      const title = unit==='day' ? thDate(k) : `${TM[+k.slice(5,7)-1]} ${k.slice(0,4)}`;
+      tip.innerHTML = `<b class="h">${title}</b>` + gs.slice().reverse().map(g=>`<div class="r"><span><i style="background:${g.c}"></i>${g.n}</span><span>${baht(M[k]?.[g.k]||0)}</span></div>`).join('') + `<div class="r t"><span>รวม</span><span>${baht(tot[i])}</span></div>`;
+      tip.hidden = false; const b = box.getBoundingClientRect(); let tx = e.clientX-b.left+14; if (tx+200 > b.width) tx = e.clientX-b.left-210; tip.style.left = Math.max(0,tx)+'px'; });
+    r.addEventListener('mouseleave', () => { tip.hidden = true; hl.setAttribute('hidden',''); });
+  });
+}
+
+function renderProducts(){
+  const all = st.data.products, q = st.q.trim().toLowerCase();
+  const list = (q ? all.filter(p => p.name.toLowerCase().includes(q)) : all).slice(0, st.limit);
+  const cell = v => v ? `<td class="num">${fmt(v)}</td>` : `<td class="num z">–</td>`;
+  $('prods').innerHTML = list.length ? list.map(p => `<tr><td class="muted" style="padding-left:20px">${all.indexOf(p)+1}</td><td style="font-weight:500">${esc(p.name)}</td>${G.map(g=>cell(p.u[g.k])).join('')}<td class="num" style="font-weight:600">${fmt(p.units)}</td><td class="num" style="font-weight:600;padding-right:20px">${baht(p.net)}</td></tr>`).join('')
+    : `<tr><td colspan="9" class="empty">${q ? 'ไม่พบสินค้าที่ตรงกับ "'+esc(st.q)+'"' : 'ไม่มียอดขายในช่วงนี้'}</td></tr>`;
+  const more = !q && all.length > list.length;
+  $('prod-note').innerHTML = `แสดง ${list.length} จาก ${all.length} สินค้าที่ขายได้ในช่วงนี้ (เรียงตามยอดเงิน)` + (more ? ` · <button class="btn btn-sm" id="btn-more" type="button">แสดงเพิ่มอีก 30</button>` : '');
+  if (more) $('btn-more').onclick = () => { st.limit += 30; renderProducts(); };
+}
+
+function exportCsv(){
+  if (!st.data) return;
+  const rows = [['อันดับ','สินค้า',...G.map(g=>g.n+' (ชิ้น)'),'รวมชิ้น','ยอดเงิน']];
+  st.data.products.forEach((p,i) => rows.push([i+1, p.name, ...G.map(g=>p.u[g.k]||0), p.units, Math.round(p.net)]));
+  const csv = '﻿' + rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = `cuteboy-sales_${st.data.range.from}_${st.data.range.to}.csv`; a.click();
+}
+
+const ago = ts => { if (!ts) return 'ยังไม่มี'; const m = Math.round((Date.now()-new Date(ts))/60000);
+  return m < 60 ? `${m} นาทีที่แล้ว` : m < 1440 ? `${Math.round(m/60)} ชม.ที่แล้ว` : `${Math.round(m/1440)} วันที่แล้ว`; };
+const day = ts => ts ? thDate(String(ts).slice(0,10)) : '-';
+async function loadSources(){
+  try {
+    const s = await API.sources();
+    const last = src => (s.imports||[]).find(f => f.source===src);
+    const card = (name, src) => { const f = last(src);
+      const bad = f && !f.ok, stale = !f || (Date.now()-new Date(f.processed_at) > 8*86400e3);
+      const msg = !f ? 'ยังไม่เคยนำเข้า' : bad ? `นำเข้าไม่สำเร็จ: ${esc(f.message)}` : `นำเข้า ${ago(f.processed_at)} · ข้อมูลถึง ${day(s.latest?.[src])}${f.unmapped?` · ยังไม่ผูกสินค้า ${f.unmapped}`:''}`;
+      return `<div class="${bad||stale?'warn':''}"><div><b>${name}</b><small class="${bad?'bad':''}">${msg}</small></div><button class="btn btn-sm" type="button" data-up="${src}">อัปโหลดไฟล์</button></div>`; };
+    $('sources').innerHTML =
+      `<div><div><b>Shopify (เว็บ + POS)</b><small class="ok">อัตโนมัติทุกชั่วโมง · ล่าสุด ${ago(s.shopify_sync)}</small></div></div>` + card('Shopee','Shopee') + card('Shipnity (Live / แชต)','Shipnity');
+    $('sources').querySelectorAll('[data-up]').forEach(b => b.onclick = () => $('file').click());
+    $('syncbox').innerHTML = `<b>สถานะการซิงก์ข้อมูล</b><div>Shopify · อัตโนมัติ ${ago(s.shopify_sync)}</div><div>Shopee · ข้อมูลถึง ${day(s.latest?.Shopee)}</div><div>Shipnity · ข้อมูลถึง ${day(s.latest?.Shipnity)}</div>`;
+  } catch(e){ $('sources').innerHTML = `<div class="warn"><small class="bad">โหลดสถานะไม่สำเร็จ</small></div>`; }
+}
+$('file').onchange = async e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try { await API.upload(f); toast(`อัปโหลด ${f.name} แล้ว ระบบจะนำเข้าภายใน 15 นาที`); setTimeout(loadSources, 2000); }
+  catch(err){ toast('อัปโหลดไม่สำเร็จ: ' + (err.message||err)); } };
+
+// ===== auth flow =====
+let booting=false;
+async function boot(){
+  if (booting) return; booting=true;
+  try { await boot2(); } finally { booting=false; }
+}
+async function boot2(){
+  if (!DEMO) {
+    const { data:{ session } } = await sb.auth.getSession();
+    if (!session) { show('v-login'); return; }
+    st.user = session.user;
+  } else st.user = DEMO.user;
+  let prof;
+  try { prof = await API.profile(); } catch(e){ show('v-login'); $('login-err').hidden=false; $('login-err').textContent='ตรวจสิทธิ์ไม่สำเร็จ: '+(e.message||e); return; }
+  const meta = st.user.user_metadata || {};
+  const name = meta.custom_claims?.global_name || meta.full_name || meta.name || 'ผู้ใช้';
+  if (!prof.member) {
+    $('my-id').textContent = prof.discord_id;
+    $('add-sql').textContent = `insert into team_members (discord_id, name, role)\nvalues ('${prof.discord_id}', '${name.replace(/'/g,"''")}', 'member');`;
+    show('v-denied'); return;
+  }
+  $('me-name').textContent = prof.name || name;
+  $('me-role').textContent = 'Role: ' + (prof.role || 'member') + ' · Discord';
+  if (meta.avatar_url) $('me-av').outerHTML = `<img src="${esc(meta.avatar_url)}" alt="" width="36" height="36">`;
+  else $('me-av').textContent = (prof.name || name).slice(0,1);
+  show('v-app'); renderRanges(); load(); loadSources();
+  if (DEMO) { $('demo-note').hidden = false; $('demo-note').textContent = DEMO.note; }
+}
+$('btn-login').onclick = () => sb.auth.signInWithOAuth({ provider:'discord', options:{ redirectTo: location.origin + location.pathname } });
+const logout = async () => { if (sb) await sb.auth.signOut(); show('v-login'); };
+$('btn-logout').onclick = logout; $('btn-logout2').onclick = logout;
+$('btn-retry').onclick = boot;
+$('btn-copy').onclick = () => navigator.clipboard?.writeText($('my-id').textContent).then(()=>toast('คัดลอกแล้ว'), ()=>{});
+$('btn-csv').onclick = exportCsv;
+$('btn-apply').onclick = () => { st.from = $('d-from').value; st.to = $('d-to').value; if (st.from && st.to && st.from <= st.to) load(); else toast('เลือกวันเริ่มต้นและวันสิ้นสุดให้ถูกต้อง'); };
+$('q').oninput = e => { st.q = e.target.value; st.limit = 30; if (st.data) renderProducts(); };
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => st.data && renderChart(), 150); });
+if (sb) sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_IN' && $('v-app').hidden) boot(); });
+boot();
+</script>
+</body>
+</html>
