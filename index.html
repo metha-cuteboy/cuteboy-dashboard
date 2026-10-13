@@ -100,6 +100,7 @@ h1{margin:0;font-family:var(--display);font-size:28px;font-weight:700;line-heigh
 .row .sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .rk{font-size:12px;color:var(--muted)}
 .chg-m{display:none}
+.m-only{display:none}
 .mix{display:flex;height:8px;border-radius:99px;overflow:hidden;gap:1px;background:#EEEEEA}
 .ph{width:44px;height:44px;border-radius:10px;background:#EEEEEA;color:#8E8D99;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:600;overflow:hidden;flex:none}
 .ph img{width:100%;height:100%;object-fit:cover;display:block}
@@ -122,6 +123,28 @@ h1{margin:0;font-family:var(--display);font-size:28px;font-weight:700;line-heigh
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:12px;padding:12px 18px;font-size:14px;z-index:40;max-width:calc(100% - 32px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .note{font-size:12.5px;color:var(--muted)}
 .demo{background:var(--accent-bg);color:#3A24B8;border-radius:10px;padding:8px 12px;font-size:12.5px}
+/* inventory */
+.locs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.locs .card{padding:16px 18px}
+.pill{display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:500;line-height:18px;white-space:nowrap}
+.p-low{background:#FFF1CC;color:#6E4A00}.p-out{background:#FDE8DD;color:#9A3412}.p-idle{background:#EEEEEA;color:#4A4953}.p-ok{background:#E3F4EA;color:#17663A}
+.irow{display:grid;grid-template-columns:44px minmax(0,1fr) 64px 64px 64px 70px 104px 150px;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--line2);min-height:64px;width:100%;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.irow:hover{background:var(--soft)}
+.irow.hd{min-height:0;padding-top:8px;padding-bottom:8px;cursor:default;font-size:12px;color:var(--muted);font-weight:500}
+.irow .nm{font-weight:500;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.irow .sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.irow .st{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:12px;color:var(--muted);text-align:right}
+.sizes{padding:4px 20px 16px 76px;background:var(--soft);overflow-x:auto}
+.sizes table{width:100%;border-collapse:collapse;font-size:13px}
+.sizes th{font-weight:500;color:var(--muted);text-align:right;padding:6px 8px;font-size:12px}.sizes th:first-child,.sizes td:first-child{text-align:left}
+.sizes td{padding:6px 8px;text-align:right;border-top:1px solid var(--line2);font-variant-numeric:tabular-nums}
+.issues{border-color:var(--warn-line);background:var(--warn-bg);padding:14px 18px}
+.issues summary{cursor:pointer;font-weight:600;min-height:32px;display:flex;align-items:center}
+.issue-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:10px;font-size:13px}
+.issue-body ul{margin:6px 0 0;padding-left:18px;display:grid;gap:2px}
+@media (max-width:1100px){.irow{grid-template-columns:44px minmax(0,1fr) 70px 104px 130px}.irow .c-loc{display:none}}
+@media (max-width:860px){.locs{grid-template-columns:minmax(0,1fr)}.irow{grid-template-columns:44px minmax(0,1fr) auto;padding:10px 16px}.irow .c-t,.irow .c-v{display:none}.irow.hd{display:none}.sizes{padding:4px 16px 14px}}
+
 /* login */
 .login{display:flex;flex-wrap:wrap;min-height:100vh}
 .login .l{flex:1 1 420px;background:var(--side);color:#F3F3EF;padding:56px;display:flex;flex-direction:column;justify-content:space-between;gap:40px}
@@ -153,6 +176,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
   .row .c-net{grid-column:3;text-align:right}
   .row.hd{display:none}
   .chg-m{display:block}
+  .m-only{display:inline;font-weight:600;color:var(--ink)}
   .card{padding:16px}
   .login .l{padding:32px 24px}.login .l h2{font-size:32px}
 }
@@ -208,12 +232,13 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
     <div class="logo"><div class="m">CB</div><div><b>CUTEBOY</b><span>Team Dashboard</span></div></div>
     <div class="me"><div id="me-av" class="av">?</div><div style="min-width:0"><div class="n" id="me-name">-</div><div class="r" id="me-role">-</div></div><button id="btn-logout" type="button">ออก</button></div>
     <div><div class="grp-l">ทั่วไป</div><div class="nav"><span>งานของฉัน <small>เร็วๆ นี้</small></span><span>Overview <small>เร็วๆ นี้</small></span></div></div>
-    <div><div class="grp-l">PROJECT</div><div class="nav"><span>Project <small>Phase 2</small></span><span>Design <small>Phase 3</small></span><span>Supplier <small>Phase 3</small></span><span>Forecast <small>Phase 4</small></span><span>Inventory <small>กำลังทำ</small></span><span>Marketing <small>Phase 4</small></span></div></div>
-    <div><div class="grp-l">รายงานรวม</div><div class="nav"><a href="#/sales" aria-current="page">Total Sales</a><span>Inventory คงเหลือ <small>กำลังทำ</small></span></div></div>
+    <div><div class="grp-l">PROJECT</div><div class="nav"><span>Project <small>Phase 2</small></span><span>Design <small>Phase 3</small></span><span>Supplier <small>Phase 3</small></span><span>Forecast <small>Phase 4</small></span><span>Inventory (Project) <small>Phase 3</small></span><span>Marketing <small>Phase 4</small></span></div></div>
+    <div><div class="grp-l">รายงานรวม</div><div class="nav"><a href="#/sales" id="nav-sales" aria-current="page">Total Sales</a><a href="#/stock" id="nav-stock">Inventory คงเหลือ</a></div></div>
     <div class="syncbox" id="syncbox"><b>สถานะการซิงก์ข้อมูล</b><div>กำลังโหลด…</div></div>
   </nav>
 
   <main>
+  <div id="page-sales" style="display:flex;flex-direction:column;gap:18px">
     <header class="top">
       <div style="min-width:0">
         <nav class="crumb" id="crumb" aria-label="ตำแหน่ง"></nav>
@@ -276,6 +301,36 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
       <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
       <p class="note" style="margin:12px 0 0">อัปโหลดไฟล์ export จาก Shopee (Order.all) หรือ Shipnity ได้ทุกเมื่อ ไฟล์ที่ช่วงวันซ้อนกันจะไม่ทำให้ยอดซ้ำ ระบบนำเข้าภายใน 15 นาที</p>
     </section>
+  </div>
+  <div id="page-stock" style="display:flex;flex-direction:column;gap:18px" hidden>
+    <header class="top">
+      <div style="min-width:0">
+        <h1>Inventory คงเหลือ</h1>
+        <div class="muted" style="margin-top:4px" id="inv-sub">สต็อกทั้งบริษัท: สินค้าไหนเหลือเท่าไหร่ อยู่คลังไหน มูลค่าเท่าไหร่</div>
+      </div>
+      <div class="controls"><button class="btn" id="inv-csv" type="button">Export CSV</button></div>
+    </header>
+    <div id="inv-err" hidden><div class="errbox"><div><b>โหลดข้อมูลไม่สำเร็จ</b><div class="note" id="inv-errmsg"></div></div><button class="btn btn-p" id="inv-reload" type="button">ลองอีกครั้ง</button></div></div>
+    <section class="kpis" id="inv-kpis"></section>
+    <section class="locs" id="inv-locs"></section>
+    <details class="card issues" id="inv-issues" hidden><summary></summary><div class="issue-body"></div></details>
+    <section class="card" style="padding:0">
+      <div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+        <div class="card-hd">
+          <div class="seg" id="inv-tabs" role="group" aria-label="มุมมอง"></div>
+          <input class="inp" id="inv-q" style="width:240px;max-width:100%" placeholder="ค้นหาสินค้า / SKU" aria-label="ค้นหาสินค้า">
+        </div>
+        <div class="controls">
+          <div class="seg" id="inv-locsel" role="group" aria-label="คลัง"></div>
+          <select class="sel" id="inv-coll" aria-label="Collection"><option value="">ทุก Collection</option></select>
+          <select class="sel" id="inv-idle" aria-label="ไม่เคลื่อนไหวกี่วัน"><option value="60">ไม่ขายเกิน 60 วัน</option><option value="90" selected>ไม่ขายเกิน 90 วัน</option><option value="180">ไม่ขายเกิน 180 วัน</option></select>
+        </div>
+        <div class="note" id="inv-hint"></div>
+      </div>
+      <div class="list" id="inv-list"></div>
+      <div class="more" id="inv-more"></div>
+    </section>
+  </div>
   </main>
   </div>
 </div>
@@ -329,6 +384,7 @@ const API = DEMO ? DEMO.api : {
   profile: () => rpc('my_profile'),
   sales: p => rpc('dash_sales', { d_from:p.from, d_to:p.to, p_compare:p.compare, p_collection:p.collection ?? null, p_product:p.product ?? null }),
   sources: () => rpc('dash_sources'),
+  inventory: () => rpc('dash_inventory', { p_idle_days: 90 }),
   async upload(file){
     const safe = file.name.replace(/[^\w.\-]+/g, '_');
     const { error } = await sb.storage.from('imports').upload(`${new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')}_${safe}`, file);
@@ -352,13 +408,19 @@ function rangeDates(){
 }
 function parseHash(){
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
+  st.page = h.startsWith('stock') ? 'stock' : 'sales';
   let m;
   if ((m = h.match(/^sales\/p\/(\d+)/))) { st.view='product'; st.prod=+m[1]; }
   else if ((m = h.match(/^sales\/c\/(.+)$/))) { st.view='coll'; st.coll=m[1]; st.prod=null; }
   else { st.view='home'; st.coll=null; st.prod=null; }
 }
 const go = h => { location.hash = h; };
-addEventListener('hashchange', () => { parseHash(); st.q=''; $('q').value=''; st.limit=30; load(); window.scrollTo(0,0); closeMenu(); });
+addEventListener('hashchange', () => { parseHash(); st.q=''; $('q').value=''; st.limit=30; route(); window.scrollTo(0,0); closeMenu(); });
+function route(){ const stock = st.page==='stock'; $('page-sales').hidden = stock; $('page-stock').hidden = !stock;
+  $('nav-sales').toggleAttribute('aria-current', !stock); $('nav-stock').toggleAttribute('aria-current', stock);
+  if (stock) $('nav-stock').setAttribute('aria-current','page'); else $('nav-sales').setAttribute('aria-current','page');
+  document.querySelector('.topbar b').textContent = stock ? 'Inventory' : 'Total Sales';
+  if (stock) { document.title = 'Inventory คงเหลือ · CuteBoy'; loadStock(); } else load(); }
 
 function renderControls(){
   $('ranges').innerHTML = RANGES.map(([k,l]) => `<button type="button" id="r-${k}" aria-pressed="${st.range===k}">${l}</button>`).join('');
@@ -550,6 +612,108 @@ $('file').onchange = async e => {
   finally { loadSources(); }
 };
 
+
+// ===== Inventory =====
+const LOCS = [['all','ทุกคลัง'],['wh','MyCloud (คลัง)'],['office','ออฟฟิศพระราม 2'],['event','EVENT']];
+const LOCNAME = { wh:'คลัง MyCloud', office:'ออฟฟิศพระราม 2', event:'EVENT' };
+const ITABS = [['all','ทั้งหมด'],['low','เหลือน้อย'],['out','หมดแต่ยังขาย'],['idle','ไม่เคลื่อนไหว']];
+const inv = { data:null, t:0, loc:'all', tab:'all', coll:'', q:'', idle:90, limit:40, open:new Set() };
+const daysAgo = d => d ? Math.floor((Date.now() - new Date(d)) / 864e5) : null;
+const shortDate = d => { const x = new Date(d); return `${x.getDate()} ${TM[x.getMonth()]} ${String(x.getFullYear()).slice(2)}`; };
+async function loadStock(force){
+  $('inv-err').hidden = true;
+  if (inv.data && !force && Date.now()-inv.t < 5*60e3) { renderStock(); return; }
+  if (!inv.data) $('inv-kpis').innerHTML = Array(4).fill('<div class="card"><div class="sk" style="height:12px;width:40%"></div><div class="sk" style="height:28px;width:70%;margin-top:10px"></div></div>').join('');
+  try { inv.data = await API.inventory(); inv.t = Date.now(); renderStock(); }
+  catch(e){ const msg = e.message||String(e); if (/not_member/.test(msg)) { boot(); return; }
+    $('inv-errmsg').textContent = /fetch|network/i.test(msg) ? 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองอีกครั้ง' : msg; $('inv-err').hidden = false; }
+}
+const qty = (p, loc) => loc==='all' ? p.wh + p.office + p.event : p[loc];
+function statusOf(p){
+  const q = p.total, u30 = +p.u30, ds = daysAgo(p.last_sale);
+  if (q > 0 && (ds === null || ds > inv.idle)) return ['idle', ds === null ? 'ไม่เคยขาย' : `ไม่ขาย ${ds} วัน`];
+  if (u30 > 0) { const cover = Math.round(q / (u30/30)); return [cover <= 30 ? 'low' : 'ok', cover > 365 ? 'พอขายเกิน 1 ปี' : `พอขาย ~${cover} วัน`]; }
+  return ['ok', ds !== null ? `ขายล่าสุด ${shortDate(p.last_sale)}` : ''];
+}
+function renderStock(){
+  const d = inv.data; if (!d) return;
+  if (!d.as_of) { $('inv-kpis').innerHTML = ''; $('inv-locs').innerHTML = ''; $('inv-list').innerHTML = '<div class="empty">ยังไม่มีข้อมูลสต็อก ระบบจะดึงจาก Shopify รอบแรกภายใน 15–30 นาทีหลังติดตั้ง</div>'; return; }
+  $('inv-sub').textContent = `สต็อกจาก Shopify ณ ${thDate(d.as_of)} ${new Date(d.as_of).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})} · นับเฉพาะคลัง MyCloud, ออฟฟิศพระราม 2 และ EVENT · มูลค่าคิดจากราคาขาย (รอต้นทุนจริง)`;
+  const P = d.products, L = d.locations || {};
+  const units = P.reduce((s,p)=>s+p.total,0), value = P.reduce((s,p)=>s+ +p.value,0);
+  const nIdle = P.filter(p => statusOf(p)[0]==='idle').length, nOut = d.selling_out.length, nSku = Object.values(L).reduce((s,l)=>s+l.skus,0);
+  $('inv-kpis').innerHTML = [
+    ['ชิ้นคงเหลือ', fmt(units), `${fmt(P.length)} สินค้า · ${fmt(nSku)} SKU`],
+    ['มูลค่าคงคลัง (ราคาขาย)', baht(value), 'จะเปลี่ยนเป็นต้นทุนเมื่อกรอก Cost เสร็จ'],
+    ['หมดแต่ยังขาย', fmt(nOut), 'มีคนซื้อใน 30 วัน แต่สต็อกเป็น 0'],
+    [`ไม่เคลื่อนไหว ${inv.idle} วัน`, fmt(nIdle), 'มีสต็อกแต่ไม่มียอดขาย'],
+  ].map(([l,v,s]) => `<div class="card"><div class="lbl">${l}</div><div class="kpi">${v}</div><div class="delta">${s}</div></div>`).join('');
+  $('inv-locs').innerHTML = ['wh','office','event'].map(k => { const l = L[k] || {units:0,value:0,skus:0};
+    return `<div class="card"><div class="card-hd"><b>${LOCNAME[k]}</b><span class="muted">${units?Math.round(l.units/units*100):0}%</span></div><div class="bar" style="margin:10px 0 8px"><div style="width:${units?(l.units/units*100).toFixed(1):0}%;background:var(--accent)"></div></div><div class="num" style="text-align:left">${fmt(l.units)} ชิ้น · ${baht(l.value)}</div></div>`; }).join('');
+  // ต้องแก้ใน Shopify
+  const I = d.issues || {}, sus = I.suspect||[], neg = I.negative||[], oth = I.other||[];
+  const nIssue = sus.length + neg.length + oth.length;
+  $('inv-issues').hidden = !nIssue;
+  if (nIssue) {
+    $('inv-issues').querySelector('summary').textContent = `⚠ สต็อกที่ควรแก้ใน Shopify ${nIssue} รายการ (ไม่ถูกนับในตัวเลขด้านบน)`;
+    const li = (arr, f) => `<ul>${arr.slice(0,8).map(f).join('')}${arr.length>8?`<li>และอีก ${arr.length-8} รายการ</li>`:''}</ul>`;
+    $('inv-issues').querySelector('.issue-body').innerHTML =
+      (sus.length ? `<div><b>น่าจะเป็นตัวเลขหลอก / Pre-order (${sus.length})</b>${li(sus, x=>`<li>${esc(x.name)} · ${fmt(x.units)}</li>`)}</div>` : '') +
+      (oth.length ? `<div><b>สต็อกค้างใน Location อื่น</b>${li(oth, x=>`<li>${esc(x.location)} · ${fmt(x.units)} ชิ้น</li>`)}</div>` : '') +
+      (neg.length ? `<div><b>สต็อกติดลบ (${neg.length})</b>${li(neg, x=>`<li>${esc(x.name)} · ${fmt(x.units)}</li>`)}</div>` : '');
+  }
+  // filters
+  $('inv-tabs').innerHTML = ITABS.map(([k,l]) => `<button type="button" data-t="${k}" aria-pressed="${inv.tab===k}">${l}</button>`).join('');
+  $('inv-locsel').innerHTML = LOCS.map(([k,l]) => `<button type="button" data-l="${k}" aria-pressed="${inv.loc===k}">${l}</button>`).join('');
+  const colls = [...new Set(P.map(p=>p.coll).concat(d.selling_out.map(p=>p.coll)))].sort();
+  $('inv-coll').innerHTML = '<option value="">ทุก Collection</option>' + colls.map(c=>`<option ${c===inv.coll?'selected':''}>${esc(c)}</option>`).join('');
+  renderStockList();
+}
+function renderStockList(){
+  const d = inv.data, q = inv.q.trim().toLowerCase();
+  let items;
+  if (inv.tab==='out') items = d.selling_out.map(p => ({...p, out:true}));
+  else {
+    items = d.products.map(p => ({...p, q: qty(p, inv.loc), stt: statusOf(p)})).filter(p => p.q > 0);
+    if (inv.tab==='low') items = items.filter(p => +p.u30 > 0).sort((a,b) => (a.total/(a.u30/30)) - (b.total/(b.u30/30)));
+    if (inv.tab==='idle') items = items.filter(p => p.stt[0]==='idle').sort((a,b) => b.value - a.value);
+  }
+  if (inv.coll) items = items.filter(p => p.coll===inv.coll);
+  if (q) items = items.filter(p => p.name.toLowerCase().includes(q) || (p.coll||'').toLowerCase().includes(q) || (p.rows||[]).some(r => (r.sku||'').toLowerCase().includes(q)));
+  $('inv-hint').textContent = { all:'เรียงตามมูลค่าคงคลัง กดที่สินค้าเพื่อดูแยกไซซ์และคลัง',
+    low:'สินค้าที่ยังขายอยู่ เรียงจากเหลือน้อยที่สุด (คิดจากยอดขาย 30 วันล่าสุด)',
+    out:'สต็อกในคลังที่นับเป็น 0 แต่ยังมีคนซื้อใน 30 วัน ควรเช็กว่าต้องผลิตเพิ่มหรือย้ายสต็อกจาก Location อื่น',
+    idle:`มีสต็อกแต่ไม่มียอดขายเกิน ${inv.idle} วัน เรียงตามมูลค่าที่ค้าง` }[inv.tab];
+  const list = items.slice(0, inv.limit);
+  const pill = s => ({ low:'<span class="pill p-low">เหลือน้อย</span>', idle:'<span class="pill p-idle">ไม่เคลื่อนไหว</span>', ok:'' })[s] || '';
+  const hd = inv.tab==='out' ? '' : `<div class="irow hd"><div></div><div>สินค้า</div><div class="num c-loc">MyCloud</div><div class="num c-loc">ออฟฟิศ</div><div class="num c-loc">EVENT</div><div class="num c-t">รวม</div><div class="num c-v">มูลค่า</div><div class="num">สถานะ</div></div>`;
+  const row = p => {
+    if (p.out) return `<a class="irow" href="#/sales/p/${p.id}">${thumb(p.img,p.name)}<div style="min-width:0"><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.coll)}</div></div><div class="c-loc"></div><div class="c-loc"></div><div class="c-loc"></div><div class="num c-t">0</div><div class="c-v"></div><div class="st"><span class="pill p-out">หมด</span>ขาย 30 วัน ${fmt(p.u30)} ชิ้น</div></a>`;
+    const open = inv.open.has(p.key);
+    const z = v => v ? fmt(v) : '<span style="color:#C3C2BB">–</span>';
+    let sz = '';
+    if (open) { const by = {}; for (const r of p.rows) { const k = r.sku || r.size; (by[k] ??= { size:r.size, sku:r.sku, wh:0, office:0, event:0 })[r.loc] += r.q; }
+      sz = `<div class="sizes"><table><thead><tr><th>ไซซ์ / SKU</th><th>MyCloud</th><th>ออฟฟิศ</th><th>EVENT</th><th>รวม</th><th>ขาย 30 วัน</th></tr></thead><tbody>${Object.values(by).sort((a,b)=>a.size.localeCompare(b.size)).map(r=>`<tr><td>${esc(r.size)} <span class="muted">${esc(r.sku||'')}</span></td><td>${z(r.wh)}</td><td>${z(r.office)}</td><td>${z(r.event)}</td><td><b>${fmt(r.wh+r.office+r.event)}</b></td><td>${z(d.sku30?.[r.sku])}</td></tr>`).join('')}</tbody></table>${p.id?`<p style="margin:10px 0 0"><a class="btn btn-sm" href="#/sales/p/${p.id}">ดูยอดขายสินค้านี้</a></p>`:''}</div>`; }
+    return `<button class="irow" type="button" data-k="${esc(p.key)}" aria-expanded="${open}">${thumb(p.img,p.name)}<div style="min-width:0"><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.coll)} · ขาย 30 วัน ${fmt(p.u30)}</div></div><div class="num c-loc">${z(p.wh)}</div><div class="num c-loc">${z(p.office)}</div><div class="num c-loc">${z(p.event)}</div><div class="num c-t" style="font-weight:600">${fmt(p.q)}</div><div class="num c-v">${baht(p.value)}</div><div class="st">${pill(p.stt[0])}<span>${esc(p.stt[1])}</span><span class="m-only">${fmt(p.q)} ชิ้น</span></div></button>${sz}`;
+  };
+  $('inv-list').innerHTML = list.length ? hd + list.map(row).join('') : '<div class="empty">ไม่มีสินค้าในมุมมองนี้</div>';
+  $('inv-more').innerHTML = `แสดง ${list.length} จาก ${items.length} รายการ` + (items.length > list.length ? ` <button class="btn btn-sm" id="inv-morebtn" type="button">แสดงเพิ่มอีก 40</button>` : '');
+  if (items.length > list.length) $('inv-morebtn').onclick = () => { inv.limit += 40; renderStockList(); };
+}
+$('inv-list').onclick = e => { const b = e.target.closest('button.irow'); if (!b) return; const k = b.dataset.k; inv.open.has(k) ? inv.open.delete(k) : inv.open.add(k); renderStockList(); };
+$('inv-tabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; inv.tab = b.dataset.t; inv.limit = 40; document.querySelectorAll('#inv-tabs button').forEach(x=>x.setAttribute('aria-pressed', x===b)); renderStockList(); };
+$('inv-locsel').onclick = e => { const b = e.target.closest('button'); if (!b) return; inv.loc = b.dataset.l; document.querySelectorAll('#inv-locsel button').forEach(x=>x.setAttribute('aria-pressed', x===b)); renderStockList(); };
+$('inv-coll').onchange = e => { inv.coll = e.target.value; inv.limit = 40; renderStockList(); };
+$('inv-idle').onchange = e => { inv.idle = +e.target.value; renderStock(); };
+$('inv-q').oninput = e => { inv.q = e.target.value; inv.limit = 40; renderStockList(); };
+$('inv-reload').onclick = () => loadStock(true);
+$('inv-csv').onclick = () => { const d = inv.data; if (!d) return;
+  const rows = [['สินค้า','Collection','ไซซ์','SKU','MyCloud','ออฟฟิศ','EVENT','รวม','ขาย 30 วัน','ราคาขายรวม']];
+  for (const p of d.products) { const by = {}; for (const r of p.rows) { const k = r.sku||r.size; (by[k] ??= { size:r.size, sku:r.sku, wh:0, office:0, event:0 })[r.loc] += r.q; }
+    for (const r of Object.values(by)) rows.push([p.name, p.coll, r.size, r.sku, r.wh, r.office, r.event, r.wh+r.office+r.event, d.sku30?.[r.sku]||0, '']); }
+  const csv = '﻿' + rows.map(r => r.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = `cuteboy-stock_${String(d.as_of).slice(0,10)}.csv`; a.click(); };
+
 // ===== menu (mobile) =====
 const closeMenu = () => { $('side').classList.remove('open'); $('scrim').classList.remove('open'); $('btn-menu').setAttribute('aria-expanded','false'); };
 $('btn-menu').onclick = () => { $('side').classList.add('open'); $('scrim').classList.add('open'); $('btn-menu').setAttribute('aria-expanded','true'); };
@@ -575,7 +739,7 @@ async function boot2(){
   $('me-name').textContent = prof.name || name;
   $('me-role').textContent = 'Role: ' + (prof.role || 'member');
   if (meta.avatar_url) $('me-av').outerHTML = `<img src="${esc(meta.avatar_url)}" alt="" width="36" height="36">`; else $('me-av').textContent = (prof.name || name).slice(0,1);
-  show('v-app'); parseHash(); renderControls(); load(); loadSources();
+  show('v-app'); parseHash(); renderControls(); route(); loadSources();
   if (DEMO) { $('demo-note').hidden = false; $('demo-note').textContent = DEMO.note; }
 }
 $('btn-login').onclick = () => sb.auth.signInWithOAuth({ provider:'discord', options:{ redirectTo: location.origin + location.pathname } });
