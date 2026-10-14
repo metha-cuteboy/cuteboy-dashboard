@@ -305,6 +305,20 @@ h1{margin:0;font-family:var(--display);font-size:28px;font-weight:700;line-heigh
   .adrow{grid-template-columns:minmax(0,1fr) auto;padding:12px 16px}.adrow>div:nth-child(4){grid-column:1/-1}.adrow .adact{grid-column:1/-1;justify-content:flex-start}.adfull{grid-template-columns:minmax(0,1fr)}
 }
 
+/* members */
+.mrq{display:grid;grid-template-columns:40px minmax(0,1.2fr) minmax(120px,.9fr) 170px 230px auto;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid var(--line2)}
+.mbrow{display:grid;grid-template-columns:40px minmax(0,1.2fr) 190px 250px 110px 110px;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--line2)}
+.mbrow.hd{font-size:12px;color:var(--muted);font-weight:500;padding-top:8px;padding-bottom:8px}
+.mbrow.off{background:var(--soft)}.mbrow.off .inp,.mbrow.off .sel{opacity:.6}
+.mbrow .inp,.mbrow .sel,.mrq .inp,.mrq .sel{width:100%}
+.mra{display:flex;gap:6px;flex-wrap:wrap}
+.av3{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.tgl{display:flex;align-items:center;gap:8px;min-height:40px;font-size:13px;cursor:pointer}.tgl input{width:18px;height:18px;accent-color:var(--accent)}
+.badge{background:var(--brand);color:#2A1405!important;border-radius:99px;padding:0 7px;font-weight:700;font-size:11px}
+@media (max-width:1100px){.mrq{grid-template-columns:40px minmax(0,1fr) minmax(0,1fr);}.mrq>.sel,.mrq>.inp{grid-column:auto}.mrq .mra{grid-column:1/-1}
+  .mbrow{grid-template-columns:40px minmax(0,1fr) minmax(0,1fr)}.mbrow.hd{display:none}.mbrow>.sel,.mbrow .tgl,.mbrow>.note{grid-column:2/-1}}
+@media (max-width:860px){.mrq,.mbrow{padding:12px 16px;grid-template-columns:40px minmax(0,1fr)}.mrq>*:nth-child(n+3),.mbrow>*:nth-child(n+3){grid-column:2}}
+
 /* modal */
 .modal{position:fixed;inset:0;z-index:50;background:rgba(22,22,29,.45);display:flex;align-items:center;justify-content:center;padding:16px}
 .modal .box2{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -388,9 +402,9 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
   <div class="r" style="flex-basis:100%">
     <div class="box" style="max-width:560px">
       <div><h3 class="h" style="margin:0;font-size:24px">ยังไม่มีสิทธิ์เข้า Dashboard</h3>
-        <p class="muted" style="margin:6px 0 0">ส่ง Discord ID นี้ให้แอดมินเพื่อเพิ่มคุณเข้าทีม</p></div>
+        <p class="muted" style="margin:6px 0 0" id="req-note">ส่ง Discord ID นี้ให้แอดมินเพื่อเพิ่มคุณเข้าทีม</p></div>
       <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px"><code class="id" id="my-id"></code><button class="btn btn-sm" id="btn-copy" type="button">คัดลอก</button></div>
-      <div><div class="lbl" style="margin-bottom:6px">สำหรับแอดมิน: รันคำสั่งนี้ใน Supabase SQL Editor</div><pre class="sql" id="add-sql"></pre></div>
+      <details><summary class="lbl" style="cursor:pointer;min-height:32px;display:flex;align-items:center">สำหรับแอดมิน (ทางสำรอง): คำสั่ง SQL</summary><pre class="sql" id="add-sql" style="margin-top:6px"></pre></details>
       <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-p" id="btn-retry" type="button">ลองอีกครั้ง</button><button class="btn" id="btn-logout2" type="button">ออกจากระบบ</button></div>
     </div>
   </div>
@@ -406,7 +420,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
     <div><div class="grp-l">ทั่วไป</div><div class="nav"><a href="#/me" id="nav-me">งานของฉัน</a><a href="#/overview" id="nav-overview">Overview</a><a href="#/team" id="nav-team">ทีมงาน (Workload)</a></div></div>
     <div><div class="grp-l">PROJECT</div><div class="nav"><a href="#/projects" id="nav-projects">Project</a><a href="#/design" id="nav-design">Design</a><a href="#/supplier" id="nav-supplier">Supplier</a><a href="#/forecast" id="nav-forecast">Forecast</a><a href="#/incoming" id="nav-incoming">Inventory (Project)</a><a href="#/marketing" id="nav-marketing">Marketing</a></div></div>
     <div><div class="grp-l">รายงานรวม</div><div class="nav"><a href="#/sales" id="nav-sales">Total Sales</a><a href="#/stock" id="nav-stock">Inventory คงเหลือ</a><a href="#/oem" id="nav-oem">ยอดขาย OEM</a><a href="#/recovery" id="nav-recovery">คืนทุน & โปรโมชัน</a></div></div>
-    <div id="nav-admin-grp" hidden><div class="grp-l">ADMIN</div><div class="nav"><a href="#/admin" id="nav-admin" class="adm">หลังบ้าน · ประวัติแก้ไข</a></div></div>
+    <div id="nav-admin-grp" hidden><div class="grp-l">ADMIN</div><div class="nav"><a href="#/members" id="nav-members" class="adm">จัดการสมาชิก</a><a href="#/admin" id="nav-admin" class="adm">หลังบ้าน · ประวัติแก้ไข</a></div></div>
     <div class="syncbox" id="syncbox"><b>สถานะการซิงก์ข้อมูล</b><div>กำลังโหลด…</div></div>
   </nav>
 
@@ -626,6 +640,14 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
       <button class="btn btn-p" id="ad-apply" type="button">ดูประวัติ</button><input class="inp" id="ad-q" style="width:200px;max-width:100%" placeholder="ค้นหาในผลลัพธ์" aria-label="ค้นหา"></div>
     <div id="ad-body"></div>
   </div>
+  <div id="page-members" class="pg" hidden>
+    <header class="top"><div style="min-width:0"><h1>จัดการสมาชิก</h1><div class="muted" style="margin-top:4px">อนุมัติคนที่ขอเข้าใช้ ตั้งทีมและสิทธิ์ ปิด/เปิดสิทธิ์ · เปลี่ยนแล้วบันทึกทันที และมีประวัติในหลังบ้าน · เฉพาะ admin</div></div>
+      <div class="controls"><button class="btn" id="mb-add" type="button">+ เพิ่มด้วย Discord ID</button></div></header>
+    <section class="kpis" id="mb-kpis"></section>
+    <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">รออนุมัติ</h2><span class="note">เลือกทีมและสิทธิ์ แล้วกดอนุมัติ</span></div><div id="mb-req"></div><div id="mb-rej" style="padding:0 20px 8px"></div></section>
+    <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><div class="seg" id="mb-tabs" role="group" aria-label="ทีม"></div><input class="inp" id="mb-q" style="width:200px;max-width:100%" placeholder="ค้นหาชื่อ / ID" aria-label="ค้นหา"></div><div id="mb-list"></div></section>
+    <div id="mb-body"></div>
+  </div>
   <div id="pj-err" hidden><div class="errbox"><div><b>โหลดข้อมูล Project ไม่สำเร็จ</b><div class="note" id="pj-errmsg"></div></div><button class="btn btn-p" id="pj-reload" type="button">ลองอีกครั้ง</button></div></div>
   </main>
   </div>
@@ -693,6 +715,10 @@ const API = DEMO ? DEMO.api : {
   recovery: () => rpc('dash_recovery'),
   adminLog: f => rpc('admin_log', { p_from:f.from, p_to:f.to, p_actor:f.actor, p_tbl:f.tbl, p_limit:500 }),
   adminRestore: id => rpc('admin_restore', { p_id:id }),
+  members: () => rpc('admin_members'),
+  memberSave: m => rpc('admin_member_save', { p_id:m.id, p_name:m.name, p_role:m.role, p_team:m.team || null, p_active:m.active }),
+  requestReject: id => rpc('admin_request_reject', { p_id:id }),
+  requestAccess: (n, a) => rpc('request_access', { p_name:n, p_avatar:a }),
   promos: () => rpc('promo_list'),
   promoSave: d => rpc('promo_save', { d }),
   promoDelete: id => rpc('promo_delete', { p_id:id }),
@@ -747,7 +773,7 @@ function rangeDates(){
 }
 function parseHash(){
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
-  st.page = h.startsWith('stock') ? 'stock' : h.startsWith('oem') ? 'oem' : h.startsWith('me') ? 'me' : h.startsWith('overview') ? 'overview' : h.startsWith('projects') ? 'projects' : h.startsWith('design') ? 'design' : h.startsWith('supplier') ? 'supplier' : h.startsWith('incoming') ? 'incoming' : h.startsWith('forecast') ? 'forecast' : h.startsWith('marketing') ? 'marketing' : h.startsWith('recovery') ? 'recovery' : h.startsWith('team') ? 'team' : h.startsWith('admin') ? 'admin' : 'sales';
+  st.page = h.startsWith('stock') ? 'stock' : h.startsWith('oem') ? 'oem' : h.startsWith('members') ? 'members' : /^me(\/|$)/.test(h) ? 'me' : h.startsWith('overview') ? 'overview' : h.startsWith('projects') ? 'projects' : h.startsWith('design') ? 'design' : h.startsWith('supplier') ? 'supplier' : h.startsWith('incoming') ? 'incoming' : h.startsWith('forecast') ? 'forecast' : h.startsWith('marketing') ? 'marketing' : h.startsWith('recovery') ? 'recovery' : h.startsWith('team') ? 'team' : h.startsWith('admin') ? 'admin' : h.startsWith('members') ? 'members' : 'sales';
   fc.id = (h.match(/^forecast\/(\d+)/) || [])[1] ? +h.match(/^forecast\/(\d+)/)[1] : null;
   proj.sid = (h.match(/^supplier\/(\d+)/) || [])[1] ? +h.match(/^supplier\/(\d+)/)[1] : null;
   proj.id = (h.match(/^projects\/(\d+)/) || [])[1] ? +h.match(/^projects\/(\d+)/)[1] : null;
@@ -758,15 +784,16 @@ function parseHash(){
   else { st.view='home'; st.coll=null; st.prod=null; }
 }
 const go = h => { location.hash = h; };
-const TITLES = { me:'งานของฉัน', overview:'Overview', projects:'Project', design:'Design', supplier:'Supplier', incoming:'Inventory (Project)', forecast:'Forecast', marketing:'Marketing', recovery:'คืนทุน & โปรโมชัน', team:'ทีมงาน', admin:'หลังบ้าน', sales:'Total Sales', stock:'Inventory', oem:'ยอดขาย OEM' };
+const TITLES = { me:'งานของฉัน', overview:'Overview', projects:'Project', design:'Design', supplier:'Supplier', incoming:'Inventory (Project)', forecast:'Forecast', marketing:'Marketing', recovery:'คืนทุน & โปรโมชัน', team:'ทีมงาน', admin:'หลังบ้าน', members:'จัดการสมาชิก', sales:'Total Sales', stock:'Inventory', oem:'ยอดขาย OEM' };
 const PJPAGES = ['me','overview','team','projects','design','supplier','incoming','forecast'];
 addEventListener('hashchange', () => { parseHash(); st.q=''; $('q').value=''; st.limit=30; route(); window.scrollTo(0,0); closeMenu(); });
 function route(){ const pg = st.page;
-  for (const k of ['me','overview','team','projects','design','supplier','incoming','forecast','marketing','recovery','admin','sales','stock','oem']) { $('page-'+k).hidden = pg!==k; if (pg===k) $('nav-'+k).setAttribute('aria-current','page'); else $('nav-'+k).removeAttribute('aria-current'); }
+  for (const k of ['me','overview','team','projects','design','supplier','incoming','forecast','marketing','recovery','admin','members','sales','stock','oem']) { $('page-'+k).hidden = pg!==k; if (pg===k) $('nav-'+k).setAttribute('aria-current','page'); else $('nav-'+k).removeAttribute('aria-current'); }
   $('pj-err').hidden = true;
   document.querySelector('.topbar b').textContent = TITLES[pg];
   if (PJPAGES.includes(pg)) { document.title = TITLES[pg] + ' · CuteBoy'; loadProjects(); if (pg==='overview') loadOverview(); return; }
   if (pg==='marketing') { document.title = 'Marketing · CuteBoy'; loadPromos(); return; }
+  if (pg==='members') { document.title = 'จัดการสมาชิก · CuteBoy'; loadMembers(); return; }
   if (pg==='admin') { document.title = 'หลังบ้าน · CuteBoy'; $('ad-from').value = adm.from; $('ad-to').value = adm.to; loadAdmin(); return; }
   if (pg==='recovery') { document.title = 'คืนทุน & โปรโมชัน · CuteBoy'; loadRecovery(); return; }
   if (pg==='stock') { document.title = 'Inventory คงเหลือ · CuteBoy'; loadStock(); }
@@ -1947,6 +1974,72 @@ document.addEventListener('click', async e => {
   catch(err){ toast('คืนค่าไม่สำเร็จ: ' + (err.message || err)); b.disabled = false; }
 });
 
+// ===== จัดการสมาชิก (admin) =====
+const mb = { data:null, team:'all', q:'' };
+const ROLES = [['member','member · แก้ได้เฉพาะทีมตัวเอง'],['editor','editor · แก้ได้ทุกช่อง'],['admin','admin · ทุกอย่าง + หลังบ้าน']];
+const teamOpts = cur => `<option value="">— ไม่มีทีม —</option>` + Object.entries(TEAMS).map(([k,n]) => `<option value="${k}" ${k===cur?'selected':''}>${esc(n)}</option>`).join('');
+const roleOpts = cur => ROLES.map(([k,l]) => `<option value="${k}" ${k===cur?'selected':''}>${esc(l)}</option>`).join('');
+const avatar = (img, name) => img ? `<img class="av3" src="${esc(img)}" alt="" onerror="this.outerHTML='<span class=&quot;av2&quot;>${esc((name||'?').slice(0,1))}</span>'">` : `<span class="av2">${esc((name||'?').slice(0,1))}</span>`;
+async function loadMembers(){
+  if (!st.isAdmin) { $('mb-body').innerHTML = '<div class="card empty">หน้านี้เปิดได้เฉพาะ admin</div>'; return; }
+  if (!mb.data) $('mb-list').innerHTML = '<div style="padding:16px 20px"><div class="sk" style="height:160px"></div></div>';
+  try { mb.data = await API.members(); $('mb-body').innerHTML = ''; renderMembers(); updateReqBadge(); }
+  catch(e){ $('mb-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message||e)}</div></div></div>`; }
+}
+function updateReqBadge(){ const n = (mb.data?.requests || []).filter(r => r.status === 'pending').length; $('nav-members').innerHTML = 'จัดการสมาชิก' + (n ? ` <small class="badge">${n}</small>` : ''); }
+function renderMembers(){
+  const d = mb.data, pend = d.requests.filter(r => r.status === 'pending'), rej = d.requests.filter(r => r.status === 'rejected');
+  const act = d.members.filter(m => m.active);
+  $('mb-kpis').innerHTML = `
+    <div class="card"><div class="lbl">รออนุมัติ</div><div class="kpi ${pend.length?'down':''}">${fmt(pend.length)}</div><div class="delta">คนที่ล็อกอินแล้วแต่ยังไม่มีสิทธิ์</div></div>
+    <div class="card"><div class="lbl">สมาชิกที่ใช้งาน</div><div class="kpi">${fmt(act.length)}</div><div class="delta">admin ${act.filter(m=>m.role==='admin').length} · editor ${act.filter(m=>m.role==='editor').length} · member ${act.filter(m=>m.role==='member').length}</div></div>
+    <div class="card"><div class="lbl">ยังไม่ตั้งทีม</div><div class="kpi ${act.some(m=>!m.team)?'down':''}">${fmt(act.filter(m => !m.team).length)}</div><div class="delta">ตั้งทีมเพื่อให้แก้งานของทีมได้</div></div>
+    <div class="card"><div class="lbl">ปิดสิทธิ์แล้ว</div><div class="kpi">${fmt(d.members.length - act.length)}</div><div class="delta">เปิดคืนได้ทุกเมื่อ</div></div>`;
+  $('mb-req').innerHTML = pend.length ? pend.map(r => `<div class="mrq" data-req="${esc(r.id)}">${avatar(r.avatar, r.name)}
+      <div style="min-width:0"><b>${esc(r.name || 'ไม่มีชื่อ')}</b><div class="note">Discord ID ${esc(r.id)} · ขอเข้า ${ago(r.requested_at)}</div></div>
+      <input class="inp" data-k="name" value="${esc(r.name || '')}" aria-label="ชื่อที่แสดง" placeholder="ชื่อที่แสดง">
+      <select class="sel" data-k="team" aria-label="ทีม">${teamOpts('')}</select>
+      <select class="sel" data-k="role" aria-label="สิทธิ์">${roleOpts('member')}</select>
+      <div class="mra"><button class="btn btn-p btn-sm" type="button" data-approve="${esc(r.id)}">อนุมัติ</button><button class="btn btn-sm" type="button" data-reject="${esc(r.id)}">ปฏิเสธ</button></div></div>`).join('')
+    : '<div class="empty">ไม่มีคำขอใหม่ · ส่งลิงก์เว็บให้ทีมล็อกอินด้วย Discord แล้วชื่อจะมาขึ้นที่นี่</div>';
+  const tabs = [['all','ทั้งหมด'], ...Object.entries(TEAMS), ['none','ยังไม่ตั้งทีม'], ['off','ปิดสิทธิ์']];
+  $('mb-tabs').innerHTML = segHtml(tabs, mb.team, 'data-k');
+  const q = mb.q.trim().toLowerCase();
+  const L = d.members.filter(m => (mb.team === 'all' ? m.active : mb.team === 'off' ? !m.active : mb.team === 'none' ? m.active && !m.team : m.active && m.team === mb.team) && (!q || (m.name || '').toLowerCase().includes(q) || m.id.includes(q)));
+  $('mb-list').innerHTML = L.length ? `<div class="mbrow hd"><div></div><div>ชื่อ</div><div>ทีม</div><div>สิทธิ์</div><div>สถานะ</div><div>แก้ล่าสุด</div></div>` + L.map(m => { const self = m.id === d.me;
+    return `<div class="mbrow ${m.active?'':'off'}" data-mem="${esc(m.id)}">${avatar(m.avatar, m.name)}
+      <div style="min-width:0"><input class="inp" data-k="name" value="${esc(m.name || '')}" aria-label="ชื่อ"><div class="note">ID ${esc(m.id)}${self ? ' · บัญชีของคุณ' : ''}</div></div>
+      <select class="sel" data-k="team" aria-label="ทีม">${teamOpts(m.team)}</select>
+      <select class="sel" data-k="role" aria-label="สิทธิ์" ${self?'disabled title="เปลี่ยนสิทธิ์ตัวเองไม่ได้"':''}>${roleOpts(m.role)}</select>
+      <label class="tgl"><input type="checkbox" data-k="active" ${m.active?'checked':''} ${self?'disabled':''}> ${m.active ? 'ใช้งาน' : 'ปิดสิทธิ์'}</label>
+      <div class="note">${m.last_edit ? ago(m.last_edit) : 'ยังไม่เคยแก้'}</div></div>`; }).join('')
+    : '<div class="empty">ไม่มีสมาชิกในกลุ่มนี้</div>';
+  $('mb-rej').innerHTML = rej.length ? `<details><summary class="note" style="cursor:pointer;min-height:36px;display:flex;align-items:center">คำขอที่ปฏิเสธไปแล้ว ${rej.length} รายการ</summary>${rej.map(r => `<div class="mrq" data-req="${esc(r.id)}">${avatar(r.avatar, r.name)}<div style="min-width:0"><b>${esc(r.name||'-')}</b><div class="note">ID ${esc(r.id)} · ล่าสุด ${ago(r.last_seen)}</div></div><input class="inp" data-k="name" value="${esc(r.name||'')}" aria-label="ชื่อ"><select class="sel" data-k="team" aria-label="ทีม">${teamOpts('')}</select><select class="sel" data-k="role" aria-label="สิทธิ์">${roleOpts('member')}</select><div class="mra"><button class="btn btn-sm" type="button" data-approve="${esc(r.id)}">อนุมัติ</button></div></div>`).join('')}</details>` : '';
+}
+async function saveMember(id, row, extra){
+  const g = k => row.querySelector(`[data-k="${k}"]`);
+  const m = mb.data.members.find(x => x.id === id) || {};
+  const body = { id, name: g('name')?.value ?? m.name, team: g('team')?.value ?? m.team, role: g('role')?.value ?? m.role, active: g('active') ? g('active').checked : true, ...extra };
+  row.classList.add('dim');
+  try { await API.memberSave(body); toast(extra?.approved ? `อนุมัติ ${body.name || id} แล้ว` : 'บันทึกแล้ว'); proj.data = null; await loadMembers(); }
+  catch(e){ row.classList.remove('dim'); toast((e.message || String(e)).replace(/^.*no_permission:\s*/, '')); renderMembers(); }
+}
+$('mb-tabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; mb.team = b.dataset.k; renderMembers(); };
+$('mb-q').oninput = e => { mb.q = e.target.value; renderMembers(); };
+$('page-members').addEventListener('change', e => { const row = e.target.closest('[data-mem]'); if (!row || e.target.dataset.k === 'name') return; saveMember(row.dataset.mem, row); });
+$('page-members').addEventListener('focusout', e => { const row = e.target.closest('[data-mem]'); if (!row || e.target.dataset.k !== 'name') return; const m = mb.data.members.find(x => x.id === row.dataset.mem); if ((m.name || '') !== e.target.value.trim()) saveMember(row.dataset.mem, row); });
+$('page-members').addEventListener('click', async e => {
+  const a = e.target.closest('[data-approve]'); if (a) { const row = a.closest('[data-req]'); a.disabled = true; await saveMember(a.dataset.approve, row, { approved:true, active:true }); return; }
+  const r = e.target.closest('[data-reject]'); if (r) { if (!r.dataset.sure) { r.dataset.sure = 1; r.textContent = 'ยืนยันปฏิเสธ'; return; }
+    try { await API.requestReject(r.dataset.reject); toast('ปฏิเสธคำขอแล้ว'); loadMembers(); } catch(err){ toast(err.message || String(err)); } }
+});
+$('mb-add').onclick = () => openModal('เพิ่มสมาชิกด้วย Discord ID', `
+  <div class="field"><label class="lbl" for="na-id">Discord ID</label><input class="inp" id="na-id" inputmode="numeric" placeholder="ตัวเลข 17–20 หลัก"><span class="note">ปกติไม่ต้องใช้: ให้เขาล็อกอินแล้วชื่อจะขึ้นในรายการรออนุมัติเอง</span></div>
+  <div class="field"><label class="lbl" for="na-name">ชื่อ</label><input class="inp" id="na-name"></div>
+  <div class="fgrid"><div class="field"><label class="lbl" for="na-team">ทีม</label><select class="sel" id="na-team">${teamOpts('')}</select></div>
+  <div class="field"><label class="lbl" for="na-role">สิทธิ์</label><select class="sel" id="na-role">${roleOpts('member')}</select></div></div>`,
+  async () => { await API.memberSave({ id: $('na-id').value.trim(), name: $('na-name').value, team: $('na-team').value, role: $('na-role').value, active: true }); });
+
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
 function openModal(title, html, onSave){ $('modal').querySelector('.box2').classList.remove('wide'); $('m-save').hidden = false; $('m-save').textContent = 'บันทึก'; $('m-title').textContent = title; $('m-body').innerHTML = html; $('m-err').hidden = true; modalSave = onSave; $('modal').hidden = false; setTimeout(()=>$('m-body').querySelector('input')?.focus(), 30); }
@@ -1955,7 +2048,7 @@ $('m-cancel').onclick = closeModal;
 $('modal').onclick = e => { if (e.target.id==='modal') closeModal(); };
 addEventListener('keydown', e => { if (e.key==='Escape' && !$('modal').hidden) closeModal(); });
 $('m-save').onclick = async () => { if (!modalSave) return; const b = $('m-save'); const lbl = b.textContent; b.disabled = true; b.textContent = 'กำลังบันทึก…';
-  try { await modalSave(); closeModal(); cache.clear(); inv.data = null; toast('บันทึกแล้ว'); if (st.page==='stock') loadStock(true); else if (st.page==='oem') loadOem(); else if (PJPAGES.includes(st.page)) loadProjects(true); else if (st.page==='marketing') loadPromos(true); else if (st.page==='recovery') { mk.t = 0; loadRecovery(true); } else load(); }
+  try { await modalSave(); closeModal(); cache.clear(); inv.data = null; toast('บันทึกแล้ว'); if (st.page==='stock') loadStock(true); else if (st.page==='oem') loadOem(); else if (PJPAGES.includes(st.page)) loadProjects(true); else if (st.page==='marketing') loadPromos(true); else if (st.page==='recovery') { mk.t = 0; loadRecovery(true); } else if (st.page==='members') loadMembers(); else load(); }
   catch(e){ const m = e.message||String(e); $('m-err').textContent = /no_permission:/.test(m) ? m.replace(/^.*no_permission:\s*/, 'ไม่มีสิทธิ์: ') : /no_permission/.test(m) ? 'บัญชีนี้ไม่มีสิทธิ์แก้ไข (ต้องเป็น admin หรือ editor)' : m; $('m-err').hidden = false; }
   finally { b.disabled = false; b.textContent = lbl; } };
 async function fillCollections(){ try { const [c, g] = await Promise.all([API.collections(), API.groups()]); $('coll-list').innerHTML = c.map(x=>`<option value="${esc(x)}">`).join(''); $('group-list').innerHTML = g.map(x=>`<option value="${esc(x)}">`).join(''); } catch(e){} }
@@ -2019,6 +2112,7 @@ async function boot2(){
   if (!prof.member) {
     $('my-id').textContent = prof.discord_id;
     $('add-sql').textContent = `insert into team_members (discord_id, name, role)\nvalues ('${prof.discord_id}', '${name.replace(/'/g,"''")}', 'member');`;
+    API.requestAccess(name, meta.avatar_url || null).then(r => { $('req-note').textContent = r?.status === 'rejected' ? 'คำขอของคุณถูกปฏิเสธ ติดต่อแอดมินโดยตรง' : 'ส่งคำขอให้แอดมินแล้ว รอแอดมินอนุมัติ แล้วกด "ลองอีกครั้ง"'; }).catch(() => {});
     show('v-denied'); return;
   }
   $('me-name').textContent = prof.name || name;
@@ -2026,6 +2120,7 @@ async function boot2(){
   proj.myTeam = prof.team || null;
   st.canPromo = !!prof.can_edit || prof.team === 'pr';
   st.isAdmin = !!prof.admin; $('nav-admin-grp').hidden = !st.isAdmin;
+  if (st.isAdmin) API.members().then(d => { mb.data = d; updateReqBadge(); }).catch(() => {});
   st.canEdit = !!prof.can_edit;
   if (meta.avatar_url) $('me-av').outerHTML = `<img src="${esc(meta.avatar_url)}" alt="" width="36" height="36">`; else $('me-av').textContent = (prof.name || name).slice(0,1);
   show('v-app'); parseHash(); renderControls(); route(); loadSources();
