@@ -355,6 +355,31 @@ h1{margin:0;font-family:var(--display);font-size:28px;font-weight:700;line-heigh
 .sdel{color:var(--muted);font-weight:400;font-size:12px;min-height:24px;margin-left:4px}
 .szs{font-size:12px;color:var(--ink2)}
 
+/* รอบ 8 */
+.runs{display:grid;gap:6px;margin-top:6px}
+.runrow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:8px 10px;border:1px solid var(--line2);border-radius:10px;font-size:13.5px;background:#fff}
+.icrow2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(90px,.9fr) 90px 110px auto;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--line2);min-height:60px}
+.icact{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.arrow{display:grid;grid-template-columns:minmax(0,1fr) 110px auto;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--line2);min-height:56px;font-size:14px}
+.arrow:first-child{border-top:0}
+.banner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border:1px solid #CDE9D7;background:#F1FAF4;border-radius:12px;padding:10px 16px;font-size:13.5px}
+details.card>summary{list-style:none}details.card>summary::-webkit-details-marker{display:none}
+@media (max-width:860px){.icrow2{grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;padding:12px 16px}.icrow2>:first-child{grid-column:1/-1}.icrow2 .icact{grid-column:1/-1;justify-content:flex-start}
+  .arrow{grid-template-columns:minmax(0,1fr) auto;padding:12px 16px}.arrow>:last-child{grid-column:1/-1}}
+
+
+/* QA: contrast + tap targets */
+.sc.todo{color:#66656F}.ph{color:#5F5E68}.delta a{display:inline-flex;align-items:center;min-height:32px}.pbl{font-size:11px}.chartbox svg text{font-size:11px}
+.stat-l a{display:inline-flex;align-items:center;min-height:32px}
+.rrow .nm{display:flex;align-items:center;min-height:32px}
+.kcard .kl a{display:inline-flex;align-items:center;min-height:28px}
+@media (max-width:860px){
+  .linklike{min-height:40px}.stat-l a,.rrow .nm{min-height:40px}.kcard .kl a{min-height:36px}
+  .fin{min-height:40px}.ntc li{min-height:40px}.ntc li .btn{min-height:40px}.ntc li a{display:inline-flex;align-items:center;min-height:40px}
+  .sprow.hd .spc-h{font-size:11px}.pchip,.tchip{font-size:10.5px;min-height:24px}
+  .more a,.note a{display:inline-flex;align-items:center;min-height:32px}
+}
+
 /* modal */
 .modal{position:fixed;inset:0;z-index:50;background:rgba(22,22,29,.45);display:flex;align-items:center;justify-content:center;padding:16px}
 .modal .box2{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -453,7 +478,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
   <nav class="side" id="side" aria-label="เมนูหลัก">
     <div class="logo"><div class="m">CB</div><div><b>CUTEBOY</b><span>Team Dashboard</span></div></div>
     <div class="me"><div id="me-av" class="av">?</div><div style="min-width:0"><div class="n" id="me-name">-</div><div class="r" id="me-role">-</div></div><button id="btn-logout" type="button">ออก</button></div>
-    <div><div class="grp-l">ทั่วไป</div><div class="nav"><a href="#/me" id="nav-me">งานของฉัน</a><a href="#/overview" id="nav-overview">Overview</a><a href="#/team" id="nav-team">ทีมงาน (Workload)</a></div></div>
+    <div><div class="grp-l">ทั่วไป</div><div class="nav"><a href="#/me" id="nav-me">งานของฉัน</a><a href="#/overview" id="nav-overview">Overview</a><a href="#/team" id="nav-team">ทีมงาน (Workload)</a><a href="#/archive" id="nav-archive">คลังงานที่เสร็จแล้ว</a></div></div>
     <div><div class="grp-l">PROJECT</div><div class="nav"><a href="#/projects" id="nav-projects">Project</a><a href="#/design" id="nav-design">Design</a><a href="#/supplier" id="nav-supplier">Supplier</a><a href="#/forecast" id="nav-forecast">Forecast</a><a href="#/incoming" id="nav-incoming">Inventory (Project)</a><a href="#/marketing" id="nav-marketing">Marketing & PR</a></div></div>
     <div><div class="grp-l">รายงานรวม</div><div class="nav"><a href="#/sales" id="nav-sales">Total Sales</a><a href="#/stock" id="nav-stock">Inventory คงเหลือ</a><a href="#/oem" id="nav-oem">ยอดขาย OEM</a><a href="#/recovery" id="nav-recovery">คืนทุน & โปรโมชัน</a></div></div>
     <div id="nav-admin-grp" hidden><div class="grp-l">ADMIN</div><div class="nav"><a href="#/members" id="nav-members" class="adm">จัดการสมาชิก</a><a href="#/admin" id="nav-admin" class="adm">หลังบ้าน · ประวัติแก้ไข</a></div></div>
@@ -643,9 +668,10 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
     <div id="sp-fac"></div>
   </div>
   <div id="page-incoming" class="pg" hidden>
-    <header class="top"><div style="min-width:0"><h1>Inventory (Project)</h1><div class="muted" style="margin-top:4px">ของจาก Project ที่กำลังผลิตและจะเข้าคลัง เรียงตามวันเข้าคลัง · กรอกจำนวนผลิตและวันเข้าคลังได้ในรายละเอียดรายการ (ทีม Production)</div></div></header>
+    <header class="top"><div style="min-width:0"><h1>Inventory (Project)</h1><div class="muted" style="margin-top:4px">ของที่สั่งผลิตแต่ละรอบ: ส่งยอดให้โรงงานเมื่อไหร่ กี่ชิ้น นัดรับวันไหน · ตัวอย่างผ่านแล้วตัวไหนยังไม่สั่งผลิต</div></div>
+      <div class="controls"><select class="sel" id="ic-fac" aria-label="โรงงาน"><option value="">ทุกโรงงาน</option></select></div></header>
     <section class="kpis" id="ic-kpis"></section>
-    <section class="card" style="padding:0"><div class="list" id="ic-list"></div></section>
+    <div id="ic-list" style="display:flex;flex-direction:column;gap:14px"></div>
   </div>
   <div id="page-forecast" class="pg" hidden>
     <header class="top"><div style="min-width:0"><nav class="crumb" id="fc-crumb" hidden><a href="#/forecast">Forecast</a> <span>/</span></nav><h1 id="fc-title">Forecast</h1><div class="muted" style="margin-top:4px">เทียบ Project: มีสินค้าอะไร ทุนประมาณเท่าไหร่ ขายเท่าไหร่ กำไรเท่าไหร่ · ใช้คุยกับทีมหรือ partner (ตัวเลขประมาณการ ไม่ใช่ยอดจริง)</div></div><div class="controls"><button class="btn" id="fc-csv" type="button">Export CSV</button></div></header>
@@ -662,7 +688,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
     </section>
     <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">Notice · ยังไม่ได้วาง PR / Marketing</h2><span class="note">ไว้รีเช็คก่อนของออก</span></div><div id="mk-notice"></div></section>
     <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">งาน PR / Marketing</h2><div class="controls"><div class="seg" id="mk-scope" role="group" aria-label="ขอบเขต"></div><select class="sel" id="mk-proj" aria-label="Project"></select></div></div>
-      <div class="note" style="padding:0 20px 10px">ลากการ์ดเพื่อเปลี่ยนสถานะ · กดวันในปฏิทินเพื่อเพิ่มงานวันนั้น · กดการ์ดเพื่อดู/แก้รายละเอียด</div><div id="mk-board" style="padding:0 20px 18px"></div></section>
+      <div class="note" style="padding:0 20px 10px">ลากการ์ดเพื่อเปลี่ยนสถานะ · กดวันในปฏิทินเพื่อเพิ่มงานวันนั้น · กดการ์ดเพื่อดู/แก้รายละเอียด · งานที่โพสต์เกิน 14 วันย้ายไป <a href="#/archive">คลังงานที่เสร็จแล้ว</a></div><div id="mk-board" style="padding:0 20px 18px"></div></section>
     <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">โปรโมชันทั้งหมด</h2><span class="note">ยอดรวม VAT · ยอด Shopee เข้าระบบตามรอบอัปโหลดไฟล์</span></div><div class="list" id="mk-list"></div></section>
   </div>
   <div id="page-team" class="pg" hidden>
@@ -688,6 +714,13 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
     <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><div class="seg" id="mb-tabs" role="group" aria-label="ทีม"></div><input class="inp" id="mb-q" style="width:200px;max-width:100%" placeholder="ค้นหาชื่อ / ID" aria-label="ค้นหา"></div><div id="mb-list"></div></section>
     <section class="card" style="padding:0" id="mb-discord"><div class="empty">กำลังโหลด…</div></section>
     <div id="mb-body"></div>
+  </div>
+  <div id="page-archive" class="pg" hidden>
+    <header class="top"><div style="min-width:0"><h1>คลังงานที่เสร็จแล้ว</h1><div class="muted" style="margin-top:4px">รายการที่ปิดงานเกิน 14 วัน รอบผลิตที่รับของแล้ว และงาน PR ที่โพสต์แล้ว จะย้ายมาอยู่ที่นี่ หน้าใช้งานจึงไม่รก · ค้นหาและดูย้อนหลังได้</div></div>
+      <div class="controls"><button class="btn" id="ar-csv" type="button">Export CSV</button></div></header>
+    <div class="controls"><input class="inp" id="ar-q" style="width:240px;max-width:100%" placeholder="ค้นหา Project / สินค้า / โรงงาน" aria-label="ค้นหา"><label class="lbl" for="ar-from">ตั้งแต่</label><input class="inp" type="date" id="ar-from"><label class="lbl" for="ar-to">ถึง</label><input class="inp" type="date" id="ar-to"><button class="btn btn-p" id="ar-apply" type="button">ค้นหา</button></div>
+    <div class="seg" id="ar-tabs" role="group" aria-label="ประเภท"></div>
+    <div id="ar-body"></div>
   </div>
   <div id="pj-err" hidden><div class="errbox"><div><b>โหลดข้อมูล Project ไม่สำเร็จ</b><div class="note" id="pj-errmsg"></div></div><button class="btn btn-p" id="pj-reload" type="button">ลองอีกครั้ง</button></div></div>
   </main>
@@ -745,12 +778,32 @@ function thumb(img, name, cls=''){
 const DEMO = window.CB_DEMO || null;
 const sb = DEMO ? null : supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const withTimeout = (p, ms=25000) => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('เซิร์ฟเวอร์ตอบช้าเกินไป ลองใหม่อีกครั้ง')), ms))]);
-async function rpc(fn, args){
-  let { data, error } = await withTimeout(sb.rpc(fn, args));
-  if (error && /jwt|token/i.test(error.message)) { await sb.auth.refreshSession(); ({ data, error } = await withTimeout(sb.rpc(fn, args))); }
-  if (error) throw error;
-  return data;
+// เรียกฐานข้อมูล: ต่ออายุ login อัตโนมัติ · เน็ตหลุด/เซิร์ฟเวอร์ตื่นช้า ลองใหม่ให้ 1 ครั้ง · แปล error เป็นภาษาคน
+const isNetErr = e => /failed to fetch|networkerror|load failed|ตอบช้าเกินไป|503|502|504|fetch/i.test(String(e?.message || e));
+function niceErr(e){
+  const m = String(e?.message || e || '');
+  if (!navigator.onLine) return new Error('ไม่ได้ต่ออินเทอร์เน็ต เชื่อมต่อแล้วกดลองอีกครั้ง');
+  if (/failed to fetch|networkerror|load failed/i.test(m)) return new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ลองใหม่อีกครั้ง');
+  if (/50[234]/.test(m)) return new Error('ฐานข้อมูลกำลังเริ่มทำงาน รอสักครู่แล้วลองอีกครั้ง');
+  if (/not_member/.test(m)) return new Error('บัญชีนี้ยังไม่มีสิทธิ์ หรือถูกปิดสิทธิ์ ติดต่อแอดมิน');
+  if (/could not find the function|PGRST202/i.test(m)) return new Error('ฐานข้อมูลยังไม่ได้อัปเดตเป็นเวอร์ชันล่าสุด (ให้แอดมินรันไฟล์ SQL ล่าสุด)');
+  return e instanceof Error ? e : new Error(m);
 }
+async function rpc(fn, args){
+  for (let attempt = 0; ; attempt++) {
+    try {
+      let { data, error } = await withTimeout(sb.rpc(fn, args));
+      if (error && /jwt|token/i.test(error.message)) { await sb.auth.refreshSession(); ({ data, error } = await withTimeout(sb.rpc(fn, args))); }
+      if (error) { if (attempt === 0 && isNetErr(error) && /^(dash_|list_|my_|promo_list|mk_board|admin_log|admin_members|archive_list)/.test(fn)) { await new Promise(r => setTimeout(r, 1500)); continue; } throw error; }
+      return data;
+    } catch(e){
+      if (attempt === 0 && isNetErr(e) && /^(dash_|list_|my_|promo_list|mk_board|admin_log|admin_members|archive_list)/.test(fn)) { await new Promise(r => setTimeout(r, 1500)); continue; }
+      throw niceErr(e);
+    }
+  }
+}
+addEventListener('offline', () => toast('อินเทอร์เน็ตหลุด · ข้อมูลที่แก้ตอนนี้จะยังไม่ถูกบันทึก'));
+addEventListener('online', () => toast('กลับมาออนไลน์แล้ว'));
 const API = DEMO ? DEMO.api : {
   projects: () => rpc('dash_projects'),
   recovery: () => rpc('dash_recovery'),
@@ -759,6 +812,10 @@ const API = DEMO ? DEMO.api : {
   members: () => rpc('admin_members'),
   lookupAdd: (k, n) => rpc('lookup_add', { p_kind:k, p_name:n }),
   sampleDelete: id => rpc('sample_event_delete', { p_id:id }),
+  runSave: d => rpc('run_save', { d }),
+  runDelete: id => rpc('run_delete', { p_id:id }),
+  itemsDone: (ids, done) => rpc('items_set_done', { p_ids:ids, p_done:done }),
+  archive: (q, f, t) => rpc('archive_list', { p_q:q, p_from:f, p_to:t }),
   mkBoard: () => rpc('mk_board'),
   mkSave: d => rpc('mk_task_save', { d }),
   mkPatch: (id, o) => rpc('mk_task_patch', { p_id:id, p_status:o.status ?? null, p_assignee:o.assignee ?? null, p_unassign:!!o.unassign }),
@@ -824,7 +881,7 @@ function rangeDates(){
 }
 function parseHash(){
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
-  st.page = h.startsWith('stock') ? 'stock' : h.startsWith('oem') ? 'oem' : h.startsWith('members') ? 'members' : /^me(\/|$)/.test(h) ? 'me' : h.startsWith('overview') ? 'overview' : h.startsWith('projects') ? 'projects' : h.startsWith('design') ? 'design' : h.startsWith('supplier') ? 'supplier' : h.startsWith('incoming') ? 'incoming' : h.startsWith('forecast') ? 'forecast' : h.startsWith('marketing') ? 'marketing' : h.startsWith('recovery') ? 'recovery' : h.startsWith('team') ? 'team' : h.startsWith('admin') ? 'admin' : h.startsWith('members') ? 'members' : 'sales';
+  st.page = h.startsWith('stock') ? 'stock' : h.startsWith('oem') ? 'oem' : h.startsWith('members') ? 'members' : h.startsWith('archive') ? 'archive' : /^me(\/|$)/.test(h) ? 'me' : h.startsWith('overview') ? 'overview' : h.startsWith('projects') ? 'projects' : h.startsWith('design') ? 'design' : h.startsWith('supplier') ? 'supplier' : h.startsWith('incoming') ? 'incoming' : h.startsWith('forecast') ? 'forecast' : h.startsWith('marketing') ? 'marketing' : h.startsWith('recovery') ? 'recovery' : h.startsWith('team') ? 'team' : h.startsWith('admin') ? 'admin' : h.startsWith('members') ? 'members' : 'sales';
   fc.id = (h.match(/^forecast\/(\d+)/) || [])[1] ? +h.match(/^forecast\/(\d+)/)[1] : null;
   proj.sid = (h.match(/^supplier\/(\d+)/) || [])[1] ? +h.match(/^supplier\/(\d+)/)[1] : null;
   proj.id = (h.match(/^projects\/(\d+)/) || [])[1] ? +h.match(/^projects\/(\d+)/)[1] : null;
@@ -835,15 +892,16 @@ function parseHash(){
   else { st.view='home'; st.coll=null; st.prod=null; }
 }
 const go = h => { location.hash = h; };
-const TITLES = { me:'งานของฉัน', overview:'Overview', projects:'Project', design:'Design', supplier:'Supplier', incoming:'Inventory (Project)', forecast:'Forecast', marketing:'Marketing & PR', recovery:'คืนทุน & โปรโมชัน', team:'ทีมงาน', admin:'หลังบ้าน', members:'จัดการสมาชิก', sales:'Total Sales', stock:'Inventory', oem:'ยอดขาย OEM' };
+const TITLES = { me:'งานของฉัน', overview:'Overview', projects:'Project', design:'Design', supplier:'Supplier', incoming:'Inventory (Project)', forecast:'Forecast', marketing:'Marketing & PR', recovery:'คืนทุน & โปรโมชัน', team:'ทีมงาน', archive:'คลังงานที่เสร็จแล้ว', admin:'หลังบ้าน', members:'จัดการสมาชิก', sales:'Total Sales', stock:'Inventory', oem:'ยอดขาย OEM' };
 const PJPAGES = ['me','overview','team','projects','design','supplier','incoming','forecast'];
 addEventListener('hashchange', () => { parseHash(); st.q=''; $('q').value=''; st.limit=30; route(); window.scrollTo(0,0); closeMenu(); });
 function route(){ const pg = st.page;
-  for (const k of ['me','overview','team','projects','design','supplier','incoming','forecast','marketing','recovery','admin','members','sales','stock','oem']) { $('page-'+k).hidden = pg!==k; if (pg===k) $('nav-'+k).setAttribute('aria-current','page'); else $('nav-'+k).removeAttribute('aria-current'); }
+  for (const k of ['me','overview','team','archive','projects','design','supplier','incoming','forecast','marketing','recovery','admin','members','sales','stock','oem']) { $('page-'+k).hidden = pg!==k; if (pg===k) $('nav-'+k).setAttribute('aria-current','page'); else $('nav-'+k).removeAttribute('aria-current'); }
   $('pj-err').hidden = true;
   document.querySelector('.topbar b').textContent = TITLES[pg];
   if (PJPAGES.includes(pg)) { document.title = TITLES[pg] + ' · CuteBoy'; loadProjects(); if (pg==='overview') loadOverview(); return; }
   if (pg==='marketing') { document.title = 'Marketing & PR · CuteBoy'; loadPromos(); return; }
+  if (pg==='archive') { document.title = 'คลังงานที่เสร็จแล้ว · CuteBoy'; $('ar-from').value = ar.from; $('ar-to').value = ar.to; if (!proj.data) loadProjects(); loadArchive(); return; }
   if (pg==='members') { document.title = 'จัดการสมาชิก · CuteBoy'; loadMembers(); return; }
   if (pg==='admin') { document.title = 'หลังบ้าน · CuteBoy'; $('ad-from').value = adm.from; $('ad-to').value = adm.to; loadAdmin(); return; }
   if (pg==='recovery') { document.title = 'คืนทุน & โปรโมชัน · CuteBoy'; loadRecovery(); return; }
@@ -1572,7 +1630,7 @@ function editItem(it, focus){
     const g = STAGES.find(x => x.k === sk), x = g ? stageOf(it, sk) : null;
     return `<section class="isec ${anyOk?'':'locked'}" id="sec-${sk}"><h4>${esc(SEC[sk])}${x ? ` <span class="sc ${x.s}" style="display:inline-flex;font-family:var(--body);font-weight:500">${esc(x.t)}</span>` : ''}
       <small>${anyOk ? (t === '*' ? 'ทุกคนแก้ได้' : 'คุณแก้ได้') : `แก้ได้เฉพาะ${t ? ' ทีม ' + esc(teamLabel(t)) + ' หรือ' : ''} admin/editor`}</small></h4>
-      <div class="fgrid">${fs.map(f => `<div class="field ${f.kind==='longtext'||f.field==='shoot_location'||f.kind==='link'||f.kind==='sizes'?'wide':''}"><label class="lbl" for="f-${f.field}">${esc(f.label)}</label>${fieldInput(f, it[f.field], canField(f))}</div>`).join('')}${sk === 'production' ? sampleTimeline(it) : ''}</div></section>`;
+      <div class="fgrid">${fs.map(f => `<div class="field ${f.kind==='longtext'||f.field==='shoot_location'||f.kind==='link'||f.kind==='sizes'?'wide':''}"><label class="lbl" for="f-${f.field}">${esc(f.label)}</label>${fieldInput(f, it[f.field], canField(f))}</div>`).join('')}${sk === 'production' ? sampleTimeline(it) + runsBlock(it) : ''}</div></section>`;
   }).join('');
   const hist = d.log.filter(l => l.item_id === it.id).slice(0, 6);
   openModal(`${p.name} · ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''}`, `${secs}
@@ -1763,7 +1821,7 @@ function renderSupplier0(){
       const sups = [...new Set(L.map(i => i.supplier_name).filter(Boolean))];
       const due = L.filter(i => supStep(i) !== 'เสร็จสิ้น').map(i => i.supplier_due).filter(Boolean).sort()[0];
       return `<a class="sprow" href="#/supplier/${p.id}"><div style="min-width:0"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}</div><div class="note">${L.length} รายการ${sups.length ? ' · ' + esc(sups.join(', ')) : ''}</div></div>
-        ${cnt.map((n, k) => `<div class="spc ${n ? 'on' : ''}" style="--a:${n ? Math.min(1, .25 + n / L.length * .75) : 0}" title="${esc(SUP_STEPS[k])}: ${n}">${n || ''}</div>`).join('')}
+        ${cnt.map((n, k) => `<div class="spc ${n ? 'on' : ''}" style="--a:${n ? Math.min(1, .25 + n / L.length * .75) : 0};${n && .25 + n / L.length * .75 < .6 ? 'color:#2B1D86' : ''}" title="${esc(SUP_STEPS[k])}: ${n}">${n || ''}</div>`).join('')}
         <div class="spdue">${due ? dueHtml(due) : '<span class="note">ยังไม่นัด</span>'}</div></a>`; }).filter(Boolean);
     $('sp-body').innerHTML = `<section class="card" style="padding:0"><div class="sprow hd"><div>Project</div>${SUP_STEPS.map(s => `<div class="spc-h">${esc(s)}</div>`).join('')}<div class="spdue">นัดรับของ</div></div>${rows.join('') || '<div class="empty">ยังไม่มี Project</div>'}</section>`;
     return;
@@ -1776,24 +1834,6 @@ function renderSupplier0(){
       <div class="spdue">${i.supplier_due ? '<span class="note">นัดรับ</span> ' + dueHtml(i.supplier_due) : '<span class="note">ยังไม่นัดรับ</span>'}</div></div>`; }).join('') || '<div class="empty">ยังไม่มีรายการ</div>'}</section>`;
   $('sp-body').querySelectorAll('[data-step]').forEach(s => s.onchange = async () => { const i = d.items.find(x => x.id === +s.dataset.step), old = i.supplier_step; i.supplier_step = s.value; renderSupplier();
     try { await API.projUpdate(i.id, { supplier_step: s.value }); toast(`${i.item_name}: ${s.value}`); loadProjects(true); } catch(e){ i.supplier_step = old; renderSupplier(); toast('บันทึกไม่สำเร็จ: ' + (e.message || e)); } });
-}
-
-// ---------- Inventory (Project): ของกำลังเข้า ----------
-function renderIncoming(){
-  const d = proj.data;
-  const L = d.items.filter(i => supStep(i) !== 'เสร็จสิ้น' && i.status !== 'On Hold' && (i.stock_in_date || ['ตัวอย่างผ่านแล้ว','รอผลิต'].includes(supStep(i))))
-    .sort((a,b) => (a.stock_in_date || '9999').localeCompare(b.stock_in_date || '9999'));
-  const in30 = L.filter(i => i.stock_in_date && daysTo(i.stock_in_date) <= 30);
-  $('ic-kpis').innerHTML = `
-    <div class="card"><div class="lbl">กำลังจะเข้าคลัง</div><div class="kpi">${fmt(L.length)}</div><div class="delta">รายการที่ผลิตอยู่หรือมีวันเข้าคลัง</div></div>
-    <div class="card"><div class="lbl">เข้าภายใน 30 วัน</div><div class="kpi">${fmt(in30.length)}</div><div class="delta">${fmt(in30.reduce((s,i)=>s+(+i.plan_qty||0),0))} ชิ้น (ที่กรอกจำนวนไว้)</div></div>
-    <div class="card"><div class="lbl">เลยวันเข้าคลัง</div><div class="kpi ${L.some(i=>i.stock_in_date&&daysTo(i.stock_in_date)<0)?'down':''}">${fmt(L.filter(i=>i.stock_in_date&&daysTo(i.stock_in_date)<0).length)}</div><div class="delta">ควรตามกับ Supplier</div></div>
-    <div class="card"><div class="lbl">ยังไม่ระบุวันเข้าคลัง</div><div class="kpi">${fmt(L.filter(i=>!i.stock_in_date).length)}</div><div class="delta">ทีม Production กรอกได้</div></div>`;
-  $('ic-list').innerHTML = L.length ? `<div class="icrow hd"><div>รายการ</div><div>ขั้นกับ Supplier</div><div class="num">จำนวน</div><div>เข้าคลัง</div><div>เปิดขาย</div></div>` + L.map(i => `<button class="icrow" type="button" data-item="${i.id}" data-stage="production">
-      <div style="min-width:0"><div class="nm" style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${itemLabel(i)}</div><div class="note">${esc(pById(i.project_id).name)}${i.supplier_name ? ' · ' + esc(i.supplier_name) : ''}${i.supplier_due ? ' · นัดรับ ' + esc(shortDate(i.supplier_due)) : ''}</div>${i.size_qty ? `<div class="szs">${esc(sizeText(i.size_qty))}</div>` : ''}</div>
-      <div><span class="sc ${supStep(i)==='ตัวอย่างผ่านแล้ว'||supStep(i)==='รอผลิต'?'active':'todo'}" style="display:inline-flex">${esc(supStep(i))}</span></div>
-      <div class="num">${i.plan_qty ? fmt(i.plan_qty) : '<span class="muted">-</span>'}</div><div>${dueHtml(i.stock_in_date)}</div><div>${dueHtml(i.target_launch)}</div></button>`).join('')
-    : '<div class="empty">ยังไม่มีของที่กำลังจะเข้าคลัง</div>';
 }
 
 // ---------- Forecast ----------
@@ -1835,7 +1875,7 @@ $('fc-csv').onclick = () => { if (!proj.data) return; const rows = [['Project','
 const mk = { data:null, t:0, month:today.slice(0,7), products:null };
 const CHANNELS = ['ทุกช่องทาง','เว็บ','Shopee','Live','Event'];
 const SCOPES = [['all','ทุกสินค้า'],['group','Group'],['collection','Collection'],['product','สินค้า']];
-const PCOL = ['#4B32D9','#EB6834','#1BAF7A','#C2417A','#EDA100','#2E86C1'];
+const PCOL = ['#4B32D9','#B7410E','#0F7B52','#B03070','#7A5200','#1F6FA8'];
 async function loadPromos(force){
   if (!force && mk.data && Date.now() - mk.t < 60e3) { renderMarketing(); return; }
   $('mk-err').hidden = true;
@@ -1934,7 +1974,7 @@ async function loadAdmin(){
   $('ad-body').innerHTML = '<div class="card"><div class="sk" style="height:200px"></div></div>';
   if (!proj.data) await Promise.resolve(loadProjects()).catch(() => {});
   try { adm.data = await API.adminLog({ from: adm.from || null, to: adm.to || null, actor: adm.actor || null, tbl: adm.tbl || null }); renderAdmin(); }
-  catch(e){ $('ad-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message||e)}</div></div></div>`; }
+  catch(e){ $('ad-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message||e)}</div></div><button class="btn btn-p" type="button" onclick="loadAdmin()">ลองอีกครั้ง</button></div>`; }
 }
 const short2 = (v, k) => { if (k && /_owner$/.test(k) && v) v = memName(v); const s = v == null ? '–' : typeof v === 'object' ? JSON.stringify(v) : String(v); return s.length > 70 ? s.slice(0, 70) + '…' : s; };
 const rowTitle = r => { const x = r.new_row || r.old_row || {}; return x.name || x.item_name || x.display_name || x.doc_no || x.label || r.note || r.pk || ''; };
@@ -1976,7 +2016,7 @@ async function loadMembers(){
   if (!mb.data) $('mb-list').innerHTML = '<div style="padding:16px 20px"><div class="sk" style="height:160px"></div></div>';
   loadHooks();
   try { mb.data = await API.members(); $('mb-body').innerHTML = ''; renderMembers(); updateReqBadge(); }
-  catch(e){ $('mb-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message||e)}</div></div></div>`; }
+  catch(e){ $('mb-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message||e)}</div></div><button class="btn btn-p" type="button" onclick="loadMembers()">ลองอีกครั้ง</button></div>`; }
 }
 function updateReqBadge(){ const n = (mb.data?.requests || []).filter(r => r.status === 'pending').length; $('nav-members').innerHTML = 'จัดการสมาชิก' + (n ? ` <small class="badge">${n}</small>` : ''); }
 function renderMembers(){
@@ -2085,8 +2125,11 @@ function renderProjects(){
         ${items.map(i => `<button class="prow" type="button" data-item="${i.id}"><div style="min-width:0"><div class="nm">${itemLabel(i)}</div><div class="sub">${esc(i.status || '')}${i.designer ? ' · ' + esc(i.designer) : ''}</div></div>${stageChips(i)}${stageDots(i)}${dueHtml(i.target_launch)}${i.blocker ? `<span class="flag" title="${esc(i.blocker)}">!</span>` : '<span></span>'}</button>`).join('') || '<div class="empty">ยังไม่มีรายการ</div>'}</div>` : ''}
     </section>`;
   }).filter(Boolean);
-  $('pj-list').innerHTML = (!one && rows.length > 1 ? `<div class="pjtools"><button class="btn btn-sm" type="button" id="pj-expand">กางทั้งหมด</button><button class="btn btn-sm" type="button" id="pj-collapse">ย่อทั้งหมด</button></div>` : '') +
+  const dn = doneButNotClosed(), canClose = me.can_edit || ['project','ecom'].includes(me.team);
+  const banner = (dn.length && canClose ? `<div class="banner"><span>✅ มี <b>${dn.length}</b> รายการที่เสร็จครบทุกขั้นแล้ว แต่ยังไม่ปิดงาน</span><button class="btn btn-sm btn-p" type="button" id="pj-close">ปิดงานทั้งหมด</button></div>` : '') + (d.archived_count ? `<div class="note">งานที่ปิดเกิน 14 วัน ${d.archived_count} รายการ อยู่ใน <a href="#/archive">คลังงานที่เสร็จแล้ว</a></div>` : '');
+  $('pj-list').innerHTML = banner + (!one && rows.length > 1 ? `<div class="pjtools"><button class="btn btn-sm" type="button" id="pj-expand">กางทั้งหมด</button><button class="btn btn-sm" type="button" id="pj-collapse">ย่อทั้งหมด</button></div>` : '') +
     (rows.join('') || `<div class="card empty">${one ? 'ไม่พบ Project นี้' : 'ไม่มี Project ในมุมมองนี้'}</div>`);
+  if ($('pj-close')) $('pj-close').onclick = closeDoneItems;
   if ($('pj-expand')) { $('pj-expand').onclick = () => { d.projects.forEach(p => proj.openSet.add(p.id)); renderProjects(); }; $('pj-collapse').onclick = () => { proj.openSet.clear(); renderProjects(); }; }
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-ptoggle]'); if (!b) return; const id = +b.dataset.ptoggle; proj.openSet.has(id) ? proj.openSet.delete(id) : proj.openSet.add(id); renderProjects(); });
@@ -2126,9 +2169,10 @@ const MK_KINDS = ['PR','Marketing','Content','Ads','Event'];
 const MK_COL = { 'วางแผน':'#9AA1AB', 'กำลังเตรียม':'#EDA100', 'เตรียมเสร็จ รอโพสต์':'#4B32D9', 'โพสต์แล้ว':'#1BAF7A' };
 const mkb = { data:null, scope:'all', pid:'' };
 const mkName = id => (mkb.data?.members || proj.data?.members || []).find(m => m.id === id)?.name || '';
-async function loadMkBoard(){ try { mkb.data = await API.mkBoard(); } catch(e){ mkb.data = mkb.data || { tasks:[], members:[], projects:[], notice_projects:[], notice_collections:[], can_edit:false, me:null, today }; } }
+async function loadMkBoard(){ try { mkb.data = await API.mkBoard(); mkb.err = null; } catch(e){ mkb.err = e.message || String(e); mkb.data = mkb.data || { tasks:[], members:[], projects:[], notice_projects:[], notice_collections:[], can_edit:false, me:null, today }; } }
 function renderMkBoard(){
   const d = mkb.data; if (!d) return;
+  if (mkb.err) { $('mk-board').innerHTML = `<div class="errbox"><div><b>โหลดงาน PR / Marketing ไม่สำเร็จ</b><div class="note">${esc(mkb.err)}</div></div><button class="btn btn-p" type="button" id="mk-retry">ลองอีกครั้ง</button></div>`; $('mk-notice').innerHTML = ''; $('mk-retry').onclick = () => loadPromos(true); return; }
   $('mk-addtask').hidden = !d.can_edit;
   $('mk-scope').innerHTML = segHtml([['all','ทุกงาน'],['mine','งานของฉัน']], mkb.scope, 'data-k');
   $('mk-proj').innerHTML = '<option value="">ทุก Project</option>' + d.projects.map(p => `<option value="${p.id}" ${String(p.id)===mkb.pid?'selected':''}>${esc(p.name)}</option>`).join('');
@@ -2289,6 +2333,126 @@ function sampleTimeline(it){
 document.addEventListener('click', async e => { const b = e.target.closest('[data-sdel]'); if (!b) return;
   if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'ยืนยันลบ'; return; }
   try { await API.sampleDelete(+b.dataset.sdel); proj.data.samples = proj.data.samples.filter(s => s.id !== +b.dataset.sdel); b.closest('li').remove(); toast('ลบแล้ว'); } catch(err){ toast(err.message || String(err)); } });
+
+// ===== รอบ 8: รอบผลิต · Inventory (Project) · คลังงานที่เสร็จแล้ว =====
+const RUN_ST = ['สั่งผลิตแล้ว','กำลังผลิต','รับของแล้ว','ยกเลิก'];
+const RUN_PILL = { 'สั่งผลิตแล้ว':'p-low', 'กำลังผลิต':'p-low', 'รับของแล้ว':'p-ok', 'ยกเลิก':'p-idle' };
+const runsOf = id => (proj.data.runs || []).filter(r => r.item_id === id).sort((a,b) => a.run_no - b.run_no);
+const canRun = () => proj.data.me.can_edit || ['production','project'].includes(proj.data.me.team);
+const runOpen = r => r.status === 'สั่งผลิตแล้ว' || r.status === 'กำลังผลิต';
+function runsBlock(it){
+  const L = runsOf(it.id), ok = canRun(), passed = it.sample_status === 'Sample Approved';
+  return `<div class="smpl"><div class="lbl" style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap">รอบผลิต ${ok ? `<button class="btn btn-sm" type="button" data-runnew="${it.id}">+ สั่งผลิตรอบใหม่</button>` : ''}</div>
+    ${!passed && ok ? '<p class="note" style="margin:4px 0 0;color:#8A5A00">ตัวอย่างยังไม่ผ่าน (Sample Approved) · สั่งผลิตได้ แต่ควรรอตัวอย่างผ่านก่อน</p>' : ''}
+    ${L.length ? `<div class="runs">${L.map(r => `<div class="runrow"><b>รอบ ${r.run_no}</b><span class="pill ${RUN_PILL[r.status]}">${esc(r.status)}</span>
+      <span>${fmt(r.qty)} ชิ้น${r.size_qty ? ` <span class="note">(${esc(sizeText(r.size_qty))})</span>` : ''}</span>
+      <span class="note">${esc(r.factory || 'ไม่ระบุโรงงาน')} · ส่งยอด ${r.order_date ? esc(shortDate(r.order_date)) : '-'} · ${r.status === 'รับของแล้ว' ? 'รับแล้ว ' + (r.received_date ? esc(shortDate(r.received_date)) : '') + (r.received_qty ? ` (${fmt(r.received_qty)} ชิ้น)` : '') : 'นัดรับ ' + (r.pickup_date ? esc(shortDate(r.pickup_date)) : '-')}</span>
+      ${ok ? `<button type="button" class="linklike" data-runedit="${r.id}" style="font-weight:500;font-size:13px">แก้ไข</button>` : ''}</div>`).join('')}</div>`
+      : '<p class="note" style="margin:4px 0 0">ยังไม่มีรอบผลิต · กด "+ สั่งผลิตรอบใหม่" เมื่อส่งยอดให้โรงงาน</p>'}</div>`;
+}
+function editRun(r, itemId, preset){
+  const it = proj.data.items.find(x => x.id === (r ? r.item_id : itemId)), v = r ? { ...r } : { status:'สั่งผลิตแล้ว', factory: it.supplier_name || '', order_date: today, pickup_date:'', qty:'', size_qty: it.size_qty || null, unit_cost: it.est_cost || '', note:'' };
+  if (preset) Object.assign(v, preset);
+  const facs = lookupOpts({ options:['factory'] });
+  const no = r ? r.run_no : (runsOf(it.id).reduce((m, x) => Math.max(m, x.run_no), 0) + 1);
+  openModal(`${pById(it.project_id).name} · ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''} · รอบผลิตที่ ${no}`, `
+    <div class="fgrid">
+      <div class="field"><label class="lbl" for="rn-st">สถานะ</label><select class="sel" id="rn-st">${RUN_ST.map(s => `<option ${s===v.status?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="field"><label class="lbl" for="rn-fac">โรงงาน</label><input class="inp" id="rn-fac" list="rn-facs" value="${esc(v.factory || '')}" placeholder="เลือกหรือพิมพ์ชื่อใหม่"><datalist id="rn-facs">${facs.map(f => `<option value="${esc(f)}">`).join('')}</datalist></div>
+      <div class="field"><label class="lbl" for="rn-od">วันส่งยอดผลิตให้โรงงาน</label><input class="inp" type="date" id="rn-od" value="${esc(v.order_date || '')}"></div>
+      <div class="field"><label class="lbl" for="rn-pd">วันนัดรับสินค้า</label><input class="inp" type="date" id="rn-pd" value="${esc(v.pickup_date || '')}"></div>
+      <div class="field wide"><span class="lbl">จำนวนผลิตรอบนี้ (แยกไซซ์ หรือใส่จำนวนรวมด้านล่าง)</span>${sizesInput({ field:'rn_sizes' }, v.size_qty, true)}</div>
+      <div class="field"><label class="lbl" for="rn-qty">จำนวนรวม (ถ้าไม่แยกไซซ์)</label><input class="inp" id="rn-qty" inputmode="numeric" value="${esc(v.qty || '')}"></div>
+      <div class="field"><label class="lbl" for="rn-cost">ทุนต่อชิ้นรอบนี้</label><input class="inp" id="rn-cost" inputmode="decimal" value="${esc(v.unit_cost || '')}"></div>
+      <div class="field"><label class="lbl" for="rn-rd">วันรับของจริง</label><input class="inp" type="date" id="rn-rd" value="${esc(v.received_date || '')}"></div>
+      <div class="field"><label class="lbl" for="rn-rq">จำนวนที่รับจริง</label><input class="inp" id="rn-rq" inputmode="numeric" value="${esc(v.received_qty || '')}" placeholder="ถ้าไม่ตรงกับที่สั่ง"></div>
+      <div class="field wide"><label class="lbl" for="rn-note">หมายเหตุ</label><textarea class="inp" id="rn-note" rows="2" style="font:inherit">${esc(v.note || '')}</textarea></div></div>
+    ${r ? '<div><button class="btn btn-sm" type="button" id="rn-del">ลบรอบนี้</button></div>' : ''}`,
+    async () => { const sz = JSON.parse(document.querySelector('[data-f="rn_sizes"]').value || '{}');
+      if ($('rn-st').value === 'รับของแล้ว' && !$('rn-rd').value) $('rn-rd').value = today;
+      await API.runSave({ id: r?.id, item_id: it.id, status: $('rn-st').value, factory: $('rn-fac').value, order_date: $('rn-od').value, pickup_date: $('rn-pd').value,
+        size_qty: Object.keys(sz).length ? sz : null, qty: Object.keys(sz).length ? null : $('rn-qty').value, unit_cost: $('rn-cost').value, received_date: $('rn-rd').value, received_qty: $('rn-rq').value, note: $('rn-note').value }); });
+  $('modal').querySelector('.box2').classList.add('wide');
+  document.querySelectorAll('[data-szbox]').forEach(szSync);
+  $('rn-st').onchange = () => { if ($('rn-st').value === 'รับของแล้ว' && !$('rn-rd').value) $('rn-rd').value = today; };
+  if ($('rn-del')) $('rn-del').onclick = async () => { const b = $('rn-del'); if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'กดอีกครั้งเพื่อยืนยันการลบ'; return; }
+    try { await API.runDelete(r.id); closeModal(); toast('ลบรอบผลิตแล้ว'); loadProjects(true); } catch(e){ $('m-err').textContent = e.message || String(e); $('m-err').hidden = false; } };
+}
+document.addEventListener('click', e => {
+  const n = e.target.closest('[data-runnew]'); if (n) { editRun(null, +n.dataset.runnew); return; }
+  const ed = e.target.closest('[data-runedit]'); if (ed) { const r = proj.data.runs.find(x => x.id === +ed.dataset.runedit); if (r) editRun(r, null, ed.dataset.recv ? { status:'รับของแล้ว', received_date: today } : null); }
+});
+
+// ---------- Inventory (Project) ----------
+const ic = { fac:'' };
+function renderIncoming(){
+  const d = proj.data, R = d.runs || [], fac = ic.fac;
+  const item = id => d.items.find(i => i.id === id);
+  const open = R.filter(r => runOpen(r) && item(r.item_id) && (!fac || r.factory === fac)).sort((a,b) => (a.pickup_date || '9999').localeCompare(b.pickup_date || '9999'));
+  const recv = R.filter(r => r.status === 'รับของแล้ว' && item(r.item_id) && (!fac || r.factory === fac) && (!r.received_date || daysTo(r.received_date) >= -30)).sort((a,b) => (b.received_date || '').localeCompare(a.received_date || ''));
+  const waiting = d.items.filter(i => i.sample_status === 'Sample Approved' && !R.some(r => r.item_id === i.id && runOpen(r)) && !R.some(r => r.item_id === i.id) && i.status !== 'Completed' && (!fac || i.supplier_name === fac));
+  const facs = [...new Set(R.map(r => r.factory).filter(Boolean))].sort();
+  $('ic-fac').innerHTML = '<option value="">ทุกโรงงาน</option>' + facs.map(f => `<option ${f===fac?'selected':''}>${esc(f)}</option>`).join('');
+  const due14 = open.filter(r => r.pickup_date && daysTo(r.pickup_date) <= 14 && daysTo(r.pickup_date) >= 0), late = open.filter(r => r.pickup_date && daysTo(r.pickup_date) < 0);
+  const q = L => L.reduce((s, r) => s + (+r.qty || 0), 0);
+  $('ic-kpis').innerHTML = `
+    <div class="card"><div class="lbl">กำลังผลิต / รอรับของ</div><div class="kpi">${fmt(q(open))} ชิ้น</div><div class="delta">${fmt(open.length)} รอบ</div></div>
+    <div class="card"><div class="lbl">นัดรับภายใน 14 วัน</div><div class="kpi">${fmt(q(due14))} ชิ้น</div><div class="delta">${fmt(due14.length)} รอบ</div></div>
+    <div class="card"><div class="lbl">เลยวันนัดรับ</div><div class="kpi ${late.length?'down':''}">${fmt(late.length)}</div><div class="delta">${late.length ? 'ควรตามโรงงาน' : 'ไม่มี'}</div></div>
+    <div class="card"><div class="lbl">ตัวอย่างผ่าน ยังไม่สั่งผลิต</div><div class="kpi ${waiting.length?'down':''}">${fmt(waiting.length)}</div><div class="delta">รายการ</div></div>`;
+  const ok = canRun();
+  const runRow = (r, recvd) => { const it = item(r.item_id);
+    return `<div class="icrow2"><div style="min-width:0"><button type="button" class="linklike" data-item="${it.id}" data-stage="production">${itemLabel(it)}</button><div class="note">${esc(pById(it.project_id).name)} · รอบที่ ${r.run_no} · ${esc(r.factory || 'ไม่ระบุโรงงาน')}</div></div>
+      <div><b>${fmt(r.qty)}</b> ชิ้น${r.size_qty ? `<div class="szs">${esc(sizeText(r.size_qty))}</div>` : ''}</div>
+      <div class="note">ส่งยอด<br><b style="color:var(--ink)">${r.order_date ? esc(shortDate(r.order_date)) : '-'}</b></div>
+      <div class="note">${recvd ? 'รับแล้ว' : 'นัดรับ'}<br>${recvd ? `<b style="color:var(--ink)">${r.received_date ? esc(shortDate(r.received_date)) : '-'}</b>${r.received_qty && +r.received_qty !== +r.qty ? ` <span class="due late">(${fmt(r.received_qty)})</span>` : ''}` : (r.pickup_date ? dueHtml(r.pickup_date) : '<span class="due late">ยังไม่นัด</span>')}</div>
+      <div class="icact">${ok ? (recvd ? `<button class="btn btn-sm" type="button" data-runedit="${r.id}">แก้ไข</button>` : `<button class="btn btn-sm btn-p" type="button" data-runedit="${r.id}" data-recv="1">รับของแล้ว</button><button class="btn btn-sm" type="button" data-runedit="${r.id}">แก้ไข</button>`) : `<span class="pill ${RUN_PILL[r.status]}">${esc(r.status)}</span>`}</div></div>`; };
+  $('ic-list').innerHTML = `
+    <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">กำลังผลิต / รอรับของ</h2><span class="note">เรียงตามวันนัดรับ</span></div>
+      ${open.length ? open.map(r => runRow(r, false)).join('') : '<div class="empty">ไม่มีรอบที่กำลังผลิต</div>'}</section>
+    <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">ตัวอย่างผ่านแล้ว · ยังไม่ได้สั่งผลิต</h2><span class="note">ส่งยอดให้โรงงานแล้วกด "+ สั่งผลิต"</span></div>
+      ${waiting.length ? waiting.map(i => `<div class="icrow2"><div style="min-width:0"><button type="button" class="linklike" data-item="${i.id}" data-stage="production">${itemLabel(i)}</button><div class="note">${esc(pById(i.project_id).name)}${i.supplier_name ? ' · ' + esc(i.supplier_name) : ''}</div></div>
+        <div class="note">ตัวอย่างผ่าน<br><b style="color:var(--ink)">${i.sample_date ? esc(shortDate(i.sample_date)) : '-'}</b></div><div></div><div class="note">เปิดขาย<br>${dueHtml(i.target_launch)}</div>
+        <div class="icact">${ok ? `<button class="btn btn-sm btn-p" type="button" data-runnew="${i.id}">+ สั่งผลิต</button>` : ''}</div></div>`).join('') : '<div class="empty">ไม่มีรายการค้าง</div>'}</section>
+    <details class="card" style="padding:0" ${recv.length ? '' : 'hidden'}><summary class="card-hd" style="padding:16px 20px;cursor:pointer"><h2 class="sec">▸ รับของแล้ว · 30 วันล่าสุด (${recv.length} รอบ)</h2><span class="note">เก่ากว่านี้ดูใน <a href="#/archive">คลังงานที่เสร็จแล้ว</a></span></summary>
+      ${recv.map(r => runRow(r, true)).join('')}</details>`;
+}
+$('ic-fac').onchange = e => { ic.fac = e.target.value; renderIncoming(); };
+
+// ---------- ปิดงานที่เสร็จครบ ----------
+function doneButNotClosed(){ return proj.data.items.filter(i => i.status !== 'Completed' && i.status !== 'On Hold' && STAGES.every(g => isDoneS(stageOf(i, g.k)))); }
+async function closeDoneItems(){
+  const L = doneButNotClosed(); if (!L.length) return;
+  try { await API.itemsDone(L.map(i => i.id), true); toast(`ปิดงาน ${L.length} รายการแล้ว · จะย้ายไปคลังงานใน 14 วัน`); loadProjects(true); } catch(e){ toast(e.message || String(e)); }
+}
+
+// ---------- คลังงานที่เสร็จแล้ว ----------
+const ar = { data:null, tab:'items', q:'', from:addDays(today, -365), to:today };
+async function loadArchive(){
+  $('ar-body').innerHTML = '<div class="card"><div class="sk" style="height:180px"></div></div>';
+  try { ar.data = await API.archive(ar.q.trim() || null, ar.from, ar.to); renderArchive(); }
+  catch(e){ $('ar-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message||e)}</div></div><button class="btn btn-p" type="button" onclick="loadArchive()">ลองอีกครั้ง</button></div>`; }
+}
+function renderArchive(){
+  const d = ar.data; if (!d) return;
+  $('ar-tabs').innerHTML = segHtml([['items',`รายการสินค้า (${d.items.length})`],['runs',`รอบผลิตที่รับแล้ว (${d.runs.length})`],['tasks',`งาน PR ที่โพสต์แล้ว (${d.tasks.length})`]], ar.tab, 'data-k');
+  const canReopen = proj.data ? (proj.data.me.can_edit || ['project','ecom'].includes(proj.data.me.team)) : false;
+  const rows = { items: d.items.map(x => `<div class="arrow"><div style="min-width:0"><b>${esc(x.project)}</b> · ${esc(x.item)}${x.variant ? ' <span class="muted">· ' + esc(x.variant) + '</span>' : ''}<div class="note">${[x.designer && 'ออกแบบ ' + x.designer, x.factory && 'โรงงาน ' + x.factory, x.runs ? `ผลิต ${x.runs} รอบ` : '', x.received ? `รับของ ${fmt(x.received)} ชิ้น` : ''].filter(Boolean).map(esc).join(' · ')}</div></div>
+        <div class="note">ปิดงาน<br><b style="color:var(--ink)">${esc(shortDate(x.completed_at))}</b></div><div>${canReopen ? `<button class="btn btn-sm" type="button" data-reopen="${x.id}">เปิดงานอีกครั้ง</button>` : ''}</div></div>`),
+    runs: d.runs.map(x => `<div class="arrow"><div style="min-width:0"><b>${esc(x.project)}</b> · ${esc(x.item)}${x.variant ? ' · ' + esc(x.variant) : ''}<div class="note">รอบที่ ${x.run_no} · ${esc(x.factory || '-')} · สั่ง ${fmt(x.qty)} ชิ้น${x.received_qty ? ' · รับจริง ' + fmt(x.received_qty) : ''}</div></div>
+        <div class="note">ส่งยอด ${x.order_date ? esc(shortDate(x.order_date)) : '-'}<br>รับ <b style="color:var(--ink)">${x.received_date ? esc(shortDate(x.received_date)) : '-'}</b></div><div></div></div>`),
+    tasks: d.tasks.map(x => `<div class="arrow"><div style="min-width:0"><b>${esc(x.title)}</b><div class="note">${[x.kind, x.project, x.collection, x.channel, x.assignee && '👤 ' + x.assignee].filter(Boolean).map(esc).join(' · ')}</div></div>
+        <div class="note">โพสต์<br><b style="color:var(--ink)">${esc(shortDate(x.date))}</b></div><div></div></div>`) }[ar.tab];
+  $('ar-body').innerHTML = `<section class="card" style="padding:0">${rows.join('') || '<div class="empty">ไม่มีข้อมูลในช่วงนี้</div>'}</section>`;
+}
+$('ar-tabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; ar.tab = b.dataset.k; renderArchive(); };
+$('ar-apply').onclick = () => { ar.q = $('ar-q').value; ar.from = $('ar-from').value || ar.from; ar.to = $('ar-to').value || ar.to; loadArchive(); };
+$('ar-q').onkeydown = e => { if (e.key === 'Enter') $('ar-apply').click(); };
+$('ar-csv').onclick = () => { if (!ar.data) return; const d = ar.data;
+  downloadCsv([['ประเภท','Project','รายการ','สี/แบบ','รายละเอียด','วันที่'], ...d.items.map(x => ['รายการสินค้า', x.project, x.item, x.variant, [x.designer, x.factory, x.received && 'รับ ' + x.received].filter(Boolean).join(' / '), String(x.completed_at).slice(0,10)]),
+    ...d.runs.map(x => ['รอบผลิต', x.project, x.item, x.variant, `รอบ ${x.run_no} · ${x.factory || ''} · ${x.qty}`, x.received_date]), ...d.tasks.map(x => ['งาน PR', x.project, x.title, '', [x.kind, x.channel].filter(Boolean).join(' / '), x.date])], `cuteboy-archive_${today}.csv`); };
+document.addEventListener('click', async e => { const b = e.target.closest('[data-reopen]'); if (!b) return;
+  try { await API.itemsDone([+b.dataset.reopen], false); toast('เปิดงานอีกครั้งแล้ว'); proj.data = null; loadArchive(); } catch(err){ toast(err.message || String(err)); } });
 
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
