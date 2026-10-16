@@ -319,6 +319,42 @@ h1{margin:0;font-family:var(--display);font-size:28px;font-weight:700;line-heigh
   .mbrow{grid-template-columns:40px minmax(0,1fr) minmax(0,1fr)}.mbrow.hd{display:none}.mbrow>.sel,.mbrow .tgl,.mbrow>.note{grid-column:2/-1}}
 @media (max-width:860px){.mrq,.mbrow{padding:12px 16px;grid-template-columns:40px minmax(0,1fr)}.mrq>*:nth-child(n+3),.mbrow>*:nth-child(n+3){grid-column:2}}
 
+/* รอบ 6 */
+.psum{display:grid;grid-template-columns:18px minmax(0,1.4fr) minmax(220px,1.3fr) 80px 100px;gap:14px;align-items:center;width:100%;background:none;border:0;padding:14px 20px;text-align:left;font:inherit;color:inherit;cursor:pointer;min-height:68px}
+.psum:hover{background:var(--soft)}.pcard.open>.psum{border-bottom:1px solid var(--line2)}
+.psum .chev{color:var(--muted);font-size:14px}.psum .pname{font-family:var(--display);font-size:16px;font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pprog{display:flex;flex-direction:column;gap:4px}.pbl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;font-size:10.5px;color:var(--muted)}.pbl span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ppct{display:flex;flex-direction:column;align-items:flex-end}.ppct b{font-family:var(--display);font-size:18px}
+.pdue{text-align:right}.pjtools{display:flex;gap:8px;justify-content:flex-end}
+.pitems .prow:first-of-type{border-top:1px solid var(--line2)}
+.facrow{display:grid;grid-template-columns:minmax(0,1.5fr) 70px 70px 100px 120px 80px;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--line2);width:100%;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;font:inherit;color:inherit;cursor:pointer;min-height:50px}
+.facrow:hover{background:var(--soft)}.facrow.hd{min-height:0;font-size:12px;color:var(--muted);font-weight:500;cursor:default}
+.faclist{background:var(--soft)}
+.ntc{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:0 20px 18px}.ntc h3{font-size:14px;margin:0 0 8px;display:flex;gap:8px;align-items:center}
+.ntc ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13.5px}.ntc li .btn{margin-left:6px;min-height:30px}
+.tchip{border:0;border-left:3px solid var(--c);border-radius:5px;background:#F4F4F1;color:var(--ink);font:inherit;font-size:11px;line-height:17px;padding:1px 5px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;min-height:19px;width:100%}
+.cal .cd[data-day]{cursor:pointer}.cal .cd[data-day]:hover{background:#FBFBF8}
+.wkb{grid-auto-columns:minmax(230px,1fr)}
+.wcol .wsub{padding:0 4px 4px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:11.5px}.wcol .wsub .wbar{width:100%;margin:0 0 4px}
+.wcol.warn{background:#F7E4DC}
+.kcard.wk .km{flex-wrap:nowrap;min-width:0}
+.hookrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--line2)}
+@media (max-width:1100px){.psum{grid-template-columns:18px minmax(0,1fr) 70px 90px}.psum .pprog{grid-column:2/-1;grid-row:2}}
+@media (max-width:860px){.psum{padding:12px 16px;grid-template-columns:18px minmax(0,1fr) auto}.psum .ppct{display:none}.psum .pprog{grid-column:2/-1}
+  .facrow{grid-template-columns:minmax(0,1fr) 60px 90px;padding:10px 16px}.facrow>:nth-child(2),.facrow>:nth-child(4),.facrow>:nth-child(6){display:none}
+  .ntc{grid-template-columns:minmax(0,1fr);padding:0 16px 16px}.hookrow{grid-template-columns:minmax(0,1fr);padding:12px 16px}.tchip{font-size:9.5px}}
+
+/* รอบ 7 */
+.szbox{display:flex;flex-direction:column;gap:6px}.szrows{display:flex;flex-direction:column;gap:6px}
+.szrow{display:grid;grid-template-columns:minmax(0,150px) minmax(0,150px) auto;gap:6px;justify-content:start}
+.szact{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.smpl{grid-column:1/-1;border-top:1px dashed var(--line);padding-top:10px}
+.smpl ol{list-style:none;margin:6px 0 0;padding:0 0 0 4px;display:grid;gap:6px;font-size:13.5px;border-left:2px solid var(--line);}
+.smpl li{position:relative;padding-left:14px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.sdot{position:absolute;left:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:#EDA100;border:2px solid #fff}.sdot.ok{background:#1BAF7A}.sdot.fix{background:#E0663A}
+.sdel{color:var(--muted);font-weight:400;font-size:12px;min-height:24px;margin-left:4px}
+.szs{font-size:12px;color:var(--ink2)}
+
 /* modal */
 .modal{position:fixed;inset:0;z-index:50;background:rgba(22,22,29,.45);display:flex;align-items:center;justify-content:center;padding:16px}
 .modal .box2{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -418,7 +454,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
     <div class="logo"><div class="m">CB</div><div><b>CUTEBOY</b><span>Team Dashboard</span></div></div>
     <div class="me"><div id="me-av" class="av">?</div><div style="min-width:0"><div class="n" id="me-name">-</div><div class="r" id="me-role">-</div></div><button id="btn-logout" type="button">ออก</button></div>
     <div><div class="grp-l">ทั่วไป</div><div class="nav"><a href="#/me" id="nav-me">งานของฉัน</a><a href="#/overview" id="nav-overview">Overview</a><a href="#/team" id="nav-team">ทีมงาน (Workload)</a></div></div>
-    <div><div class="grp-l">PROJECT</div><div class="nav"><a href="#/projects" id="nav-projects">Project</a><a href="#/design" id="nav-design">Design</a><a href="#/supplier" id="nav-supplier">Supplier</a><a href="#/forecast" id="nav-forecast">Forecast</a><a href="#/incoming" id="nav-incoming">Inventory (Project)</a><a href="#/marketing" id="nav-marketing">Marketing</a></div></div>
+    <div><div class="grp-l">PROJECT</div><div class="nav"><a href="#/projects" id="nav-projects">Project</a><a href="#/design" id="nav-design">Design</a><a href="#/supplier" id="nav-supplier">Supplier</a><a href="#/forecast" id="nav-forecast">Forecast</a><a href="#/incoming" id="nav-incoming">Inventory (Project)</a><a href="#/marketing" id="nav-marketing">Marketing & PR</a></div></div>
     <div><div class="grp-l">รายงานรวม</div><div class="nav"><a href="#/sales" id="nav-sales">Total Sales</a><a href="#/stock" id="nav-stock">Inventory คงเหลือ</a><a href="#/oem" id="nav-oem">ยอดขาย OEM</a><a href="#/recovery" id="nav-recovery">คืนทุน & โปรโมชัน</a></div></div>
     <div id="nav-admin-grp" hidden><div class="grp-l">ADMIN</div><div class="nav"><a href="#/members" id="nav-members" class="adm">จัดการสมาชิก</a><a href="#/admin" id="nav-admin" class="adm">หลังบ้าน · ประวัติแก้ไข</a></div></div>
     <div class="syncbox" id="syncbox"><b>สถานะการซิงก์ข้อมูล</b><div>กำลังโหลด…</div></div>
@@ -604,6 +640,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
     <header class="top"><div style="min-width:0"><nav class="crumb" id="sp-crumb" hidden><a href="#/supplier">Supplier</a> <span>/</span></nav><h1 id="sp-title">Supplier</h1><div class="muted" style="margin-top:4px" id="sp-sub">ทุก Project อยู่ขั้นไหนกับ Supplier</div></div></header>
     <div id="sp-kpis" style="display:flex;flex-direction:column;gap:10px"></div>
     <div id="sp-body"></div>
+    <div id="sp-fac"></div>
   </div>
   <div id="page-incoming" class="pg" hidden>
     <header class="top"><div style="min-width:0"><h1>Inventory (Project)</h1><div class="muted" style="margin-top:4px">ของจาก Project ที่กำลังผลิตและจะเข้าคลัง เรียงตามวันเข้าคลัง · กรอกจำนวนผลิตและวันเข้าคลังได้ในรายละเอียดรายการ (ทีม Production)</div></div></header>
@@ -617,20 +654,23 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
     <div id="fc-tables" style="display:flex;flex-direction:column;gap:14px"></div>
   </div>
   <div id="page-marketing" class="pg" hidden>
-    <header class="top"><div style="min-width:0"><h1>Marketing</h1><div class="muted" style="margin-top:4px">ปฏิทินโปรโมชัน และยอดขายช่วงโปรเทียบกับช่วงก่อนโปรจำนวนวันเท่ากัน (เฉพาะสินค้าและช่องทางในโปร)</div></div><div class="controls"><button class="btn btn-p" id="mk-add" type="button" hidden>+ สร้างโปร</button></div></header>
+    <header class="top"><div style="min-width:0"><h1>Marketing & PR</h1><div class="muted" style="margin-top:4px">ปฏิทินงาน PR / Marketing และโปรโมชัน · มอบหมายงานให้ทีม · ยอดขายช่วงโปรเทียบช่วงก่อนโปร</div></div><div class="controls"><button class="btn" id="mk-add" type="button" hidden>+ สร้างโปร</button><button class="btn btn-p" id="mk-addtask" type="button" hidden>+ เพิ่มงาน PR / Marketing</button></div></header>
     <div id="mk-err" hidden><div class="errbox"><div><b>โหลดข้อมูลไม่สำเร็จ</b><div class="note" id="mk-errmsg"></div></div><button class="btn btn-p" id="mk-reload" type="button">ลองอีกครั้ง</button></div></div>
     <section class="card">
       <div class="card-hd" style="margin-bottom:12px"><h2 class="sec" id="mk-month"></h2><div class="controls"><button class="btn btn-sm" id="mk-prev" type="button" aria-label="เดือนก่อน">‹</button><button class="btn btn-sm" id="mk-today" type="button">เดือนนี้</button><button class="btn btn-sm" id="mk-next" type="button" aria-label="เดือนถัดไป">›</button></div></div>
       <div class="cal" id="mk-cal"></div>
     </section>
+    <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">Notice · ยังไม่ได้วาง PR / Marketing</h2><span class="note">ไว้รีเช็คก่อนของออก</span></div><div id="mk-notice"></div></section>
+    <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">งาน PR / Marketing</h2><div class="controls"><div class="seg" id="mk-scope" role="group" aria-label="ขอบเขต"></div><select class="sel" id="mk-proj" aria-label="Project"></select></div></div>
+      <div class="note" style="padding:0 20px 10px">ลากการ์ดเพื่อเปลี่ยนสถานะ · กดวันในปฏิทินเพื่อเพิ่มงานวันนั้น · กดการ์ดเพื่อดู/แก้รายละเอียด</div><div id="mk-board" style="padding:0 20px 18px"></div></section>
     <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">โปรโมชันทั้งหมด</h2><span class="note">ยอดรวม VAT · ยอด Shopee เข้าระบบตามรอบอัปโหลดไฟล์</span></div><div class="list" id="mk-list"></div></section>
   </div>
   <div id="page-team" class="pg" hidden>
-    <header class="top"><div style="min-width:0"><h1>ทีมงาน (Workload)</h1><div class="muted" style="margin-top:4px">แต่ละคนมีงานค้างกี่งาน อยู่ขั้นไหน ใกล้กำหนดกี่งาน · กดที่ชื่อเพื่อดูตะกร้างานของคนนั้น</div></div></header>
+    <header class="top"><div style="min-width:0"><h1>ทีมงาน (Workload)</h1><div class="muted" style="margin-top:4px">ตะกร้างานของแต่ละคน อยู่ขั้นไหน ใกล้กำหนดกี่งาน · ใช้ balance งานในทีม</div></div></header>
     <div class="seg" id="tm-tabs" role="group" aria-label="ทีม"></div>
     <section class="kpis" id="tm-kpis"></section>
-    <div class="wgrid" id="tm-cards"></div>
-    <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">ยังไม่มีคนรับ</h2><span class="note">งานที่ถึงคิวแล้ว แต่ยังไม่ได้มอบหมาย · หัวหน้าทีมหรือ editor มอบหมายได้ที่นี่</span></div><div class="list" id="tm-un"></div></section>
+    <div class="note">ลากการ์ดงานไปวางที่คอลัมน์ของคนที่จะมอบหมาย (ลากกลับไป "ยังไม่มีคนรับ" เพื่อถอนออก) · กดการ์ดเพื่อดูรายละเอียด · คอลัมน์สีแดง = งานเยอะเกินคนอื่น</div>
+    <div id="tm-board"></div>
   </div>
   <div id="page-admin" class="pg" hidden>
     <header class="top"><div style="min-width:0"><h1>หลังบ้าน · ประวัติการแก้ไข</h1><div class="muted" style="margin-top:4px">ทุกการแก้ไขจากหน้าเว็บและ SQL Editor: ใคร แก้อะไร เมื่อไหร่ ค่าก่อน/หลัง · กด "คืนค่า" เพื่อย้อนรายการนั้น · เปิดได้เฉพาะ admin</div></div>
@@ -646,6 +686,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
     <section class="kpis" id="mb-kpis"></section>
     <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">รออนุมัติ</h2><span class="note">เลือกทีมและสิทธิ์ แล้วกดอนุมัติ</span></div><div id="mb-req"></div><div id="mb-rej" style="padding:0 20px 8px"></div></section>
     <section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><div class="seg" id="mb-tabs" role="group" aria-label="ทีม"></div><input class="inp" id="mb-q" style="width:200px;max-width:100%" placeholder="ค้นหาชื่อ / ID" aria-label="ค้นหา"></div><div id="mb-list"></div></section>
+    <section class="card" style="padding:0" id="mb-discord"><div class="empty">กำลังโหลด…</div></section>
     <div id="mb-body"></div>
   </div>
   <div id="pj-err" hidden><div class="errbox"><div><b>โหลดข้อมูล Project ไม่สำเร็จ</b><div class="note" id="pj-errmsg"></div></div><button class="btn btn-p" id="pj-reload" type="button">ลองอีกครั้ง</button></div></div>
@@ -716,6 +757,16 @@ const API = DEMO ? DEMO.api : {
   adminLog: f => rpc('admin_log', { p_from:f.from, p_to:f.to, p_actor:f.actor, p_tbl:f.tbl, p_limit:500 }),
   adminRestore: id => rpc('admin_restore', { p_id:id }),
   members: () => rpc('admin_members'),
+  lookupAdd: (k, n) => rpc('lookup_add', { p_kind:k, p_name:n }),
+  sampleDelete: id => rpc('sample_event_delete', { p_id:id }),
+  mkBoard: () => rpc('mk_board'),
+  mkSave: d => rpc('mk_task_save', { d }),
+  mkPatch: (id, o) => rpc('mk_task_patch', { p_id:id, p_status:o.status ?? null, p_assignee:o.assignee ?? null, p_unassign:!!o.unassign }),
+  mkDelete: id => rpc('mk_task_delete', { p_id:id }),
+  hooks: () => rpc('admin_webhooks'),
+  hookSave: (t, u) => rpc('admin_webhook_save', { p_team:t, p_url:u }),
+  hookTest: t => rpc('admin_webhook_test', { p_team:t }),
+  settingSave: (k, v) => rpc('admin_setting_save', { p_key:k, p_value:v }),
   memberSave: m => rpc('admin_member_save', { p_id:m.id, p_name:m.name, p_role:m.role, p_team:m.team || null, p_active:m.active }),
   requestReject: id => rpc('admin_request_reject', { p_id:id }),
   requestAccess: (n, a) => rpc('request_access', { p_name:n, p_avatar:a }),
@@ -784,7 +835,7 @@ function parseHash(){
   else { st.view='home'; st.coll=null; st.prod=null; }
 }
 const go = h => { location.hash = h; };
-const TITLES = { me:'งานของฉัน', overview:'Overview', projects:'Project', design:'Design', supplier:'Supplier', incoming:'Inventory (Project)', forecast:'Forecast', marketing:'Marketing', recovery:'คืนทุน & โปรโมชัน', team:'ทีมงาน', admin:'หลังบ้าน', members:'จัดการสมาชิก', sales:'Total Sales', stock:'Inventory', oem:'ยอดขาย OEM' };
+const TITLES = { me:'งานของฉัน', overview:'Overview', projects:'Project', design:'Design', supplier:'Supplier', incoming:'Inventory (Project)', forecast:'Forecast', marketing:'Marketing & PR', recovery:'คืนทุน & โปรโมชัน', team:'ทีมงาน', admin:'หลังบ้าน', members:'จัดการสมาชิก', sales:'Total Sales', stock:'Inventory', oem:'ยอดขาย OEM' };
 const PJPAGES = ['me','overview','team','projects','design','supplier','incoming','forecast'];
 addEventListener('hashchange', () => { parseHash(); st.q=''; $('q').value=''; st.limit=30; route(); window.scrollTo(0,0); closeMenu(); });
 function route(){ const pg = st.page;
@@ -792,7 +843,7 @@ function route(){ const pg = st.page;
   $('pj-err').hidden = true;
   document.querySelector('.topbar b').textContent = TITLES[pg];
   if (PJPAGES.includes(pg)) { document.title = TITLES[pg] + ' · CuteBoy'; loadProjects(); if (pg==='overview') loadOverview(); return; }
-  if (pg==='marketing') { document.title = 'Marketing · CuteBoy'; loadPromos(); return; }
+  if (pg==='marketing') { document.title = 'Marketing & PR · CuteBoy'; loadPromos(); return; }
   if (pg==='members') { document.title = 'จัดการสมาชิก · CuteBoy'; loadMembers(); return; }
   if (pg==='admin') { document.title = 'หลังบ้าน · CuteBoy'; $('ad-from').value = adm.from; $('ad-to').value = adm.to; loadAdmin(); return; }
   if (pg==='recovery') { document.title = 'คืนทุน & โปรโมชัน · CuteBoy'; loadRecovery(); return; }
@@ -1314,7 +1365,7 @@ function reviewOem(d){
 const baht2 = n => '฿' + (Number(n)||0).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
 
 // ===== Phase 2: Project / งานของฉัน / Overview =====
-const TEAMS = { design:'Design', production:'Production', pr:'PR / Marketing', ecom:'Admin & E-Commerce', management:'ผู้บริหาร' };
+const TEAMS = { project:'Project / Partner', design:'Design', production:'Production', pr:'PR / Marketing', ecom:'Admin & E-Commerce', management:'ผู้บริหาร' };
 const STAGES = [
   { k:'design',     n:'Design',     team:'design' },
   { k:'shoot',      n:'Shooting',   team:'design' },
@@ -1323,7 +1374,7 @@ const STAGES = [
   { k:'ecom',       n:'E-Commerce', team:'ecom' },
 ];
 const SEC = { general:'ข้อมูลรายการ', design:'Design & Techpack', shoot:'Fashion Shooting', production:'Production', marketing:'PR & Marketing', ecom:'Admin & E-Commerce', forecast:'ประมาณการ (Forecast)', issue:'ติดปัญหา' };
-const SEC_TEAM = { general:null, design:'design', shoot:'design', production:'production', marketing:'pr', ecom:'ecom', forecast:'management', issue:'*' };
+const SEC_TEAM = { general:'project', design:'design', shoot:'design', production:'production', marketing:'pr', ecom:'ecom', forecast:'management', issue:'*' };
 const proj = { data:null, t:0, id:null, tab:'active', type:'', q:'', myTeam:null, view:null, loading:null };
 const PTABS = [['active','กำลังทำ'],['todo','ยังไม่เริ่ม'],['done','เสร็จแล้ว'],['all','ทั้งหมด']];
 
@@ -1368,7 +1419,7 @@ function dueHtml(d){
 const itemLabel = it => esc(it.item_name) + (it.variant ? ` <span class="muted">· ${esc(it.variant)}</span>` : '');
 const pById = id => proj.data.projects.find(p => p.id === id) || { name:'-' };
 const fieldOf = k => proj.data.fields.find(f => f.field === k);
-const canField = f => !!f && (proj.data.me.can_edit || f.team === '*' || (f.team && f.team === proj.data.me.team));
+const canField = f => !!f && (proj.data.me.can_edit || f.team === '*' || String(f.team || '').split(',').includes(proj.data.me.team || '-'));
 function linkify(v){
   const s = String(v ?? ''); const m = s.match(/https?:\/\/\S+/);
   if (!m) return esc(s);
@@ -1383,7 +1434,7 @@ const curStage = it => STAGES.find(g => !isDoneS(stageOf(it, g.k)));
 async function loadProjects(force){
   if (!force && proj.data && Date.now() - proj.t < 60e3) { renderProjPage(); return; }
   if (proj.loading) return proj.loading;
-  if (!proj.data) for (const id of ['me-list','pj-list','ov-projects','dz-body','sp-body','ic-list','fc-tables','tm-cards']) $(id).innerHTML = '<div style="padding:16px 20px;display:grid;gap:10px">' + '<div class="sk" style="height:44px"></div>'.repeat(4) + '</div>';
+  if (!proj.data) for (const id of ['me-list','pj-list','ov-projects','dz-body','sp-body','ic-list','fc-tables','tm-board']) $(id).innerHTML = '<div style="padding:16px 20px;display:grid;gap:10px">' + '<div class="sk" style="height:44px"></div>'.repeat(4) + '</div>';
   proj.loading = (async () => {
     try { proj.data = await API.projects(); proj.t = Date.now(); $('pj-err').hidden = true; renderProjPage(); }
     catch(e){ $('pj-errmsg').textContent = e.message || String(e); $('pj-err').hidden = false; }
@@ -1394,41 +1445,6 @@ async function loadProjects(force){
 function renderProjPage(){ if (!proj.data) return; const f = { me:renderMe, overview:renderOvProjects, projects:renderProjects, design:renderDesign, supplier:renderSupplier, incoming:renderIncoming, forecast:renderForecast, team:renderTeam }[st.page]; if (f) f(); }
 
 // ----- Project -----
-function renderProjects(){
-  const d = proj.data, me = d.me;
-  $('pj-add').hidden = !me.can_edit;
-  $('pj-tabs').innerHTML = PTABS.map(([k,l]) => `<button type="button" data-k="${k}" aria-pressed="${proj.tab===k}">${l}</button>`).join('');
-  const types = [...new Set(d.projects.map(p => p.ptype).filter(Boolean))];
-  $('pj-type').innerHTML = '<option value="">ทุกประเภท</option>' + types.map(t => `<option ${proj.type===t?'selected':''}>${esc(t)}</option>`).join('');
-  const one = proj.id ? d.projects.find(p => p.id === proj.id) : null;
-  $('pj-crumb').hidden = !one; $('pj-filters').hidden = !!one;
-  $('pj-title').textContent = one ? one.name : 'Project';
-  if (one) $('pj-crumb').innerHTML = '<a href="#/projects">Project</a> <span>/</span>';
-  $('pj-sub').textContent = one ? `${one.ptype || '-'} · กดที่รายการเพื่อดูรายละเอียดหรืออัปเดต` : 'ทุก Project และแต่ละรายการอยู่ขั้นไหน · กดที่รายการเพื่อดูรายละเอียดหรืออัปเดต';
-  $('pj-edit').hidden = !(one && me.can_edit);
-  if (one && me.can_edit) { $('pj-edit').innerHTML = '<button class="btn btn-sm" type="button" id="pj-ren">✎ แก้ชื่อ / ประเภท Project</button>'; $('pj-ren').onclick = () => editProject(one); }
-  const q = proj.q.trim().toLowerCase();
-  const list = (one ? [one] : d.projects).map(p => {
-    let items = d.items.filter(i => i.project_id === p.id);
-    const all = items.length, open = items.filter(itemOpen).length;
-    const pState = !all ? 'todo' : items.every(i => !itemOpen(i)) ? 'done' : items.every(i => i.status === 'Not Started') ? 'todo' : 'active';
-    if (!one) {
-      if (proj.tab !== 'all' && pState !== proj.tab) return null;
-      if (proj.type && p.ptype !== proj.type) return null;
-      if (q && !p.name.toLowerCase().includes(q)) { items = items.filter(i => (i.item_name + ' ' + (i.variant||'')).toLowerCase().includes(q)); if (!items.length) return null; }
-    }
-    const dates = items.map(i => i.target_launch).filter(Boolean).sort();
-    const blk = items.filter(i => i.blocker).length;
-    return `<section class="card pcard">
-      <div class="phd"><a class="pname" href="#/projects/${p.id}">${esc(p.name)}</a>${p.ptype ? `<span class="pill t-${esc(p.ptype)}">${esc(p.ptype)}</span>` : ''}
-        <span class="pmeta"><span>${all} รายการ · ค้าง ${open}</span>${dates.length ? `<span>เปิดขาย ${dueHtml(dates[0])}</span>` : ''}${blk ? `<span class="due late">ติดปัญหา ${blk}</span>` : ''}</span>
-        ${me.can_edit ? `<button class="btn btn-sm" type="button" data-addto="${p.id}">+ รายการ</button>` : ''}</div>
-      <div class="prow hd"><div>รายการ</div><div class="stg">${STAGES.map(g => `<div>${g.n}</div>`).join('')}</div><div>เปิดขาย</div><div></div></div>
-      ${items.map(i => `<button class="prow" type="button" data-item="${i.id}"><div style="min-width:0"><div class="nm">${itemLabel(i)}</div><div class="sub">${esc(i.status || '')}${i.owner_type ? ' · ' + esc(i.owner_type) : ''}</div></div>${stageChips(i)}${stageDots(i)}${dueHtml(i.target_launch)}${i.blocker ? `<span class="flag" title="${esc(i.blocker)}">!</span>` : '<span></span>'}</button>`).join('') || '<div class="empty">ยังไม่มีรายการ</div>'}
-    </section>`;
-  }).filter(Boolean);
-  $('pj-list').innerHTML = list.join('') || `<div class="card empty">${one ? 'ไม่พบ Project นี้' : 'ไม่มี Project ในมุมมองนี้'}</div>`;
-}
 $('pj-tabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; proj.tab = b.dataset.k; renderProjects(); };
 $('pj-type').onchange = e => { proj.type = e.target.value; renderProjects(); };
 $('pj-q').oninput = e => { proj.q = e.target.value; renderProjects(); };
@@ -1534,12 +1550,15 @@ function renderOvStock(){
 // ----- แก้ไขรายการ -----
 function fieldInput(f, v, ok){
   const id = 'f-' + f.field, val = v ?? '';
+  if (f.kind === 'sizes') return sizesInput(f, v, ok);
   if (!ok && f.kind === 'person') return `<div class="ro">${val ? esc(memName(val)) : '<span class="muted">ยังไม่มีคนรับ</span>'}</div>`;
   if (!ok) return `<div class="ro">${f.kind === 'date' ? (val ? esc(thDate(val)) : '<span class="muted">-</span>') : val ? (f.kind === 'link' || /https?:\/\//.test(val) ? linkify(val) : esc(val)) : '<span class="muted">-</span>'}</div>`;
   if (f.kind === 'select') { const opts = [...(f.options || [])]; if (val && !opts.includes(val)) opts.unshift(val);
     return `<select class="sel" id="${id}" data-f="${f.field}"><option value="">-</option>${opts.map(o => `<option ${o===val?'selected':''}>${esc(o)}</option>`).join('')}</select>`; }
   if (f.kind === 'longtext') return `<textarea class="inp" id="${id}" data-f="${f.field}" rows="2">${esc(val)}</textarea>`;
   if (f.kind === 'date') return `<input class="inp" type="date" id="${id}" data-f="${f.field}" value="${esc(val)}">`;
+  if (f.kind === 'sizes') return sizesInput(f, v, ok);
+  if (f.kind === 'lookup') return lookupInput(f, val);
   if (f.kind === 'person') { const ms = proj.data.members, own = ms.filter(m => m.team === f.team), oth = ms.filter(m => m.team !== f.team);
     return `<select class="sel" id="${id}" data-f="${f.field}"><option value="">ยังไม่มีคนรับ</option>${own.map(m => `<option value="${esc(m.id)}" ${m.id===val?'selected':''}>${esc(m.name)}</option>`).join('')}${oth.length ? `<optgroup label="ทีมอื่น">${oth.map(m => `<option value="${esc(m.id)}" ${m.id===val?'selected':''}>${esc(m.name)}</option>`).join('')}</optgroup>` : ''}</select>`; }
   if (f.kind === 'number') return `<input class="inp" inputmode="decimal" id="${id}" data-f="${f.field}" value="${esc(val)}">`;
@@ -1552,8 +1571,8 @@ function editItem(it, focus){
     const anyOk = fs.some(canField), t = SEC_TEAM[sk];
     const g = STAGES.find(x => x.k === sk), x = g ? stageOf(it, sk) : null;
     return `<section class="isec ${anyOk?'':'locked'}" id="sec-${sk}"><h4>${esc(SEC[sk])}${x ? ` <span class="sc ${x.s}" style="display:inline-flex;font-family:var(--body);font-weight:500">${esc(x.t)}</span>` : ''}
-      <small>${anyOk ? (t === '*' ? 'ทุกคนแก้ได้' : 'คุณแก้ได้') : `แก้ได้เฉพาะ${t ? ' ทีม ' + esc(TEAMS[t] || t) + ' หรือ' : ''} admin/editor`}</small></h4>
-      <div class="fgrid">${fs.map(f => `<div class="field ${f.kind==='longtext'||f.field==='shoot_location'||f.kind==='link'?'wide':''}"><label class="lbl" for="f-${f.field}">${esc(f.label)}</label>${fieldInput(f, it[f.field], canField(f))}</div>`).join('')}</div></section>`;
+      <small>${anyOk ? (t === '*' ? 'ทุกคนแก้ได้' : 'คุณแก้ได้') : `แก้ได้เฉพาะ${t ? ' ทีม ' + esc(teamLabel(t)) + ' หรือ' : ''} admin/editor`}</small></h4>
+      <div class="fgrid">${fs.map(f => `<div class="field ${f.kind==='longtext'||f.field==='shoot_location'||f.kind==='link'||f.kind==='sizes'?'wide':''}"><label class="lbl" for="f-${f.field}">${esc(f.label)}</label>${fieldInput(f, it[f.field], canField(f))}</div>`).join('')}${sk === 'production' ? sampleTimeline(it) : ''}</div></section>`;
   }).join('');
   const hist = d.log.filter(l => l.item_id === it.id).slice(0, 6);
   openModal(`${p.name} · ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''}`, `${secs}
@@ -1561,11 +1580,18 @@ function editItem(it, focus){
     ${me.can_edit ? '<div><button class="btn btn-sm" type="button" id="it-hide">ซ่อนรายการนี้</button> <span class="note">ซ่อนแล้วกู้คืนได้ (ไม่ได้ลบจริง)</span></div>' : ''}`,
     async () => {
       const ch = {};
-      $('m-body').querySelectorAll('[data-f]').forEach(el => { const k = el.dataset.f, v = el.value.trim(); if (String(it[k] ?? '') !== v) ch[k] = v; });
+      for (const el of $('m-body').querySelectorAll('[data-f]')) { const k = el.dataset.f; let v = el.value.trim();
+        if (v === '__new') { v = ($('m-body').querySelector(`[data-new-for="${k}"]`)?.value || '').trim(); if (!v) throw new Error('พิมพ์ชื่อใหม่ก่อนบันทึก'); await API.lookupAdd(el.dataset.lookup, v); }
+        if (el.dataset.kind === 'sizes') { if (sizeKey(it[k]) !== sizeKey(JSON.parse(v || '{}'))) ch[k] = v; continue; }
+        if (String(it[k] ?? '') !== v) ch[k] = v; }
+      if ('size_qty' in ch) delete ch.plan_qty;
+      if (ch.sample_status && !('sample_date' in ch)) ch.sample_date = today;
       if (!Object.keys(ch).length) return;
       await API.projUpdate(it.id, ch);
     });
   $('modal').querySelector('.box2').classList.add('wide');
+  document.querySelectorAll('[data-szbox]').forEach(szSync);
+  if ($('f-sample_status')) $('f-sample_status').addEventListener('change', () => { const sd = $('f-sample_date'); if (sd && sd.value === String(it.sample_date || '')) sd.value = today; });
   if (!d.fields.some(canField)) $('m-save').hidden = true;
   if ($('it-hide')) $('it-hide').onclick = async () => { if (!confirm2()) return; try { await API.projHide(it.id, true); closeModal(); toast('ซ่อนรายการแล้ว'); loadProjects(true); } catch(e){ $('m-err').textContent = e.message || String(e); $('m-err').hidden = false; } };
   if (focus) setTimeout(() => { const s = $('sec-' + focus); if (s) { s.scrollIntoView({ block:'start' }); s.querySelector('[data-f]')?.focus({ preventScroll:true }); } }, 40);
@@ -1722,14 +1748,15 @@ document.addEventListener('keydown', e => { if (e.key !== 'Enter') return; const
 
 // ---------- Supplier ----------
 function supStep(i){ return i.supplier_step || 'รอรับไฟล์'; }
-function renderSupplier(){
+function renderSupplier(){ renderSupplier0(); if (proj.sid) $('sp-fac').innerHTML = ''; else renderFactories(); }
+function renderSupplier0(){
   const d = proj.data, open = d.items.filter(i => !['Completed','On Hold'].includes(i.status) || supStep(i) !== 'เสร็จสิ้น');
   const one = proj.sid ? d.projects.find(p => p.id === proj.sid) : null;
   $('sp-crumb').hidden = !one; $('sp-title').textContent = one ? one.name : 'Supplier';
   $('sp-sub').textContent = one ? 'แต่ละรายการอยู่ขั้นไหนกับ Supplier · เปลี่ยนขั้นได้ทันทีจากช่องเลือก' : 'ทุก Project อยู่ขั้นไหนกับ Supplier · กดที่ Project เพื่อดูแต่ละสินค้า';
   const late = open.filter(i => supStep(i) !== 'เสร็จสิ้น' && i.supplier_due && daysTo(i.supplier_due) < 0).length;
   $('sp-kpis').innerHTML = `<div class="stepbar">${SUP_STEPS.map((s, k) => { const n = (one ? d.items.filter(i => i.project_id === one.id) : open).filter(i => supStep(i) === s).length;
-    return `<div class="sb ${n?'has':''}"><span class="sn">${k+1}</span><div><div class="lbl">${esc(s)}</div><b>${fmt(n)}</b></div></div>`; }).join('')}</div>${late ? `<div class="warnbox">เลยวันนัดส่งของ ${late} รายการ</div>` : ''}`;
+    return `<div class="sb ${n?'has':''}"><span class="sn">${k+1}</span><div><div class="lbl">${esc(s)}</div><b>${fmt(n)}</b></div></div>`; }).join('')}</div>${late ? `<div class="warnbox">เลยวันนัดรับสินค้าจากโรงงาน ${late} รายการ</div>` : ''}`;
   if (!one) {
     const rows = d.projects.map(p => { const L = d.items.filter(i => i.project_id === p.id); if (!L.length) return null;
       const cnt = SUP_STEPS.map(s => L.filter(i => supStep(i) === s).length);
@@ -1738,15 +1765,15 @@ function renderSupplier(){
       return `<a class="sprow" href="#/supplier/${p.id}"><div style="min-width:0"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}</div><div class="note">${L.length} รายการ${sups.length ? ' · ' + esc(sups.join(', ')) : ''}</div></div>
         ${cnt.map((n, k) => `<div class="spc ${n ? 'on' : ''}" style="--a:${n ? Math.min(1, .25 + n / L.length * .75) : 0}" title="${esc(SUP_STEPS[k])}: ${n}">${n || ''}</div>`).join('')}
         <div class="spdue">${due ? dueHtml(due) : '<span class="note">ยังไม่นัด</span>'}</div></a>`; }).filter(Boolean);
-    $('sp-body').innerHTML = `<section class="card" style="padding:0"><div class="sprow hd"><div>Project</div>${SUP_STEPS.map(s => `<div class="spc-h">${esc(s)}</div>`).join('')}<div class="spdue">นัดส่ง</div></div>${rows.join('') || '<div class="empty">ยังไม่มี Project</div>'}</section>`;
+    $('sp-body').innerHTML = `<section class="card" style="padding:0"><div class="sprow hd"><div>Project</div>${SUP_STEPS.map(s => `<div class="spc-h">${esc(s)}</div>`).join('')}<div class="spdue">นัดรับของ</div></div>${rows.join('') || '<div class="empty">ยังไม่มี Project</div>'}</section>`;
     return;
   }
   const L = d.items.filter(i => i.project_id === one.id), f = fieldOf('supplier_step'), ok = canField(f);
   $('sp-body').innerHTML = `<section class="card" style="padding:0">${L.map(i => { const k = SUP_STEPS.indexOf(supStep(i));
-    return `<div class="sirow"><div style="min-width:0"><button type="button" class="linklike" data-item="${i.id}" data-stage="production">${itemLabel(i)}</button><div class="note">${esc(i.supplier_name || 'ยังไม่ระบุ Supplier')}${i.plan_qty ? ' · ' + fmt(i.plan_qty) + ' ชิ้น' : ''}</div></div>
+    return `<div class="sirow"><div style="min-width:0"><button type="button" class="linklike" data-item="${i.id}" data-stage="production">${itemLabel(i)}</button><div class="note">${esc(i.supplier_name || 'ยังไม่ระบุโรงงาน')}${i.plan_qty ? ' · ' + fmt(i.plan_qty) + ' ชิ้น' : ''}</div>${i.size_qty ? `<div class="szs">${esc(sizeText(i.size_qty))}</div>` : ''}${i.sample_status ? `<div class="note">ตัวอย่าง: <b>${esc(i.sample_status)}</b>${i.sample_date ? ' · ' + esc(shortDate(i.sample_date)) : ''}</div>` : ''}</div>
       <div class="steps" aria-label="ขั้น ${k+1} จาก 6">${SUP_STEPS.map((s, j) => `<span class="${j < k || supStep(i)==='เสร็จสิ้น' ? 'done' : j === k ? 'cur' : ''}" title="${esc(s)}"></span>`).join('')}</div>
       <div>${ok ? `<select class="sel" data-step="${i.id}" aria-label="ขั้นตอนกับ Supplier">${SUP_STEPS.map(s => `<option ${s===supStep(i)?'selected':''}>${s}</option>`).join('')}</select>` : `<b>${esc(supStep(i))}</b>`}</div>
-      <div class="spdue">${i.supplier_due ? dueHtml(i.supplier_due) : '<span class="note">ยังไม่นัด</span>'}</div></div>`; }).join('') || '<div class="empty">ยังไม่มีรายการ</div>'}</section>`;
+      <div class="spdue">${i.supplier_due ? '<span class="note">นัดรับ</span> ' + dueHtml(i.supplier_due) : '<span class="note">ยังไม่นัดรับ</span>'}</div></div>`; }).join('') || '<div class="empty">ยังไม่มีรายการ</div>'}</section>`;
   $('sp-body').querySelectorAll('[data-step]').forEach(s => s.onchange = async () => { const i = d.items.find(x => x.id === +s.dataset.step), old = i.supplier_step; i.supplier_step = s.value; renderSupplier();
     try { await API.projUpdate(i.id, { supplier_step: s.value }); toast(`${i.item_name}: ${s.value}`); loadProjects(true); } catch(e){ i.supplier_step = old; renderSupplier(); toast('บันทึกไม่สำเร็จ: ' + (e.message || e)); } });
 }
@@ -1763,7 +1790,7 @@ function renderIncoming(){
     <div class="card"><div class="lbl">เลยวันเข้าคลัง</div><div class="kpi ${L.some(i=>i.stock_in_date&&daysTo(i.stock_in_date)<0)?'down':''}">${fmt(L.filter(i=>i.stock_in_date&&daysTo(i.stock_in_date)<0).length)}</div><div class="delta">ควรตามกับ Supplier</div></div>
     <div class="card"><div class="lbl">ยังไม่ระบุวันเข้าคลัง</div><div class="kpi">${fmt(L.filter(i=>!i.stock_in_date).length)}</div><div class="delta">ทีม Production กรอกได้</div></div>`;
   $('ic-list').innerHTML = L.length ? `<div class="icrow hd"><div>รายการ</div><div>ขั้นกับ Supplier</div><div class="num">จำนวน</div><div>เข้าคลัง</div><div>เปิดขาย</div></div>` + L.map(i => `<button class="icrow" type="button" data-item="${i.id}" data-stage="production">
-      <div style="min-width:0"><div class="nm" style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${itemLabel(i)}</div><div class="note">${esc(pById(i.project_id).name)}${i.supplier_name ? ' · ' + esc(i.supplier_name) : ''}</div></div>
+      <div style="min-width:0"><div class="nm" style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${itemLabel(i)}</div><div class="note">${esc(pById(i.project_id).name)}${i.supplier_name ? ' · ' + esc(i.supplier_name) : ''}${i.supplier_due ? ' · นัดรับ ' + esc(shortDate(i.supplier_due)) : ''}</div>${i.size_qty ? `<div class="szs">${esc(sizeText(i.size_qty))}</div>` : ''}</div>
       <div><span class="sc ${supStep(i)==='ตัวอย่างผ่านแล้ว'||supStep(i)==='รอผลิต'?'active':'todo'}" style="display:inline-flex">${esc(supStep(i))}</span></div>
       <div class="num">${i.plan_qty ? fmt(i.plan_qty) : '<span class="muted">-</span>'}</div><div>${dueHtml(i.stock_in_date)}</div><div>${dueHtml(i.target_launch)}</div></button>`).join('')
     : '<div class="empty">ยังไม่มีของที่กำลังจะเข้าคลัง</div>';
@@ -1785,7 +1812,7 @@ function renderForecast(){
       <div class="stat-l"><span>ลงทุน</span><b>${baht(x.inv)}</b></div><div class="stat-l"><span>ยอดขายถ้าขายหมด</span><b>${baht(x.rev)}</b></div>
       <div class="stat-l"><span>กำไร</span><b class="${x.profit>=0?'up':'down'}">${baht(x.profit)}${x.margin!=null?` · ${Math.round(x.margin)}%`:''}</b></div>
       ${x.miss ? `<div class="note" style="color:#8A5A00">ยังกรอกไม่ครบ ${x.miss} รายการ</div>` : ''}</a>`; }).join('') || '<div class="card empty">เลือก Project ที่ต้องการเทียบด้านบน</div>';
-  const inp = (i, f, k) => canField(f) ? `<input class="inp fin" inputmode="decimal" data-fc="${i.id}" data-f="${k}" value="${i[k] ?? ''}" aria-label="${esc(f.label)}">` : (i[k] != null ? fmt(i[k]) : '<span class="muted">-</span>');
+  const inp = (i, f, k) => (k === 'plan_qty' && i.size_qty && Object.keys(i.size_qty).length) ? `<span title="${esc(sizeText(i.size_qty))}">${fmt(i.plan_qty)} <span class="muted">(ตามไซซ์)</span></span>` : canField(f) ? `<input class="inp fin" inputmode="decimal" data-fc="${i.id}" data-f="${k}" value="${i[k] ?? ''}" aria-label="${esc(f.label)}">` : (i[k] != null ? fmt(i[k]) : '<span class="muted">-</span>');
   $('fc-tables').innerHTML = P.map(p => { const L = d.items.filter(i => i.project_id === p.id), x = fcCalc(L);
     return `<section class="card" style="padding:0" id="fc-${p.id}"><div class="card-hd" style="padding:14px 20px"><h3 class="sec" style="font-size:16px">${esc(p.name)}</h3><span class="note">${L.length} รายการ</span></div>
     <div class="fcwrap"><table class="tbl fct"><thead><tr><th>รายการ</th><th class="num">จำนวน</th><th class="num">ทุน/ชิ้น</th><th class="num">ราคาขาย</th><th class="num">ลงทุน</th><th class="num">ยอดขาย</th><th class="num">กำไร</th><th class="num">Margin</th></tr></thead><tbody>
@@ -1812,7 +1839,7 @@ const PCOL = ['#4B32D9','#EB6834','#1BAF7A','#C2417A','#EDA100','#2E86C1'];
 async function loadPromos(force){
   if (!force && mk.data && Date.now() - mk.t < 60e3) { renderMarketing(); return; }
   $('mk-err').hidden = true;
-  try { mk.data = await API.promos(); mk.t = Date.now(); st.canPromo = mk.data.can_edit; renderMarketing(); }
+  try { [mk.data] = await Promise.all([API.promos(), loadMkBoard()]); mk.t = Date.now(); st.canPromo = mk.data.can_edit; renderMarketing(); }
   catch(e){ $('mk-errmsg').textContent = e.message || String(e); $('mk-err').hidden = false; }
 }
 function promoState(p){ const td = mk.data.today; return p.start_date > td ? ['soon','กำลังจะมา'] : p.end_date < td ? ['past','จบแล้ว'] : ['live','กำลังจัด']; }
@@ -1824,7 +1851,9 @@ function renderMarketing(){
   const P = d.promos.map((p, k) => ({ ...p, col: PCOL[p.id % PCOL.length] }));
   let cells = ''; for (let k = 0; k < lead; k++) cells += '<div class="cd out"></div>';
   for (let dd = 1; dd <= days; dd++) { const ds = `${mk.month}-${String(dd).padStart(2,'0')}`, on = P.filter(p => p.start_date <= ds && p.end_date >= ds);
-    cells += `<div class="cd ${ds===d.today?'today':''}"><div class="dn">${dd}</div>${on.slice(0,3).map(p => `<button type="button" class="pchip" data-promo="${p.id}" style="--c:${p.col}" title="${esc(p.name)}">${p.start_date===ds||dd===1?esc(p.name):'&nbsp;'}</button>`).join('')}${on.length>3?`<div class="note">+${on.length-3}</div>`:''}</div>`; }
+    const tk = (mkb.data?.tasks || []).filter(t => t.due_date === ds);
+    cells += `<div class="cd ${ds===d.today?'today':''}" data-day="${ds}"><div class="dn">${dd}</div>${on.slice(0,2).map(p => `<button type="button" class="pchip" data-promo="${p.id}" style="--c:${p.col}" title="${esc(p.name)}">${p.start_date===ds||dd===1?esc(p.name):'&nbsp;'}</button>`).join('')}${tk.slice(0,3).map(t => `<button type="button" class="tchip" data-mk="${t.id}" style="--c:${MK_COL[t.status]}" title="${esc(t.title + ' · ' + t.status)}">${esc(t.title)}</button>`).join('')}${on.length + tk.length > 5 ? `<div class="note">+${on.length + tk.length - 5}</div>` : ''}</div>`; }
+  renderMkBoard();
   $('mk-cal').innerHTML = ['อา','จ','อ','พ','พฤ','ศ','ส'].map(x => `<div class="cw">${x}</div>`).join('') + cells;
   const order = { live:0, soon:1, past:2 };
   const L = [...P].sort((a,b) => order[promoState(a)[0]] - order[promoState(b)[0]] || (promoState(a)[0]==='past' ? b.start_date.localeCompare(a.start_date) : a.start_date.localeCompare(b.start_date)));
@@ -1895,44 +1924,6 @@ function openTasks(){
       out.push({ it, g, x, owner: it[OWNER[g.k]] || null, cur: curStage(it) === g }); } }
   return out;
 }
-// ---------- ทีมงาน ----------
-const wl = { team:'', open:null };
-function renderTeam(){
-  const d = proj.data, T = openTasks().filter(t => t.cur || t.owner);    // งานที่ถึงคิวแล้ว หรือมีคนรับไว้แล้ว
-  $('tm-tabs').innerHTML = segHtml([['','ทุกทีม'], ...Object.entries(TEAMS).filter(([k]) => k !== 'management')], wl.team, 'data-k');
-  const mem = d.members.filter(m => !wl.team || m.team === wl.team);
-  const by = id => T.filter(t => t.owner === id);
-  const max = Math.max(1, ...mem.map(m => by(m.id).length));
-  const late = L => L.filter(t => t.it.target_launch && daysTo(t.it.target_launch) <= 7).length;
-  const un = T.filter(t => !t.owner && (!wl.team || t.g.team === wl.team));
-  $('tm-kpis').innerHTML = `
-    <div class="card"><div class="lbl">งานที่ถึงคิว</div><div class="kpi">${fmt(T.filter(t => !wl.team || t.g.team === wl.team).length)}</div><div class="delta">ขั้นที่ยังไม่เสร็จ</div></div>
-    <div class="card"><div class="lbl">ยังไม่มีคนรับ</div><div class="kpi ${un.length?'down':''}">${fmt(un.length)}</div><div class="delta">มอบหมายได้ด้านล่าง</div></div>
-    <div class="card"><div class="lbl">คนในทีม</div><div class="kpi">${fmt(mem.length)}</div><div class="delta">${mem.filter(m => !m.team).length ? `ยังไม่ตั้งทีม ${mem.filter(m => !m.team).length} คน` : 'ตั้งทีมครบ'}</div></div>
-    <div class="card"><div class="lbl">งานเฉลี่ยต่อคน</div><div class="kpi">${mem.length ? (mem.reduce((s,m) => s + by(m.id).length, 0) / mem.length).toFixed(1) : '-'}</div><div class="delta">มากสุด ${fmt(max === 1 && !mem.some(m => by(m.id).length) ? 0 : max)} งาน</div></div>`;
-  const card = m => { const L = by(m.id), n = L.length, op = wl.open === m.id;
-    const st2 = STAGES.map(g => [g, L.filter(t => t.g === g).length]).filter(([,c]) => c);
-    return `<section class="card wcard ${op?'open':''}"><button type="button" class="whd" data-who="${esc(m.id)}" aria-expanded="${op}">
-      <span class="av2">${esc((m.name||'?').slice(0,1))}</span><div style="min-width:0;text-align:left"><b>${esc(m.name)}</b><div class="note">${esc(TEAMS[m.team] || 'ยังไม่ตั้งทีม')}</div></div>
-      <div class="wn"><b>${fmt(n)}</b><span class="note">งาน</span></div></button>
-      <div class="wbar"><i style="width:${(n/max*100).toFixed(0)}%;background:${n/max > .8 && n > 3 ? 'var(--bad)' : 'var(--accent)'}"></i></div>
-      <div class="wst">${st2.map(([g,c]) => `<span class="sc active" style="display:inline-flex">${esc(g.n)} ${c}</span>`).join('') || '<span class="note">ว่าง ไม่มีงานค้าง</span>'}${late(L) ? `<span class="due late">ใกล้/เลยกำหนด ${late(L)}</span>` : ''}</div>
-      ${op ? `<div class="wlist">${L.map(t => `<button class="lrow" type="button" data-item="${t.it.id}" data-stage="${t.g.k}"><div style="min-width:0"><div><b style="font-weight:600">${esc(pById(t.it.project_id).name)}</b> · ${itemLabel(t.it)}</div><div class="note">${esc(t.g.n)}: ${esc(t.x.t)}</div></div><span class="w">${dueHtml(t.it.target_launch)}</span></button>`).join('') || '<div class="empty">ไม่มีงาน</div>'}</div>` : ''}</section>`; };
-  mem.sort((a,b) => by(b.id).length - by(a.id).length);
-  $('tm-cards').innerHTML = mem.map(card).join('') || `<div class="card empty">ยังไม่มีคนใน${wl.team ? 'ทีม ' + esc(TEAMS[wl.team]) : 'ระบบ'} · ตั้งทีมด้วย <code>update team_members set team = '...' where name = '...';</code></div>`;
-  const canAssign = t => canField(fieldOf(OWNER[t.g.k]));
-  $('tm-un').innerHTML = un.length ? un.sort((a,b) => (a.it.target_launch||'9999').localeCompare(b.it.target_launch||'9999')).map(t => { const ok = canAssign(t), cand = d.members.filter(m => m.team === t.g.team);
-    return `<div class="unrow"><div style="min-width:0"><button type="button" class="linklike" data-item="${t.it.id}" data-stage="${t.g.k}">${esc(pById(t.it.project_id).name)} · ${itemLabel(t.it)}</button><div class="note">${esc(t.g.n)}: ${esc(t.x.t)}</div></div>
-      <div>${dueHtml(t.it.target_launch)}</div>
-      <div>${ok ? `<select class="sel" data-assign="${t.it.id}" data-f="${OWNER[t.g.k]}" aria-label="มอบหมายให้"><option value="">มอบหมายให้…</option>${(cand.length ? cand : d.members).map(m => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('')}</select>` : '<span class="note">รอทีมมอบหมาย</span>'}</div></div>`; }).join('')
-    : '<div class="empty">ทุกงานมีคนรับแล้ว</div>';
-  $('tm-un').querySelectorAll('[data-assign]').forEach(s => s.onchange = async () => { if (!s.value) return; const it = d.items.find(x => x.id === +s.dataset.assign), k = s.dataset.f;
-    const old = it[k]; it[k] = s.value; renderTeam();
-    try { await API.projUpdate(it.id, { [k]: s.value }); toast(`มอบหมาย ${it.item_name} ให้ ${memName(s.value)}`); loadProjects(true); } catch(e){ it[k] = old; renderTeam(); toast('มอบหมายไม่สำเร็จ: ' + (e.message || e)); } });
-}
-$('tm-tabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; wl.team = b.dataset.k; renderTeam(); };
-document.addEventListener('click', e => { const b = e.target.closest('[data-who]'); if (!b) return; wl.open = wl.open === b.dataset.who ? null : b.dataset.who; renderTeam(); });
-
 // ---------- หลังบ้าน Admin ----------
 const adm = { data:null, from:addDays(today, -30), to:today, actor:'', tbl:'', q:'', open:new Set() };
 const TBL = { team_members:'สมาชิก', products:'สินค้า', sku_costs:'ทุนสินค้า', projects:'Project', project_items:'รายการ Project', project_fields:'ตั้งค่าช่อง',
@@ -1983,6 +1974,7 @@ const avatar = (img, name) => img ? `<img class="av3" src="${esc(img)}" alt="" o
 async function loadMembers(){
   if (!st.isAdmin) { $('mb-body').innerHTML = '<div class="card empty">หน้านี้เปิดได้เฉพาะ admin</div>'; return; }
   if (!mb.data) $('mb-list').innerHTML = '<div style="padding:16px 20px"><div class="sk" style="height:160px"></div></div>';
+  loadHooks();
   try { mb.data = await API.members(); $('mb-body').innerHTML = ''; renderMembers(); updateReqBadge(); }
   catch(e){ $('mb-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message||e)}</div></div></div>`; }
 }
@@ -2040,6 +2032,264 @@ $('mb-add').onclick = () => openModal('เพิ่มสมาชิกด้�
   <div class="field"><label class="lbl" for="na-role">สิทธิ์</label><select class="sel" id="na-role">${roleOpts('member')}</select></div></div>`,
   async () => { await API.memberSave({ id: $('na-id').value.trim(), name: $('na-name').value, team: $('na-team').value, role: $('na-role').value, active: true }); });
 
+// ===== รอบ 6: Project แบบย่อ · Workload บอร์ด · Marketing & PR · Discord =====
+const teamLabel = t => String(t || '').split(',').filter(Boolean).map(x => TEAMS[x] || x).join(' / ');
+
+// ---------- Project: ย่อเป็นภาพรวม กดแล้วกางรายการ ----------
+proj.openSet = new Set();
+function projSummary(items){
+  const n = items.length || 1;
+  const stg = STAGES.map(g => ({ g, done: items.filter(i => isDoneS(stageOf(i, g.k))).length }));
+  const cur = {}; for (const i of items) { const c = curStage(i); if (c && itemOpen(i)) cur[c.k] = (cur[c.k] || 0) + 1; }
+  const top = Object.entries(cur).sort((a,b) => b[1] - a[1])[0];
+  const pct = Math.round(items.reduce((s,i) => s + STAGES.filter(g => isDoneS(stageOf(i, g.k))).length, 0) / (n * STAGES.length) * 100);
+  return { stg, top: top ? STAGES.find(g => g.k === top[0]) : null, topN: top ? top[1] : 0, pct };
+}
+function renderProjects(){
+  const d = proj.data, me = d.me, canP = me.can_edit || me.team === 'project';
+  $('pj-add').hidden = !canP;
+  $('pj-tabs').innerHTML = segHtml(PTABS, proj.tab, 'data-k');
+  const types = [...new Set(d.projects.map(p => p.ptype).filter(Boolean))];
+  $('pj-type').innerHTML = '<option value="">ทุกประเภท</option>' + types.map(t => `<option ${proj.type===t?'selected':''}>${esc(t)}</option>`).join('');
+  const one = proj.id ? d.projects.find(p => p.id === proj.id) : null;
+  if (one) proj.openSet.add(one.id);
+  $('pj-crumb').hidden = !one; $('pj-filters').hidden = !!one;
+  $('pj-title').textContent = one ? one.name : 'Project';
+  if (one) $('pj-crumb').innerHTML = '<a href="#/projects">Project</a> <span>/</span>';
+  $('pj-sub').textContent = one ? `${one.ptype || '-'} · กดที่รายการเพื่อดูรายละเอียดหรืออัปเดต` : 'ภาพรวมแต่ละ Project อยู่ขั้นไหน · กดที่ Project เพื่อกางดูรายการสินค้า';
+  $('pj-edit').hidden = !(one && canP);
+  if (one && canP) { $('pj-edit').innerHTML = '<button class="btn btn-sm" type="button" id="pj-ren">✎ แก้ชื่อ / ประเภท Project</button>'; $('pj-ren').onclick = () => editProject(one); }
+  const q = proj.q.trim().toLowerCase();
+  const rows = (one ? [one] : d.projects).map(p => {
+    let items = d.items.filter(i => i.project_id === p.id);
+    const all = items.length, open = items.filter(itemOpen).length;
+    const pState = !all ? 'todo' : items.every(i => !itemOpen(i)) ? 'done' : items.every(i => i.status === 'Not Started') ? 'todo' : 'active';
+    if (!one) {
+      if (proj.tab !== 'all' && pState !== proj.tab) return null;
+      if (proj.type && p.ptype !== proj.type) return null;
+      if (q && !p.name.toLowerCase().includes(q)) { items = items.filter(i => (i.item_name + ' ' + (i.variant||'')).toLowerCase().includes(q)); if (!items.length) return null; }
+    }
+    const s = projSummary(items), dates = items.map(i => i.target_launch).filter(Boolean).sort(), next = dates.find(x => x >= today) || dates[dates.length-1];
+    const blk = items.filter(i => i.blocker).length, isOpen = proj.openSet.has(p.id) || !!q;
+    return `<section class="card pcard ${isOpen?'open':''}">
+      <button type="button" class="psum" data-ptoggle="${p.id}" aria-expanded="${isOpen}">
+        <span class="chev" aria-hidden="true">${isOpen ? '▾' : '▸'}</span>
+        <div class="pst" style="min-width:0"><div class="pname">${esc(p.name)} ${p.ptype ? `<span class="pill t-${esc(p.ptype)}">${esc(p.ptype)}</span>` : ''}</div>
+          <div class="note">${all} รายการ · ค้าง ${open}${s.top ? ` · ส่วนใหญ่อยู่ขั้น <b>${esc(s.top.n)}</b> (${s.topN})` : open ? '' : ' · เสร็จแล้ว'}${blk ? ` · <span class="due late">ติดปัญหา ${blk}</span>` : ''}</div></div>
+        <div class="pprog"><div class="pbar">${s.stg.map(x => `<div title="${esc(x.g.n)}: เสร็จ ${x.done}/${all}"><i style="width:${all ? Math.round(x.done/all*100) : 0}%"></i></div>`).join('')}</div>
+          <div class="pbl">${STAGES.map(g => `<span>${esc(g.n)}</span>`).join('')}</div></div>
+        <div class="ppct"><b>${s.pct}%</b><span class="note">ความคืบหน้า</span></div>
+        <div class="pdue">${dueHtml(next)}</div></button>
+      ${isOpen ? `<div class="pitems">${canP ? `<div style="padding:8px 20px 0;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm" type="button" data-addto="${p.id}">+ รายการ</button>${one ? '' : `<a class="btn btn-sm" href="#/projects/${p.id}">เปิดหน้า Project</a>`}</div>` : ''}
+        <div class="prow hd"><div>รายการ</div><div class="stg">${STAGES.map(g => `<div>${g.n}</div>`).join('')}</div><div>เปิดขาย</div><div></div></div>
+        ${items.map(i => `<button class="prow" type="button" data-item="${i.id}"><div style="min-width:0"><div class="nm">${itemLabel(i)}</div><div class="sub">${esc(i.status || '')}${i.designer ? ' · ' + esc(i.designer) : ''}</div></div>${stageChips(i)}${stageDots(i)}${dueHtml(i.target_launch)}${i.blocker ? `<span class="flag" title="${esc(i.blocker)}">!</span>` : '<span></span>'}</button>`).join('') || '<div class="empty">ยังไม่มีรายการ</div>'}</div>` : ''}
+    </section>`;
+  }).filter(Boolean);
+  $('pj-list').innerHTML = (!one && rows.length > 1 ? `<div class="pjtools"><button class="btn btn-sm" type="button" id="pj-expand">กางทั้งหมด</button><button class="btn btn-sm" type="button" id="pj-collapse">ย่อทั้งหมด</button></div>` : '') +
+    (rows.join('') || `<div class="card empty">${one ? 'ไม่พบ Project นี้' : 'ไม่มี Project ในมุมมองนี้'}</div>`);
+  if ($('pj-expand')) { $('pj-expand').onclick = () => { d.projects.forEach(p => proj.openSet.add(p.id)); renderProjects(); }; $('pj-collapse').onclick = () => { proj.openSet.clear(); renderProjects(); }; }
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-ptoggle]'); if (!b) return; const id = +b.dataset.ptoggle; proj.openSet.has(id) ? proj.openSet.delete(id) : proj.openSet.add(id); renderProjects(); });
+
+// ---------- ช่องรายชื่อ (ผู้ออกแบบ / โรงงาน) ----------
+function lookupOpts(f){
+  const kind = (f.options || [])[0], L = [...((proj.data.lookups || {})[kind] || [])];
+  if (kind === 'designer') for (const m of proj.data.members) if (m.team === 'design' && !L.includes(m.name)) L.push(m.name);
+  return L.sort((a,b) => a.localeCompare(b, 'th'));
+}
+function lookupInput(f, val){
+  const L = lookupOpts(f); if (val && !L.includes(val)) L.unshift(val);
+  return `<select class="sel" id="f-${f.field}" data-f="${f.field}" data-lookup="${esc((f.options||[])[0])}"><option value="">-</option>${L.map(o => `<option ${o===val?'selected':''}>${esc(o)}</option>`).join('')}<option value="__new">+ เพิ่มชื่อใหม่…</option></select>
+    <input class="inp" data-new-for="${f.field}" placeholder="พิมพ์ชื่อใหม่ แล้วกดบันทึก" hidden style="margin-top:6px">`;
+}
+document.addEventListener('change', e => { const s = e.target.closest('select[data-lookup]'); if (!s) return; const inp = document.querySelector(`[data-new-for="${s.dataset.f}"]`); if (inp) { inp.hidden = s.value !== '__new'; if (!inp.hidden) inp.focus(); } });
+
+// ---------- Supplier: สรุปตามโรงงาน ----------
+const fac = { open:null };
+function renderFactories(){
+  const d = proj.data, by = {};
+  for (const i of d.items) { const k = i.supplier_name || ''; (by[k] ??= []).push(i); }
+  const rows = Object.entries(by).filter(([k]) => k).sort((a,b) => b[1].length - a[1].length);
+  const none = (by[''] || []).length;
+  $('sp-fac').innerHTML = `<section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">สรุปตามโรงงาน</h2><span class="note">ผลิตกับโรงงานไหน กี่รายการ กี่ชิ้น ทุนประมาณเท่าไหร่ · กดเพื่อดูรายการ${none ? ` · ยังไม่ระบุโรงงาน ${none} รายการ` : ''}</span></div>
+    ${rows.length ? `<div class="facrow hd"><div>โรงงาน</div><div class="num">Project</div><div class="num">รายการ</div><div class="num">จำนวนผลิต</div><div class="num">ทุนประมาณ</div><div class="num">เสร็จแล้ว</div></div>` + rows.map(([k, L]) => {
+      const qty = L.reduce((s,i) => s + (+i.plan_qty || 0), 0), cost = L.reduce((s,i) => s + (+i.plan_qty || 0) * (+i.est_cost || 0), 0), done = L.filter(i => supStep(i) === 'เสร็จสิ้น').length, op = fac.open === k;
+      return `<button type="button" class="facrow" data-fac="${esc(k)}" aria-expanded="${op}"><div style="font-weight:600">${op?'▾':'▸'} ${esc(k)}</div><div class="num">${new Set(L.map(i => i.project_id)).size}</div><div class="num">${L.length}</div><div class="num">${qty ? fmt(qty) : '-'}</div><div class="num">${cost ? baht(cost) : '-'}</div><div class="num">${done}/${L.length}</div></button>
+        ${op ? `<div class="faclist">${L.map(i => `<button class="lrow" type="button" data-item="${i.id}" data-stage="production"><div style="min-width:0"><b style="font-weight:600">${esc(pById(i.project_id).name)}</b> · ${itemLabel(i)}<div class="note">${esc(supStep(i))}${i.plan_qty ? ' · ' + fmt(i.plan_qty) + ' ชิ้น' : ''}</div></div><span class="w">${i.supplier_due ? dueHtml(i.supplier_due) : ''}</span></button>`).join('')}</div>` : ''}`; }).join('')
+      : '<div class="empty">ยังไม่มีรายการที่ระบุโรงงาน · เลือกโรงงานได้ในรายละเอียดรายการ ขั้น Production</div>'}</section>`;
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-fac]'); if (!b) return; fac.open = fac.open === b.dataset.fac ? null : b.dataset.fac; renderFactories(); });
+
+// ---------- Marketing & PR: งาน + บอร์ดสถานะ + Notice ----------
+const MK_STATUS = ['วางแผน','กำลังเตรียม','เตรียมเสร็จ รอโพสต์','โพสต์แล้ว'];
+const MK_KINDS = ['PR','Marketing','Content','Ads','Event'];
+const MK_COL = { 'วางแผน':'#9AA1AB', 'กำลังเตรียม':'#EDA100', 'เตรียมเสร็จ รอโพสต์':'#4B32D9', 'โพสต์แล้ว':'#1BAF7A' };
+const mkb = { data:null, scope:'all', pid:'' };
+const mkName = id => (mkb.data?.members || proj.data?.members || []).find(m => m.id === id)?.name || '';
+async function loadMkBoard(){ try { mkb.data = await API.mkBoard(); } catch(e){ mkb.data = mkb.data || { tasks:[], members:[], projects:[], notice_projects:[], notice_collections:[], can_edit:false, me:null, today }; } }
+function renderMkBoard(){
+  const d = mkb.data; if (!d) return;
+  $('mk-addtask').hidden = !d.can_edit;
+  $('mk-scope').innerHTML = segHtml([['all','ทุกงาน'],['mine','งานของฉัน']], mkb.scope, 'data-k');
+  $('mk-proj').innerHTML = '<option value="">ทุก Project</option>' + d.projects.map(p => `<option value="${p.id}" ${String(p.id)===mkb.pid?'selected':''}>${esc(p.name)}</option>`).join('');
+  const T = d.tasks.filter(t => (mkb.scope !== 'mine' || t.assignee === d.me) && (!mkb.pid || String(t.project_id) === mkb.pid));
+  $('mk-board').innerHTML = `<div class="kb">${MK_STATUS.map(s => { const L = T.filter(t => t.status === s).sort((a,b) => a.due_date.localeCompare(b.due_date));
+    return `<section class="kcol" data-mkcol="${esc(s)}"><h3><span><i class="dot" style="background:${MK_COL[s]};display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px"></i>${esc(s)}</span> <span>${L.length}</span></h3><div class="kcards">${L.map(t => mkCard(t)).join('') || '<div class="kempty">ว่าง</div>'}</div></section>`; }).join('')}</div>`;
+  wireMkBoard();
+  const np = d.notice_projects, nc = d.notice_collections;
+  $('mk-notice').innerHTML = `<div class="ntc"><div><h3>Project ที่ยังไม่มีงาน PR / Marketing <span class="pill ${np.length?'p-out':'p-ok'}">${np.length}</span></h3>${np.length ? `<ul>${np.map(p => `<li><a href="#/projects/${p.id}">${esc(p.name)}</a>${p.launch ? ` · เปิดขาย ${dueHtml(p.launch)}` : ''} ${d.can_edit ? `<button class="btn btn-sm" type="button" data-mknew-p="${p.id}">+ วางงาน</button>` : ''}</li>`).join('')}</ul>` : '<p class="note">ทุก Project มีงานแล้ว</p>'}</div>
+    <div><h3>Collection ที่มีของในสต็อก แต่ยังไม่มีงาน/โปรใน 60 วัน <span class="pill ${nc.length?'p-low':'p-ok'}">${nc.length}</span></h3>${nc.length ? `<ul>${nc.slice(0, 15).map(c => `<li><b>${esc(c.name)}</b> <span class="note">${esc(c.group || '')} · เหลือ ${fmt(c.units)} ชิ้น</span> ${d.can_edit ? `<button class="btn btn-sm" type="button" data-mknew-c="${esc(c.name)}">+ วางงาน</button>` : ''}</li>`).join('')}</ul>${nc.length > 15 ? `<p class="note">และอีก ${nc.length - 15} Collection</p>` : ''}` : '<p class="note">ทุก Collection มีงานหรือโปรแล้ว</p>'}</div></div>`;
+}
+function mkCard(t){
+  return `<article class="kcard" ${mkb.data.can_edit || t.assignee === mkb.data.me ? 'draggable="true"' : ''} data-mk="${t.id}" tabindex="0" style="border-left:3px solid ${MK_COL[t.status]}">
+    <div class="kp">${esc([t.kind, (mkb.data.projects.find(p => p.id === t.project_id) || {}).name, t.collection].filter(Boolean).join(' · '))}</div>
+    <div class="kn">${esc(t.title)}</div>${t.detail ? `<div class="kf">${esc(t.detail)}</div>` : ''}
+    <div class="kd">${dueHtml(t.due_date)}<span class="note">${t.assignee ? '👤 ' + esc(mkName(t.assignee)) : '<span style="color:#8A5A00">ยังไม่มีคนรับ</span>'}</span></div></article>`;
+}
+function wireMkBoard(){
+  let dragId = null;
+  $('mk-board').querySelectorAll('.kcard[draggable="true"]').forEach(c => { c.ondragstart = e => { dragId = +c.dataset.mk; c.classList.add('drag'); e.dataTransfer.effectAllowed = 'move'; }; c.ondragend = () => c.classList.remove('drag'); });
+  $('mk-board').querySelectorAll('.kcol').forEach(col => { col.ondragover = e => { e.preventDefault(); col.classList.add('over'); }; col.ondragleave = () => col.classList.remove('over');
+    col.ondrop = async e => { e.preventDefault(); col.classList.remove('over'); const t = mkb.data.tasks.find(x => x.id === dragId); if (!t || t.status === col.dataset.mkcol) return;
+      const old = t.status; t.status = col.dataset.mkcol; renderMkBoard(); renderMarketing();
+      try { await API.mkPatch(t.id, { status: t.status }); toast(`${t.title} → ${t.status}`); } catch(err){ t.status = old; renderMkBoard(); renderMarketing(); toast('เปลี่ยนสถานะไม่สำเร็จ: ' + (err.message || err)); } }; });
+}
+function editMkTask(t, preset){
+  const d = mkb.data, can = d.can_edit || (t && t.assignee === d.me), v = t ? { ...t } : { title:'', due_date: preset?.date || today, kind:'PR', status:'วางแผน', project_id: preset?.project_id || null, collection: preset?.collection || '', channel:'', assignee:'', detail:'' };
+  const ro = can ? '' : 'disabled';
+  const mem = [...d.members].sort((a,b) => (b.team === 'pr') - (a.team === 'pr'));
+  openModal(t ? 'งาน Marketing & PR' : 'เพิ่มงาน Marketing & PR', `
+    <div class="field"><label class="lbl" for="mt-title">ชื่องาน</label><input class="inp" id="mt-title" value="${esc(v.title)}" ${ro} placeholder="เช่น โพสต์เปิดตัว RO Classic"></div>
+    <div class="fgrid"><div class="field"><label class="lbl" for="mt-date">วันที่ต้องเสร็จ / วันโพสต์</label><input class="inp" type="date" id="mt-date" value="${esc(v.due_date)}" ${ro}></div>
+      <div class="field"><label class="lbl" for="mt-status">สถานะ</label><select class="sel" id="mt-status" ${ro}>${MK_STATUS.map(s => `<option ${s===v.status?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="field"><label class="lbl" for="mt-kind">ประเภท</label><select class="sel" id="mt-kind" ${ro}>${MK_KINDS.map(s => `<option ${s===v.kind?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="field"><label class="lbl" for="mt-ass">มอบหมายให้</label><select class="sel" id="mt-ass" ${ro}><option value="">ยังไม่มีคนรับ</option>${mem.map(m => `<option value="${esc(m.id)}" ${m.id===v.assignee?'selected':''}>${esc(m.name)}${m.team ? ' · ' + esc(TEAMS[m.team] || m.team) : ''}</option>`).join('')}</select></div>
+      <div class="field"><label class="lbl" for="mt-proj">Project</label><select class="sel" id="mt-proj" ${ro}><option value="">-</option>${d.projects.map(p => `<option value="${p.id}" ${p.id===v.project_id?'selected':''}>${esc(p.name)}</option>`).join('')}</select></div>
+      <div class="field"><label class="lbl" for="mt-coll">Collection</label><input class="inp" id="mt-coll" list="coll-list" value="${esc(v.collection || '')}" ${ro}></div>
+      <div class="field wide"><label class="lbl" for="mt-ch">ช่องทาง</label><input class="inp" id="mt-ch" value="${esc(v.channel || '')}" ${ro} placeholder="เช่น FB, IG, TikTok, Shopee"></div></div>
+    <div class="field"><label class="lbl" for="mt-detail">รายละเอียดงาน</label><textarea class="inp" id="mt-detail" rows="4" ${ro} style="font:inherit">${esc(v.detail || '')}</textarea></div>
+    ${t ? `<div class="note">สร้างโดย ${esc(t.created_by || '-')}${t.updated_at ? ' · แก้ล่าสุด ' + ago(t.updated_at) : ''}</div>` : '<div class="note">คนที่ได้รับมอบหมายจะได้รับแจ้งเตือนใน Discord (ถ้าตั้งค่าไว้)</div>'}
+    ${t && d.can_edit ? '<div><button class="btn btn-sm" type="button" id="mt-del">ลบงานนี้</button></div>' : ''}`,
+    async () => { await API.mkSave({ id: t?.id, title: $('mt-title').value, due_date: $('mt-date').value, status: $('mt-status').value, kind: $('mt-kind').value, assignee: $('mt-ass').value, project_id: $('mt-proj').value, collection: $('mt-coll').value, channel: $('mt-ch').value, detail: $('mt-detail').value }); });
+  $('modal').querySelector('.box2').classList.add('wide');
+  if (!can) $('m-save').hidden = true;
+  fillCollections();
+  if ($('mt-del')) $('mt-del').onclick = async () => { const b = $('mt-del'); if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'กดอีกครั้งเพื่อยืนยันการลบ'; return; }
+    try { await API.mkDelete(t.id); closeModal(); toast('ลบงานแล้ว'); loadPromos(true); } catch(e){ $('m-err').textContent = e.message || String(e); $('m-err').hidden = false; } };
+}
+$('mk-scope').onclick = e => { const b = e.target.closest('button'); if (!b) return; mkb.scope = b.dataset.k; renderMkBoard(); };
+$('mk-proj').onchange = e => { mkb.pid = e.target.value; renderMkBoard(); };
+$('mk-addtask').onclick = () => editMkTask(null);
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-mk]'); if (c && mkb.data && !e.target.closest('a')) { const t = mkb.data.tasks.find(x => x.id === +c.dataset.mk); if (t) editMkTask(t); return; }
+  const np = e.target.closest('[data-mknew-p]'); if (np) { editMkTask(null, { project_id: +np.dataset.mknewP }); return; }
+  const nc = e.target.closest('[data-mknew-c]'); if (nc) { editMkTask(null, { collection: nc.dataset.mknewC }); return; }
+  const day = e.target.closest('.cd[data-day]'); if (day && !e.target.closest('button') && mkb.data?.can_edit) editMkTask(null, { date: day.dataset.day });
+});
+
+// ---------- Workload: บอร์ดลากมอบหมาย ----------
+const wl = { team:'' };
+function wlTasks(){
+  const T = openTasks().filter(t => t.cur || t.owner).map(t => ({ key:'i' + t.it.id + t.g.k, type:'item', it:t.it, g:t.g, x:t.x, owner:t.owner, team:t.g.team, due:t.it.target_launch, field:OWNER[t.g.k] }));
+  for (const m of (mkb.data?.tasks || [])) if (m.status !== 'โพสต์แล้ว') T.push({ key:'m' + m.id, type:'mk', mk:m, owner:m.assignee || null, team:'pr', due:m.due_date });
+  return T;
+}
+function renderTeam(){
+  if (!mkb.data && !mkb.loading) mkb.loading = loadMkBoard().then(() => { if (st.page === 'team') renderTeam(); });
+  const d = proj.data, mem = d.members.filter(m => !wl.team || m.team === wl.team);
+  $('tm-tabs').innerHTML = segHtml([['','ทุกทีม'], ...Object.entries(TEAMS).filter(([k]) => k !== 'management')], wl.team, 'data-k');
+  const T = wlTasks().filter(t => !wl.team || t.team === wl.team || mem.some(m => m.id === t.owner));
+  const by = id => T.filter(t => t.owner === id), un = T.filter(t => !t.owner);
+  const max = Math.max(1, ...mem.map(m => by(m.id).length));
+  const soon = L => L.filter(t => t.due && daysTo(t.due) <= 7).length;
+  $('tm-kpis').innerHTML = `
+    <div class="card"><div class="lbl">งานทั้งหมดในบอร์ด</div><div class="kpi">${fmt(T.length)}</div><div class="delta">รวมงาน PR / Marketing</div></div>
+    <div class="card"><div class="lbl">ยังไม่มีคนรับ</div><div class="kpi ${un.length?'down':''}">${fmt(un.length)}</div><div class="delta">ลากการ์ดไปที่ชื่อคนเพื่อมอบหมาย</div></div>
+    <div class="card"><div class="lbl">คนในทีม</div><div class="kpi">${fmt(mem.length)}</div><div class="delta">งานเฉลี่ย ${mem.length ? (mem.reduce((s,m) => s + by(m.id).length, 0) / mem.length).toFixed(1) : '-'} ต่อคน</div></div>
+    <div class="card"><div class="lbl">ใกล้/เลยกำหนด (7 วัน)</div><div class="kpi ${soon(T)?'down':''}">${fmt(soon(T))}</div><div class="delta">ทั้งบอร์ด</div></div>`;
+  const card = t => { const can = t.type === 'mk' ? (mkb.data?.can_edit || t.owner === mkb.data?.me) : canField(fieldOf(t.field));
+    return t.type === 'mk'
+      ? `<article class="kcard wk" ${can?'draggable="true"':''} data-wk="${t.key}" data-mk="${t.mk.id}" tabindex="0"><div class="kp">📣 ${esc(t.mk.kind || 'PR')} · ${esc(t.mk.status)}</div><div class="kn">${esc(t.mk.title)}</div><div class="kd">${dueHtml(t.due)}</div></article>`
+      : `<article class="kcard wk" ${can?'draggable="true"':''} data-wk="${t.key}" data-item="${t.it.id}" data-stage="${t.g.k}" tabindex="0"><div class="kp">${esc(pById(t.it.project_id).name)}</div><div class="kn">${itemLabel(t.it)}</div>
+          <div class="km"><span class="sc ${t.x.s}" style="display:inline-flex">${esc(t.g.n)}</span><span class="note" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.x.t)}</span></div><div class="kd">${dueHtml(t.due)}${t.it.blocker ? '<span class="flag" title="ติดปัญหา">!</span>' : ''}</div></article>`; };
+  const col = (id, title, sub, L, warn) => `<section class="kcol wcol ${warn?'warn':''}" data-owner="${esc(id)}"><h3><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title}</span><span>${L.length}</span></h3>
+      ${sub ? `<div class="wsub">${sub}</div>` : ''}<div class="kcards">${L.sort((a,b) => (a.due||'9999').localeCompare(b.due||'9999')).map(card).join('') || '<div class="kempty">ว่าง · ลากงานมาวางได้</div>'}</div></section>`;
+  $('tm-board').innerHTML = `<div class="kb wkb">${col('', '📥 ยังไม่มีคนรับ', 'งานที่ถึงคิวแล้ว', un, false)}${mem.sort((a,b) => by(b.id).length - by(a.id).length).map(m => { const L = by(m.id), n = L.length;
+    const st2 = STAGES.map(g => [g.n, L.filter(t => t.g === g).length]).concat([['PR', L.filter(t => t.type === 'mk').length]]).filter(([,c]) => c);
+    return col(m.id, `${esc(m.name)} <small class="note">${esc(TEAMS[m.team] || 'ไม่มีทีม')}</small>`, `<div class="wbar"><i style="width:${(n/max*100).toFixed(0)}%;background:${n/max > .8 && n > 3 ? 'var(--bad)' : 'var(--accent)'}"></i></div>${st2.map(([k,c]) => `<span class="pill p-idle">${esc(k)} ${c}</span>`).join(' ')}${soon(L) ? ` <span class="due late">ด่วน ${soon(L)}</span>` : ''}`, L, n/max > .8 && n > 3); }).join('')}</div>`;
+  let drag = null;
+  $('tm-board').querySelectorAll('.kcard[draggable="true"]').forEach(c => { c.ondragstart = e => { drag = c.dataset.wk; c.classList.add('drag'); e.dataTransfer.effectAllowed = 'move'; }; c.ondragend = () => c.classList.remove('drag'); });
+  $('tm-board').querySelectorAll('.wcol').forEach(cl => { cl.ondragover = e => { e.preventDefault(); cl.classList.add('over'); }; cl.ondragleave = () => cl.classList.remove('over');
+    cl.ondrop = async e => { e.preventDefault(); cl.classList.remove('over'); const t = T.find(x => x.key === drag); const to = cl.dataset.owner || null; if (!t || (t.owner || null) === to) return;
+      const who = to ? (d.members.find(m => m.id === to)?.name || '') : 'ยังไม่มีคนรับ';
+      try {
+        if (t.type === 'mk') { t.mk.assignee = to; renderTeam(); await API.mkPatch(t.mk.id, to ? { assignee: to } : { unassign: true }); }
+        else { t.it[t.field] = to; renderTeam(); await API.projUpdate(t.it.id, { [t.field]: to || '' }); }
+        toast(`มอบหมาย ${t.type === 'mk' ? t.mk.title : t.it.item_name} → ${who}`); loadProjects(true);
+      } catch(err){ toast('มอบหมายไม่สำเร็จ: ' + (err.message || err)); loadProjects(true); } }; });
+}
+$('tm-tabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; wl.team = b.dataset.k; renderTeam(); };
+
+// ---------- แจ้งเตือน Discord (ในหน้าจัดการสมาชิก) ----------
+async function loadHooks(){
+  try { const h = await API.hooks(); const rows = [['all','แชนแนลรวม (สำรอง)'], ...Object.entries(TEAMS)];
+    $('mb-discord').innerHTML = `<div class="card-hd" style="padding:16px 20px"><h2 class="sec">แจ้งเตือน Discord</h2><span class="note">Discord → ตั้งค่าแชนแนล → Integrations → Webhooks → New Webhook → Copy Webhook URL แล้ววางในช่องของทีม</span></div>
+      ${rows.map(([k, n]) => `<div class="hookrow"><div><b>${esc(n)}</b><div class="note">${h.hooks[k] ? '✅ ตั้งแล้ว · ' + esc(h.hooks[k].masked) : k === 'all' ? 'ใช้ส่งแทนทีมที่ยังไม่ได้ตั้ง' : 'ยังไม่ได้ตั้ง (จะส่งเข้าแชนแนลรวมแทน ถ้ามี)'}</div></div>
+        <input class="inp" data-hook="${k}" placeholder="https://discord.com/api/webhooks/…" aria-label="Webhook ${esc(n)}"><div class="mra"><button class="btn btn-sm" type="button" data-hooksave="${k}">บันทึก</button>${h.hooks[k] || (k !== 'all' && h.hooks.all) ? `<button class="btn btn-sm" type="button" data-hooktest="${k}">ส่งทดสอบ</button>` : ''}${h.hooks[k] ? `<button class="btn btn-sm" type="button" data-hookdel="${k}">ลบ</button>` : ''}</div></div>`).join('')}
+      <div class="hookrow"><div><b>ลิงก์เว็บ Dashboard</b><div class="note">ใช้แนบท้ายข้อความแจ้งเตือน</div></div><input class="inp" id="hook-site" value="${esc(h.site_url || '')}" aria-label="ลิงก์เว็บ"><div class="mra"><button class="btn btn-sm" type="button" id="hook-site-save">บันทึก</button></div></div>
+      <p class="note" style="padding:0 20px 16px;margin:0">ระบบแจ้งเมื่อ: มอบหมายงานให้คน (แท็กชื่อใน Discord) · Design ผ่าน → แจ้ง Production · รูป Final พร้อม → แจ้ง PR · ผลิตเสร็จ → แจ้ง E-Commerce · มีคนแจ้งติดปัญหา → แจ้ง Project · มีงาน PR ใหม่ → แจ้ง PR</p>`;
+  } catch(e){ $('mb-discord').innerHTML = `<div class="empty">โหลดการตั้งค่า Discord ไม่สำเร็จ: ${esc(e.message||e)}</div>`; }
+}
+document.addEventListener('click', async e => {
+  const s = e.target.closest('[data-hooksave]'), t = e.target.closest('[data-hooktest]'), dl = e.target.closest('[data-hookdel]');
+  try {
+    if (s) { const v = document.querySelector(`[data-hook="${s.dataset.hooksave}"]`).value.trim(); if (!v) { toast('วางลิงก์ Webhook ก่อน'); return; } await API.hookSave(s.dataset.hooksave, v); toast('บันทึก Webhook แล้ว'); loadHooks(); }
+    else if (t) { await API.hookTest(t.dataset.hooktest); toast('ส่งข้อความทดสอบแล้ว เช็คในแชนแนล Discord'); }
+    else if (dl) { if (!dl.dataset.sure) { dl.dataset.sure = 1; dl.textContent = 'ยืนยันลบ'; return; } await API.hookSave(dl.dataset.hookdel, ''); toast('ลบ Webhook แล้ว'); loadHooks(); }
+    else if (e.target.id === 'hook-site-save') { await API.settingSave('site_url', $('hook-site').value); toast('บันทึกแล้ว'); }
+  } catch(err){ toast((err.message || String(err)).replace(/^.*no_permission:\s*/, '')); }
+});
+
+// ===== รอบ 7: Production — ไซซ์ / ประวัติตัวอย่าง =====
+const SIZE_ORDER = ['XXS','XS','S','M','L','XL','2XL','XXL','3XL','4XL','5XL','6XL','FREE','FREE SIZE'];
+const sizeRank = s => { const i = SIZE_ORDER.indexOf(String(s).toUpperCase()); return i < 0 ? 99 : i; };
+const sizeList = o => Object.entries(o || {}).sort((a,b) => sizeRank(a[0]) - sizeRank(b[0]) || a[0].localeCompare(b[0]));
+const sizeKey = o => JSON.stringify(sizeList(o).map(([k,v]) => [k, Number(v)]));
+const sizeText = o => sizeList(o).map(([k,v]) => `${k} ${fmt(v)}`).join(' · ');
+function sizesInput(f, val, ok){
+  const L = sizeList(val);
+  if (!ok) return `<div class="ro">${L.length ? esc(sizeText(val)) + ` <span class="muted">(รวม ${fmt(L.reduce((s,[,v]) => s + +v, 0))})</span>` : '<span class="muted">ยังไม่แยกไซซ์</span>'}</div>`;
+  return `<div class="szbox" data-szbox="${f.field}"><input type="hidden" data-f="${f.field}" data-kind="sizes" value="${esc(JSON.stringify(Object.fromEntries(L)))}">
+    <div class="szrows">${L.map(([k,v]) => szRow(k, v)).join('')}</div>
+    <div class="szact"><button class="btn btn-sm" type="button" data-szadd>+ เพิ่ม Size</button><button class="btn btn-sm" type="button" data-szpreset="S,M,L,XL">S–XL</button><button class="btn btn-sm" type="button" data-szpreset="S,M,L,XL,2XL,3XL">S–3XL</button><button class="btn btn-sm" type="button" data-szpreset="Free Size">Free Size</button><span class="note" data-sztotal></span></div></div>`;
+}
+const szRow = (k = '', v = '') => `<div class="szrow"><input class="inp" data-szk value="${esc(k)}" placeholder="ไซซ์ เช่น M" aria-label="ไซซ์"><input class="inp" data-szv inputmode="numeric" value="${esc(v)}" placeholder="จำนวน" aria-label="จำนวน"><button class="btn btn-sm" type="button" data-szdel aria-label="ลบไซซ์">✕</button></div>`;
+function szSync(box){
+  const o = {}; let tot = 0, bad = false;
+  box.querySelectorAll('.szrow').forEach(r => { const k = r.querySelector('[data-szk]').value.trim(), v = r.querySelector('[data-szv]').value.replace(/,/g,'').trim(); if (!k && !v) return; if (!k || !/^\d+$/.test(v)) { bad = true; return; } o[k] = +v; tot += +v; });
+  box.querySelector('[data-kind="sizes"]').value = JSON.stringify(o);
+  box.querySelector('[data-sztotal]').textContent = Object.keys(o).length ? `รวม ${fmt(tot)} ชิ้น${bad ? ' · มีบางแถวไม่ครบ' : ''}` : '';
+  const pq = $('f-plan_qty'); if (pq) { pq.readOnly = !!Object.keys(o).length; if (pq.readOnly) pq.value = tot; }
+}
+document.addEventListener('click', e => {
+  const box = e.target.closest('[data-szbox]'); if (!box) return;
+  if (e.target.closest('[data-szadd]')) { box.querySelector('.szrows').insertAdjacentHTML('beforeend', szRow()); box.querySelector('.szrow:last-child [data-szk]').focus(); }
+  else if (e.target.closest('[data-szdel]')) e.target.closest('.szrow').remove();
+  else if (e.target.closest('[data-szpreset]')) { const have = [...box.querySelectorAll('[data-szk]')].map(x => x.value.trim().toUpperCase());
+    for (const s of e.target.closest('[data-szpreset]').dataset.szpreset.split(',')) if (!have.includes(s.toUpperCase())) box.querySelector('.szrows').insertAdjacentHTML('beforeend', szRow(s, '')); }
+  else return;
+  szSync(box);
+});
+document.addEventListener('input', e => { const box = e.target.closest('[data-szbox]'); if (box) szSync(box); });
+function sampleTimeline(it){
+  const L = (proj.data.samples || []).filter(s => s.item_id === it.id), can = canField(fieldOf('sample_status'));
+  return `<div class="smpl"><div class="lbl">ประวัติตัวอย่าง</div>${L.length ? `<ol>${L.map(s => `<li><span class="sdot ${s.status === 'Sample Approved' ? 'ok' : s.status === 'Fixing Sample' ? 'fix' : ''}"></span><b>${esc(s.status)}</b> · ${esc(thDate(s.date))}${s.by ? ` <span class="note">· ${esc(s.by)}</span>` : ''}${s.note ? ` <span class="note">(${esc(s.note)})</span>` : ''}${can ? ` <button type="button" class="linklike sdel" data-sdel="${s.id}" aria-label="ลบรายการนี้">✕</button>` : ''}</li>`).join('')}</ol>`
+    : '<p class="note" style="margin:4px 0 0">ยังไม่มี · เลือกสถานะตัวอย่างด้านบน ระบบจะบันทึกพร้อมวันที่ให้ (ไม่กรอกวันที่ = วันนี้)</p>'}</div>`;
+}
+document.addEventListener('click', async e => { const b = e.target.closest('[data-sdel]'); if (!b) return;
+  if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'ยืนยันลบ'; return; }
+  try { await API.sampleDelete(+b.dataset.sdel); proj.data.samples = proj.data.samples.filter(s => s.id !== +b.dataset.sdel); b.closest('li').remove(); toast('ลบแล้ว'); } catch(err){ toast(err.message || String(err)); } });
+
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
 function openModal(title, html, onSave){ $('modal').querySelector('.box2').classList.remove('wide'); $('m-save').hidden = false; $('m-save').textContent = 'บันทึก'; $('m-title').textContent = title; $('m-body').innerHTML = html; $('m-err').hidden = true; modalSave = onSave; $('modal').hidden = false; setTimeout(()=>$('m-body').querySelector('input')?.focus(), 30); }
@@ -2048,7 +2298,7 @@ $('m-cancel').onclick = closeModal;
 $('modal').onclick = e => { if (e.target.id==='modal') closeModal(); };
 addEventListener('keydown', e => { if (e.key==='Escape' && !$('modal').hidden) closeModal(); });
 $('m-save').onclick = async () => { if (!modalSave) return; const b = $('m-save'); const lbl = b.textContent; b.disabled = true; b.textContent = 'กำลังบันทึก…';
-  try { await modalSave(); closeModal(); cache.clear(); inv.data = null; toast('บันทึกแล้ว'); if (st.page==='stock') loadStock(true); else if (st.page==='oem') loadOem(); else if (PJPAGES.includes(st.page)) loadProjects(true); else if (st.page==='marketing') loadPromos(true); else if (st.page==='recovery') { mk.t = 0; loadRecovery(true); } else if (st.page==='members') loadMembers(); else load(); }
+  try { await modalSave(); closeModal(); cache.clear(); if (st.page==='team') loadMkBoard().then(() => { if (proj.data) renderTeam(); }); inv.data = null; toast('บันทึกแล้ว'); if (st.page==='stock') loadStock(true); else if (st.page==='oem') loadOem(); else if (PJPAGES.includes(st.page)) loadProjects(true); else if (st.page==='marketing') loadPromos(true); else if (st.page==='recovery') { mk.t = 0; loadRecovery(true); } else if (st.page==='members') loadMembers(); else load(); }
   catch(e){ const m = e.message||String(e); $('m-err').textContent = /no_permission:/.test(m) ? m.replace(/^.*no_permission:\s*/, 'ไม่มีสิทธิ์: ') : /no_permission/.test(m) ? 'บัญชีนี้ไม่มีสิทธิ์แก้ไข (ต้องเป็น admin หรือ editor)' : m; $('m-err').hidden = false; }
   finally { b.disabled = false; b.textContent = lbl; } };
 async function fillCollections(){ try { const [c, g] = await Promise.all([API.collections(), API.groups()]); $('coll-list').innerHTML = c.map(x=>`<option value="${esc(x)}">`).join(''); $('group-list').innerHTML = g.map(x=>`<option value="${esc(x)}">`).join(''); } catch(e){} }
