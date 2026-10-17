@@ -433,6 +433,16 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
   h1{font-size:24px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* รอบ 9 */
+.mrow{grid-template-columns:110px minmax(0,1fr) 150px 150px 28px}
+.dcell{display:flex;flex-direction:column;gap:1px;min-width:0;line-height:1.35}
+.dcell>.note{font-size:11.5px}
+.due.warn2{color:#8A4B00;font-weight:600;white-space:normal}
+.pre{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#5B2A86;background:#F1E9FA;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.rnh{margin:4px 0 0;font-size:14px;font-weight:600}
+@media (min-width:861px){.icrow2{grid-template-columns:minmax(0,1.6fr) minmax(90px,.9fr) 90px 140px auto}}
+@media (max-width:1100px){.mrow{grid-template-columns:96px minmax(0,1fr) 120px 130px 28px}}
+@media (max-width:860px){.mrow{grid-template-columns:minmax(0,1fr) auto}.mrow .dcell{text-align:right;align-items:flex-end}}
 </style>
 </head>
 <body>
@@ -1437,7 +1447,7 @@ const proj = { data:null, t:0, id:null, tab:'active', type:'', q:'', myTeam:null
 const PTABS = [['active','กำลังทำ'],['todo','ยังไม่เริ่ม'],['done','เสร็จแล้ว'],['all','ทั้งหมด']];
 
 // สถานะของแต่ละขั้น: done / active / todo / skip
-function stageOf(it, k){
+function stageOf0(it, k){
   if (it.status === 'Completed') return { s:'done', t:'เสร็จ' };
   const has = (...f) => f.some(x => it[x]);
   if (k === 'design') {
@@ -1463,7 +1473,7 @@ function stageOf(it, k){
   return { s:'todo', t:'ยังไม่เริ่ม' };
 }
 const isDoneS = x => x.s === 'done' || x.s === 'skip';
-const itemDone = it => it.status === 'Completed' || STAGES.every(g => isDoneS(stageOf(it, g.k)));
+const itemDone = it => it.status === 'Completed' || (STAGES.every(g => isDoneS(stageOf(it, g.k))) && !preUnfinished(it));
 const itemOpen = it => !['Completed','On Hold'].includes(it.status) && !itemDone(it);
 const daysTo = d => d ? Math.round((new Date(d+'T00:00:00') - new Date(today+'T00:00:00')) / 864e5) : null;
 function dueHtml(d){
@@ -1474,7 +1484,7 @@ function dueHtml(d){
   if (n <= 7) return `<span class="due soon" title="${esc(thDate(d))}">อีก ${n} วัน</span>`;
   return `<span class="due" title="${esc(thDate(d))}">${lbl}</span>`;
 }
-const itemLabel = it => esc(it.item_name) + (it.variant ? ` <span class="muted">· ${esc(it.variant)}</span>` : '');
+const itemLabel = it => esc(it.item_name) + (it.variant ? ` <span class="muted">· ${esc(it.variant)}</span>` : '') + (it.sale_type === 'Pre-order' ? '<span class="pre" title="สินค้าพรีออเดอร์">PRE</span>' : '');
 const pById = id => proj.data.projects.find(p => p.id === id) || { name:'-' };
 const fieldOf = k => proj.data.fields.find(f => f.field === k);
 const canField = f => !!f && (proj.data.me.can_edit || f.team === '*' || String(f.team || '').split(',').includes(proj.data.me.team || '-'));
@@ -1649,6 +1659,7 @@ function editItem(it, focus){
     });
   $('modal').querySelector('.box2').classList.add('wide');
   document.querySelectorAll('[data-szbox]').forEach(szSync);
+  preFieldsToggle(it);
   if ($('f-sample_status')) $('f-sample_status').addEventListener('change', () => { const sd = $('f-sample_date'); if (sd && sd.value === String(it.sample_date || '')) sd.value = today; });
   if (!d.fields.some(canField)) $('m-save').hidden = true;
   if ($('it-hide')) $('it-hide').onclick = async () => { if (!confirm2()) return; try { await API.projHide(it.id, true); closeModal(); toast('ซ่อนรายการแล้ว'); loadProjects(true); } catch(e){ $('m-err').textContent = e.message || String(e); $('m-err').hidden = false; } };
@@ -2234,7 +2245,7 @@ document.addEventListener('click', e => {
 // ---------- Workload: บอร์ดลากมอบหมาย ----------
 const wl = { team:'' };
 function wlTasks(){
-  const T = openTasks().filter(t => t.cur || t.owner).map(t => ({ key:'i' + t.it.id + t.g.k, type:'item', it:t.it, g:t.g, x:t.x, owner:t.owner, team:t.g.team, due:t.it.target_launch, field:OWNER[t.g.k] }));
+  const T = openTasks().filter(t => t.cur || t.owner).map(t => ({ key:'i' + t.it.id + t.g.k, type:'item', it:t.it, g:t.g, x:t.x, owner:t.owner, team:t.g.team, due:stageDue(t.it, t.g.k).date || t.it.target_launch, field:OWNER[t.g.k] }));
   for (const m of (mkb.data?.tasks || [])) if (m.status !== 'โพสต์แล้ว') T.push({ key:'m' + m.id, type:'mk', mk:m, owner:m.assignee || null, team:'pr', due:m.due_date });
   return T;
 }
@@ -2335,8 +2346,8 @@ document.addEventListener('click', async e => { const b = e.target.closest('[dat
   try { await API.sampleDelete(+b.dataset.sdel); proj.data.samples = proj.data.samples.filter(s => s.id !== +b.dataset.sdel); b.closest('li').remove(); toast('ลบแล้ว'); } catch(err){ toast(err.message || String(err)); } });
 
 // ===== รอบ 8: รอบผลิต · Inventory (Project) · คลังงานที่เสร็จแล้ว =====
-const RUN_ST = ['สั่งผลิตแล้ว','กำลังผลิต','รับของแล้ว','ยกเลิก'];
-const RUN_PILL = { 'สั่งผลิตแล้ว':'p-low', 'กำลังผลิต':'p-low', 'รับของแล้ว':'p-ok', 'ยกเลิก':'p-idle' };
+const RUN_ST = ['สั่งผลิตแล้ว','กำลังผลิต','รับของแล้ว','ส่งลูกค้าแล้ว','ยกเลิก'];
+const RUN_PILL = { 'สั่งผลิตแล้ว':'p-low', 'กำลังผลิต':'p-low', 'รับของแล้ว':'p-ok', 'ส่งลูกค้าแล้ว':'p-ok', 'ยกเลิก':'p-idle' };
 const runsOf = id => (proj.data.runs || []).filter(r => r.item_id === id).sort((a,b) => a.run_no - b.run_no);
 const canRun = () => proj.data.me.can_edit || ['production','project'].includes(proj.data.me.team);
 const runOpen = r => r.status === 'สั่งผลิตแล้ว' || r.status === 'กำลังผลิต';
@@ -2453,6 +2464,241 @@ $('ar-csv').onclick = () => { if (!ar.data) return; const d = ar.data;
     ...d.runs.map(x => ['รอบผลิต', x.project, x.item, x.variant, `รอบ ${x.run_no} · ${x.factory || ''} · ${x.qty}`, x.received_date]), ...d.tasks.map(x => ['งาน PR', x.project, x.title, '', [x.kind, x.channel].filter(Boolean).join(' / '), x.date])], `cuteboy-archive_${today}.csv`); };
 document.addEventListener('click', async e => { const b = e.target.closest('[data-reopen]'); if (!b) return;
   try { await API.itemsDone([+b.dataset.reopen], false); toast('เปิดงานอีกครั้งแล้ว'); proj.data = null; loadArchive(); } catch(err){ toast(err.message || String(err)); } });
+
+// ===== รอบ 9: ตัวนับวันตามขั้นงาน · Pre-order · ตัดรอบพรี =====
+const SLA = k => +(proj.data?.settings?.['sla_' + k + '_days'] ?? 3) || 3;
+const isPre = it => it.sale_type === 'Pre-order';
+const preOpenSt = it => isPre(it) && it.preorder_status !== 'ปิดรับแล้ว';
+const runsAll = id => (proj.data.runs || []).filter(r => r.item_id === id && r.status !== 'ยกเลิก').sort((a,b) => a.run_no - b.run_no);
+const runWaitShip = r => r.status === 'รับของแล้ว';
+const canShip = () => canRun() || proj.data.me.team === 'ecom';
+const preBadge = it => isPre(it) ? '<span class="pre" title="สินค้าพรีออเดอร์">PRE</span>' : '';
+// พรียังไม่จบ = ยังเปิดรับ หรือยังมีรอบที่ไม่ได้ส่งลูกค้า
+function preUnfinished(it){ if (!isPre(it)) return false; const R = runsAll(it.id); return preOpenSt(it) || !R.length || R.some(r => r.status !== 'ส่งลูกค้าแล้ว'); }
+const cutRange = r => r.cutoff_from || r.cutoff_to ? `${r.cutoff_from ? shortDate(r.cutoff_from) : '…'}–${r.cutoff_to ? shortDate(r.cutoff_to) : '…'}` : '';
+const shipLate = r => !!(r.ship_promise && r.pickup_date && runOpen(r) && addDays(r.pickup_date, SLA('pack')) > r.ship_promise);
+
+// สถานะขั้นงาน: สินค้าพรีดูจากรอบผลิต/การส่งลูกค้า
+function stageOf(it, k){
+  const x = stageOf0(it, k);
+  if (it.status === 'Completed' || !isPre(it) || !proj.data) return x;
+  const R = runsAll(it.id);
+  if (k === 'production') {
+    const op = R.filter(runOpen);
+    if (op.length) return { s:'active', t:'ผลิตรอบ ' + op.map(r => r.run_no).join(', ') };
+    if (R.length) return { s:'done', t: preOpenSt(it) ? 'รอตัดรอบถัดไป' : 'ผลิตครบ' };
+    return x;
+  }
+  if (k === 'ecom') {
+    const w = R.filter(runWaitShip);
+    if (w.length) return { s:'active', t:'รอส่งลูกค้า รอบ ' + w.map(r => r.run_no).join(', ') };
+    if (it.listing_status === 'Synced & Live') return { s:'done', t: preOpenSt(it) ? 'เปิดพรีอยู่' : 'ส่งครบ' };
+  }
+  return x;
+}
+
+// กำหนดของขั้นงาน (แทนการนับจากวันเปิดขายอย่างเดียว)
+function stageDue(it, k){
+  const pre = isPre(it), R = runsAll(it.id), L = it.target_launch;
+  if (k === 'production') {
+    const op = R.filter(runOpen).sort((a,b) => (a.pickup_date || '9999').localeCompare(b.pickup_date || '9999'));
+    if (op.length) { const r = op.find(shipLate) || op[0]; return { date: r.pickup_date, lbl: `นัดรับของ รอบ ${r.run_no}`, warn: shipLate(r) ? 'ส่งลูกค้าไม่ทัน' : null }; }
+    const ss = it.sample_status;
+    if (ss === 'Sample Approved') { if (!R.length) return { date: it.sample_date ? addDays(it.sample_date, SLA('order')) : null, lbl: pre ? 'ตัดรอบ / สั่งผลิตภายใน' : 'สั่งผลิตภายใน' }; }
+    else if (ss === 'Sample Received') return { date: it.sample_date ? addDays(it.sample_date, SLA('review')) : null, lbl: 'ตรวจตัวอย่างภายใน' };
+    else if (it.sample_due) return { date: it.sample_due, lbl: ss === 'Fixing Sample' ? 'นัดรับตัวอย่าง (แก้)' : 'นัดรับตัวอย่าง' };
+    if (pre && it.ship_promise) return { date: it.ship_promise, lbl: 'สัญญาส่งลูกค้า' };
+  }
+  if (k === 'ecom' && pre) {
+    const w = R.filter(runWaitShip).sort((a,b) => (a.ship_promise || '9999').localeCompare(b.ship_promise || '9999'));
+    if (w.length) return { date: w[0].ship_promise, lbl: `ส่งลูกค้า รอบ ${w[0].run_no}` };
+  }
+  return { date: L, lbl: pre ? 'เปิดพรี' : 'เปิดขาย', launch: true };
+}
+function dueCell(it, k){
+  const d = stageDue(it, k), L = it.target_launch, pre = isPre(it);
+  let sub = '';
+  if (d.warn) sub = `<span class="due late">⚠ ${esc(d.warn)}</span>`;
+  else if (!pre && L && daysTo(L) < 0) sub = `<span class="due warn2" title="วันเปิดขายผ่านไปแล้วแต่งานยังไม่เสร็จ">ควรเลื่อนวันเปิดขาย</span>`;
+  else if (!d.launch && L) sub = `<span class="note">${pre ? 'เปิดพรี' : 'เปิดขาย'} ${esc(shortDate(L))}</span>`;
+  return `<div class="dcell"><span class="note">${esc(d.lbl)}</span>${dueHtml(d.date)}${sub}</div>`;
+}
+
+// ----- งานของฉัน (นับตามขั้นงาน) -----
+function renderMe(){
+  const d = proj.data, team = proj.view ?? proj.myTeam ?? '';
+  $('me-team').innerHTML = `<option value="">ทุกทีม</option>` + Object.entries(TEAMS).filter(([k]) => k !== 'management').map(([k,n]) => `<option value="${k}" ${team===k?'selected':''}>${n}${k===proj.myTeam?' (ทีมฉัน)':''}</option>`).join('');
+  $('me-noteam').hidden = !!proj.myTeam;
+  if (!proj.myTeam) $('me-noteam').innerHTML = `<div class="infobox">บัญชีนี้ยังไม่ได้ตั้งทีม จึงแสดงงานของทุกทีม เลือกดูในมุมของแต่ละทีมได้ที่มุมขวาบน · แอดมินตั้งทีมให้ได้ที่หน้า "จัดการสมาชิก"</div>`;
+  const stages = team ? STAGES.filter(g => g.team === team) : STAGES;
+  const rows = [];
+  for (const it of d.items) {
+    if (!itemOpen(it)) continue;
+    const g = stages.find(g => !isDoneS(stageOf(it, g.k)));
+    if (!g || (!team && g !== curStage(it))) continue;
+    rows.push({ it, g, x: stageOf(it, g.k), due: stageDue(it, g.k) });
+  }
+  const meId = d.me.id; proj.scope ??= 'mine';
+  $('me-scope').innerHTML = segHtml([['mine','ของฉัน + ยังไม่มีคนรับ'],['all','ทั้งทีม']], proj.scope, 'data-k');
+  if (proj.scope === 'mine' && meId) for (let k = rows.length - 1; k >= 0; k--) { const o = rows[k].it[OWNER[rows[k].g.k]]; if (o && o !== meId) rows.splice(k, 1); }
+  rows.sort((a,b) => (b.due.warn ? 1 : 0) - (a.due.warn ? 1 : 0) || (a.due.date || '9999').localeCompare(b.due.date || '9999') || a.it.project_id - b.it.project_id || a.it.sort - b.it.sort);
+  $('me-sub').textContent = (team ? `ทีม ${TEAMS[team]} · รายการที่ขั้นของทีมยังไม่เสร็จ` : 'ทุกทีม · แต่ละรายการแสดงขั้นที่กำลังรออยู่') + ' · เรียงตามกำหนดของขั้นงาน';
+  const late = rows.filter(r => r.due.warn || (r.due.date && daysTo(r.due.date) <= 7)).length;
+  const blk = d.items.filter(i => i.blocker && itemOpen(i));
+  const last = d.log[0];
+  $('me-kpis').innerHTML = `
+    <div class="card"><div class="lbl">งานค้าง</div><div class="kpi">${fmt(rows.length)}</div><div class="delta">รายการ</div></div>
+    <div class="card"><div class="lbl">ถึงกำหนดใน 7 วัน / เลยกำหนด</div><div class="kpi ${late?'down':''}">${fmt(late)}</div><div class="delta">ควรทำก่อน</div></div>
+    <div class="card"><div class="lbl">ติดปัญหา (ทุกทีม)</div><div class="kpi ${blk.length?'down':''}">${fmt(blk.length)}</div><div class="delta">รายการ</div></div>
+    <div class="card"><div class="lbl">อัปเดตล่าสุด</div><div class="kpi" style="font-size:20px">${last ? esc(last.who || '-') : '-'}</div><div class="delta">${last ? ago(last.at) : 'ยังไม่มีการแก้ไข'}</div></div>`;
+  $('me-count').textContent = rows.length ? `${rows.length} รายการ` : '';
+  $('me-list').innerHTML = rows.length ? rows.map(({it, g, x}) => `<button class="mrow" type="button" data-item="${it.id}" data-stage="${g.k}">
+      <div class="ms"><span class="sc ${x.s}" style="display:inline-flex">${esc(g.n)}</span></div>
+      <div style="min-width:0"><div class="nm" style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${itemLabel(it)}</div><div class="sub" style="font-size:12px;color:var(--muted)">${esc(pById(it.project_id).name)}</div></div>
+      <div class="mstat note" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.t)}<br>${it[OWNER[g.k]] ? '👤 ' + esc(memName(it[OWNER[g.k]])) : '<span style="color:#8A5A00">ยังไม่มีคนรับ</span>'}</div>${dueCell(it, g.k)}${it.blocker ? `<span class="flag" title="${esc(it.blocker)}">!</span>` : '<span></span>'}</button>`).join('')
+    : '<div class="empty">ไม่มีงานค้างของทีมนี้ 🎉</div>';
+  $('me-issues').innerHTML = blk.length ? blk.map(it => `<button class="lrow" type="button" data-item="${it.id}" data-stage="issue"><span class="flag">!</span><div style="min-width:0"><div><b style="font-weight:600">${esc(pById(it.project_id).name)}</b> · ${itemLabel(it)}</div><div>${esc(it.blocker)}</div>${it.action_owner ? `<div class="note">ผู้รับผิดชอบ: ${esc(it.action_owner)}</div>` : ''}</div></button>`).join('')
+    : '<div class="empty">ไม่มีรายการที่ติดปัญหา</div>';
+  const fl = k => fieldOf(k)?.label || ({ created:'สร้างรายการ', hidden:'ซ่อนรายการ', restored:'กู้คืนรายการ', project:'แก้ Project', project_hidden:'ซ่อน Project' })[k] || k;
+  $('me-log').innerHTML = d.log.length ? d.log.slice(0, 12).map(l => { const it = d.items.find(i => i.id === l.item_id);
+      return `<${it ? `button class="lrow" type="button" data-item="${it.id}"` : 'div class="lrow"'}><div style="min-width:0"><div><b style="font-weight:600">${esc(l.who || '-')}</b> · ${esc(fl(l.field))}${it ? ` · ${itemLabel(it)}` : ''}</div>${l.new_value != null && l.field !== 'created' ? `<div class="note">${l.old_value ? esc(String(l.old_value).slice(0,60)) + ' → ' : ''}${esc(String(l.new_value).slice(0,80))}</div>` : ''}</div><span class="w">${ago(l.at)}</span></${it ? 'button' : 'div'}>`; }).join('')
+    : '<div class="empty">ยังไม่มีการแก้ไขในระบบ</div>';
+}
+
+// ----- ช่องพรีในรายละเอียดสินค้า: แสดงเฉพาะเมื่อเลือก Pre-order -----
+function preFieldsToggle(it){
+  const sel = $('f-sale_type'), ks = ['preorder_status','preorder_close','ship_promise'];
+  const upd = () => { const on = (sel ? sel.value : it.sale_type) === 'Pre-order';
+    ks.forEach(k => { const l = document.querySelector(`#m-body label[for="f-${k}"]`); if (l) l.closest('.field').style.display = on ? '' : 'none'; }); };
+  upd();
+  if (sel) sel.addEventListener('change', () => { const ps = $('f-preorder_status'); if (sel.value === 'Pre-order' && ps && !ps.value) ps.value = 'เปิดรับอยู่'; upd(); });
+}
+
+// ----- รอบผลิต / รอบตัดพรี -----
+function runsBlock(it){
+  const L = runsOf(it.id), ok = canRun(), ship = canShip(), passed = it.sample_status === 'Sample Approved', pre = isPre(it);
+  const R = L.filter(r => r.status !== 'ยกเลิก'), sumPre = R.reduce((s, r) => s + (+r.preorder_qty || 0), 0), shipped = R.filter(r => r.status === 'ส่งลูกค้าแล้ว').reduce((s, r) => s + (+r.preorder_qty || +r.qty || 0), 0);
+  return `<div class="smpl"><div class="lbl" style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap">${pre ? 'รอบตัดพรี / รอบผลิต' : 'รอบผลิต'} ${ok ? `<button class="btn btn-sm" type="button" data-runnew="${it.id}">${pre ? '✂️ ตัดรอบพรี' : '+ สั่งผลิตรอบใหม่'}</button>` : ''}</div>
+    ${pre ? `<p class="note" style="margin:4px 0 0">${preBadge(it)} ${esc(it.preorder_status || 'เปิดรับอยู่')} · ยอดพรีรวม ${fmt(sumPre)} ชิ้น · ส่งลูกค้าแล้ว ${fmt(shipped)} ชิ้น</p>` : ''}
+    ${!passed && ok ? '<p class="note" style="margin:4px 0 0;color:#8A5A00">ตัวอย่างยังไม่ผ่าน (Sample Approved) · สั่งผลิตได้ แต่ควรรอตัวอย่างผ่านก่อน</p>' : ''}
+    ${L.length ? `<div class="runs">${L.map(r => `<div class="runrow"><b>รอบ ${r.run_no}</b><span class="pill ${RUN_PILL[r.status] || 'p-idle'}">${esc(r.status)}</span>
+      ${r.preorder_qty || cutRange(r) ? `<span class="note">พรี ${esc(cutRange(r) || '-')}${r.preorder_qty ? ` · ยอดพรี ${fmt(r.preorder_qty)}` : ''}</span>` : ''}
+      <span>ผลิต ${fmt(r.qty)} ชิ้น${r.size_qty ? ` <span class="note">(${esc(sizeText(r.size_qty))})</span>` : ''}</span>
+      <span class="note">${esc(r.factory || 'ไม่ระบุโรงงาน')} · ส่งยอด ${r.order_date ? esc(shortDate(r.order_date)) : '-'} · ${['รับของแล้ว','ส่งลูกค้าแล้ว'].includes(r.status) ? 'รับแล้ว ' + (r.received_date ? esc(shortDate(r.received_date)) : '') + (r.received_qty ? ` (${fmt(r.received_qty)} ชิ้น)` : '') : 'นัดรับ ' + (r.pickup_date ? esc(shortDate(r.pickup_date)) : '-')}</span>
+      ${r.ship_promise || r.shipped_date ? `<span class="note">${r.shipped_date ? 'ส่งลูกค้าแล้ว ' + esc(shortDate(r.shipped_date)) : 'สัญญาส่งลูกค้า ' + esc(shortDate(r.ship_promise))}</span>` : ''}
+      ${shipLate(r) ? '<span class="due late">⚠ ส่งลูกค้าไม่ทัน</span>' : ''}
+      ${ok || (ship && runWaitShip(r)) ? `<button type="button" class="linklike" data-runedit="${r.id}" style="font-weight:500;font-size:13px">แก้ไข</button>` : ''}</div>`).join('')}</div>`
+      : `<p class="note" style="margin:4px 0 0">${pre ? 'ยังไม่มีรอบ · เมื่อตัดยอดพรีส่งให้โรงงาน กด "✂️ ตัดรอบพรี"' : 'ยังไม่มีรอบผลิต · กด "+ สั่งผลิตรอบใหม่" เมื่อส่งยอดให้โรงงาน'}</p>`}</div>`;
+}
+function editRun(r, itemId, preset){
+  const it = proj.data.items.find(x => x.id === (r ? r.item_id : itemId)), pre = isPre(it), prev = runsOf(it.id).filter(x => x.status !== 'ยกเลิก').pop();
+  const v = r ? { ...r } : { status:'สั่งผลิตแล้ว', factory: it.supplier_name || prev?.factory || '', order_date: today, pickup_date:'', qty:'', size_qty: pre ? null : (it.size_qty || null), unit_cost: it.est_cost || prev?.unit_cost || '', note:'',
+      cutoff_from: pre ? (prev?.cutoff_to ? addDays(prev.cutoff_to, 1) : (it.target_launch || '')) : '', cutoff_to: pre ? today : '', preorder_sizes:null, preorder_qty:'', ship_promise: pre && !prev ? (it.ship_promise || '') : '', shipped_date:'' };
+  if (preset) Object.assign(v, preset);
+  const facs = lookupOpts({ options:['factory'] }), sts = RUN_ST.filter(s => pre || s !== 'ส่งลูกค้าแล้ว' || s === v.status);
+  const no = r ? r.run_no : (runsOf(it.id).reduce((m, x) => Math.max(m, x.run_no), 0) + 1);
+  const can = canRun();
+  openModal(`${pById(it.project_id).name} · ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''} · ${pre ? 'รอบตัดพรี' : 'รอบผลิต'}ที่ ${no}`, `
+    ${!can ? '<p class="note" style="margin:0">ทีม E-Commerce บันทึกได้เฉพาะสถานะและวันส่งลูกค้า</p>' : ''}
+    ${pre ? `<h4 class="rnh">ยอดพรีออเดอร์ที่ตัดรอบนี้</h4><div class="fgrid">
+      <div class="field"><label class="lbl" for="rn-cf">ออเดอร์ตั้งแต่วันที่</label><input class="inp" type="date" id="rn-cf" value="${esc(v.cutoff_from || '')}"></div>
+      <div class="field"><label class="lbl" for="rn-ct">วันตัดรอบ</label><input class="inp" type="date" id="rn-ct" value="${esc(v.cutoff_to || '')}"></div>
+      <div class="field wide"><span class="lbl">ยอดพรีแยกไซซ์ (หรือใส่ยอดรวมด้านล่าง)</span>${sizesInput({ field:'rn_pre' }, v.preorder_sizes, true)}</div>
+      <div class="field"><label class="lbl" for="rn-pq">ยอดพรีรวม (ถ้าไม่แยกไซซ์)</label><input class="inp" id="rn-pq" inputmode="numeric" value="${esc(v.preorder_sizes ? '' : (v.preorder_qty || ''))}"></div>
+      <div class="field"><label class="lbl" for="rn-sp">วันสัญญาส่งลูกค้ารอบนี้</label><input class="inp" type="date" id="rn-sp" value="${esc(v.ship_promise || '')}"></div></div>
+      <h4 class="rnh">สั่งผลิตกับโรงงาน</h4>` : ''}
+    <div class="fgrid">
+      <div class="field"><label class="lbl" for="rn-st">สถานะ</label><select class="sel" id="rn-st">${sts.map(s => `<option ${s===v.status?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="field"><label class="lbl" for="rn-fac">โรงงาน</label><input class="inp" id="rn-fac" list="rn-facs" value="${esc(v.factory || '')}" placeholder="เลือกหรือพิมพ์ชื่อใหม่"><datalist id="rn-facs">${facs.map(f => `<option value="${esc(f)}">`).join('')}</datalist></div>
+      <div class="field"><label class="lbl" for="rn-od">วันส่งยอดผลิตให้โรงงาน</label><input class="inp" type="date" id="rn-od" value="${esc(v.order_date || '')}"></div>
+      <div class="field"><label class="lbl" for="rn-pd">วันนัดรับสินค้า</label><input class="inp" type="date" id="rn-pd" value="${esc(v.pickup_date || '')}"></div>
+      <div class="field wide"><span class="lbl">จำนวนผลิตรอบนี้ (แยกไซซ์ หรือใส่จำนวนรวมด้านล่าง)${pre ? ' · เว้นว่าง = ผลิตเท่ายอดพรี' : ''}</span>${sizesInput({ field:'rn_sizes' }, v.size_qty, true)}</div>
+      <div class="field"><label class="lbl" for="rn-qty">จำนวนรวม (ถ้าไม่แยกไซซ์)</label><input class="inp" id="rn-qty" inputmode="numeric" value="${esc(v.size_qty ? '' : (v.qty || ''))}"></div>
+      <div class="field"><label class="lbl" for="rn-cost">ทุนต่อชิ้นรอบนี้</label><input class="inp" id="rn-cost" inputmode="decimal" value="${esc(v.unit_cost || '')}"></div>
+      <div class="field"><label class="lbl" for="rn-rd">วันรับของจริง</label><input class="inp" type="date" id="rn-rd" value="${esc(v.received_date || '')}"></div>
+      <div class="field"><label class="lbl" for="rn-rq">จำนวนที่รับจริง</label><input class="inp" id="rn-rq" inputmode="numeric" value="${esc(v.received_qty || '')}" placeholder="ถ้าไม่ตรงกับที่สั่ง"></div>
+      ${pre ? `<div class="field"><label class="lbl" for="rn-sd">วันส่งลูกค้าจริง</label><input class="inp" type="date" id="rn-sd" value="${esc(v.shipped_date || '')}"></div>` : ''}
+      <div class="field wide"><label class="lbl" for="rn-note">หมายเหตุ</label><textarea class="inp" id="rn-note" rows="2" style="font:inherit">${esc(v.note || '')}</textarea></div></div>
+    <p class="note" id="rn-warn" style="margin:0;color:var(--bad)" hidden></p>
+    ${r && can ? '<div><button class="btn btn-sm" type="button" id="rn-del">ลบรอบนี้</button></div>' : ''}`,
+    async () => { const J = f => { const el = document.querySelector(`[data-f="${f}"]`); return el ? JSON.parse(el.value || '{}') : {}; };
+      const sz = J('rn_sizes'), psz = J('rn_pre'), has = o => Object.keys(o).length > 0, st = $('rn-st').value;
+      if (['รับของแล้ว','ส่งลูกค้าแล้ว'].includes(st) && !$('rn-rd').value) $('rn-rd').value = r?.received_date || today;
+      if (st === 'ส่งลูกค้าแล้ว' && $('rn-sd') && !$('rn-sd').value) $('rn-sd').value = today;
+      await API.runSave({ id: r?.id, item_id: it.id, status: st, factory: $('rn-fac').value, order_date: $('rn-od').value, pickup_date: $('rn-pd').value,
+        size_qty: has(sz) ? sz : null, qty: has(sz) ? null : $('rn-qty').value, unit_cost: $('rn-cost').value, received_date: $('rn-rd').value, received_qty: $('rn-rq').value, note: $('rn-note').value,
+        cutoff_from: $('rn-cf')?.value || null, cutoff_to: $('rn-ct')?.value || null, preorder_sizes: has(psz) ? psz : null, preorder_qty: has(psz) ? null : ($('rn-pq')?.value || null),
+        ship_promise: $('rn-sp')?.value || null, shipped_date: $('rn-sd')?.value || null }); });
+  $('modal').querySelector('.box2').classList.add('wide');
+  document.querySelectorAll('[data-szbox]').forEach(szSync);
+  const chk = () => { const pd = $('rn-pd').value, sp = $('rn-sp')?.value, w = $('rn-warn');
+    const late = pd && sp && addDays(pd, SLA('pack')) > sp && !['รับของแล้ว','ส่งลูกค้าแล้ว','ยกเลิก'].includes($('rn-st').value);
+    w.hidden = !late; if (late) w.textContent = `⚠ วันนัดรับ + แพ็ก ${SLA('pack')} วัน เลยวันสัญญาส่งลูกค้า · ควรเลื่อนนัดโรงงานหรือแจ้งลูกค้า`; };
+  ['rn-pd','rn-sp','rn-st'].forEach(id => $(id)?.addEventListener('change', chk)); chk();
+  $('rn-st').addEventListener('change', () => { const s = $('rn-st').value;
+    if (['รับของแล้ว','ส่งลูกค้าแล้ว'].includes(s) && !$('rn-rd').value) $('rn-rd').value = today;
+    if (s === 'ส่งลูกค้าแล้ว' && $('rn-sd') && !$('rn-sd').value) $('rn-sd').value = today; });
+  if (!can) $('m-body').querySelectorAll('input,select,textarea').forEach(el => { if (!['rn-st','rn-sd','rn-note'].includes(el.id)) el.disabled = true; });
+  if (!can) $('m-body').querySelectorAll('[data-szbox] button').forEach(b => b.disabled = true);
+  if ($('rn-del')) $('rn-del').onclick = async () => { const b = $('rn-del'); if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'กดอีกครั้งเพื่อยืนยันการลบ'; return; }
+    try { await API.runDelete(r.id); closeModal(); toast('ลบรอบแล้ว'); loadProjects(true); } catch(e){ $('m-err').textContent = e.message || String(e); $('m-err').hidden = false; } };
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-runship]'); if (!b) return;
+  const r = proj.data.runs.find(x => x.id === +b.dataset.runship); if (r) editRun(r, null, { status:'ส่งลูกค้าแล้ว', shipped_date: today }); });
+
+// ----- Inventory (Project) + พรีออเดอร์ -----
+function renderIncoming(){
+  const d = proj.data, R = d.runs || [], fac = ic.fac;
+  const item = id => d.items.find(i => i.id === id);
+  const live = r => { const it = item(r.item_id); return it && (!fac || r.factory === fac); };
+  const open = R.filter(r => runOpen(r) && live(r)).sort((a,b) => (shipLate(b) ? 1 : 0) - (shipLate(a) ? 1 : 0) || (a.pickup_date || '9999').localeCompare(b.pickup_date || '9999'));
+  const toShip = R.filter(r => runWaitShip(r) && live(r) && isPre(item(r.item_id))).sort((a,b) => (a.ship_promise || '9999').localeCompare(b.ship_promise || '9999'));
+  const recv = R.filter(r => live(r) && (r.status === 'ส่งลูกค้าแล้ว' || (r.status === 'รับของแล้ว' && !isPre(item(r.item_id)))) && (!r.received_date || daysTo(r.received_date) >= -30)).sort((a,b) => (b.received_date || '').localeCompare(a.received_date || ''));
+  const preItems = d.items.filter(i => preOpenSt(i) && i.status !== 'Completed' && (!fac || i.supplier_name === fac));
+  const waiting = d.items.filter(i => i.sample_status === 'Sample Approved' && !isPre(i) && !R.some(r => r.item_id === i.id) && i.status !== 'Completed' && (!fac || i.supplier_name === fac));
+  const facs = [...new Set(R.map(r => r.factory).filter(Boolean))].sort();
+  $('ic-fac').innerHTML = '<option value="">ทุกโรงงาน</option>' + facs.map(f => `<option ${f===fac?'selected':''}>${esc(f)}</option>`).join('');
+  const due14 = open.filter(r => r.pickup_date && daysTo(r.pickup_date) <= 14 && daysTo(r.pickup_date) >= 0), late = open.filter(r => (r.pickup_date && daysTo(r.pickup_date) < 0) || shipLate(r));
+  const q = L => L.reduce((s, r) => s + (+r.qty || 0), 0);
+  $('ic-kpis').innerHTML = `
+    <div class="card"><div class="lbl">กำลังผลิต / รอรับของ</div><div class="kpi">${fmt(q(open))} ชิ้น</div><div class="delta">${fmt(open.length)} รอบ · นัดรับใน 14 วัน ${fmt(due14.length)} รอบ</div></div>
+    <div class="card"><div class="lbl">เลยวันนัดรับ / ส่งลูกค้าไม่ทัน</div><div class="kpi ${late.length?'down':''}">${fmt(late.length)}</div><div class="delta">${late.length ? 'ควรตามโรงงาน' : 'ไม่มี'}</div></div>
+    <div class="card"><div class="lbl">พรี · รอส่งลูกค้า</div><div class="kpi ${toShip.some(r => r.ship_promise && daysTo(r.ship_promise) <= 3)?'down':''}">${fmt(toShip.reduce((s, r) => s + (+r.received_qty || +r.qty || 0), 0))} ชิ้น</div><div class="delta">${fmt(toShip.length)} รอบ · เปิดพรีอยู่ ${fmt(preItems.length)} รายการ</div></div>
+    <div class="card"><div class="lbl">ตัวอย่างผ่าน ยังไม่สั่งผลิต</div><div class="kpi ${waiting.length?'down':''}">${fmt(waiting.length)}</div><div class="delta">รายการ (สินค้าสต็อก)</div></div>`;
+  const ok = canRun(), sh = canShip();
+  const preNote = r => isPre(item(r.item_id)) ? ` · พรี ${esc(cutRange(r) || '-')}${r.preorder_qty ? ` (${fmt(r.preorder_qty)})` : ''}` : '';
+  const runRow = (r, recvd) => { const it = item(r.item_id), pre = isPre(it);
+    return `<div class="icrow2"><div style="min-width:0"><button type="button" class="linklike" data-item="${it.id}" data-stage="production">${itemLabel(it)}</button><div class="note">${esc(pById(it.project_id).name)} · รอบที่ ${r.run_no} · ${esc(r.factory || 'ไม่ระบุโรงงาน')}${preNote(r)}</div></div>
+      <div><b>${fmt(r.qty)}</b> ชิ้น${r.size_qty ? `<div class="szs">${esc(sizeText(r.size_qty))}</div>` : ''}</div>
+      <div class="note">${recvd ? 'รับแล้ว' : 'ส่งยอด'}<br><b style="color:var(--ink)">${recvd ? (r.received_date ? esc(shortDate(r.received_date)) : '-') : (r.order_date ? esc(shortDate(r.order_date)) : '-')}</b>${recvd && r.received_qty && +r.received_qty !== +r.qty ? ` <span class="due late">(${fmt(r.received_qty)})</span>` : ''}</div>
+      <div class="note">${recvd ? (r.status === 'ส่งลูกค้าแล้ว' ? `ส่งลูกค้า<br><b style="color:var(--ink)">${r.shipped_date ? esc(shortDate(r.shipped_date)) : '-'}</b>` : '') : `นัดรับ<br>${r.pickup_date ? dueHtml(r.pickup_date) : '<span class="due late">ยังไม่นัด</span>'}${pre && r.ship_promise ? `<br>สัญญาส่ง ${esc(shortDate(r.ship_promise))}` : ''}${shipLate(r) ? '<br><span class="due late">⚠ ส่งลูกค้าไม่ทัน</span>' : ''}`}</div>
+      <div class="icact">${ok ? (recvd ? `<button class="btn btn-sm" type="button" data-runedit="${r.id}">แก้ไข</button>` : `<button class="btn btn-sm btn-p" type="button" data-runedit="${r.id}" data-recv="1">รับของแล้ว</button><button class="btn btn-sm" type="button" data-runedit="${r.id}">แก้ไข</button>`) : `<span class="pill ${RUN_PILL[r.status] || 'p-idle'}">${esc(r.status)}</span>`}</div></div>`; };
+  const shipRow = r => { const it = item(r.item_id);
+    return `<div class="icrow2"><div style="min-width:0"><button type="button" class="linklike" data-item="${it.id}" data-stage="ecom">${itemLabel(it)}</button><div class="note">${esc(pById(it.project_id).name)} · รอบที่ ${r.run_no}${preNote(r)}</div></div>
+      <div><b>${fmt(r.received_qty || r.qty)}</b> ชิ้น${r.size_qty ? `<div class="szs">${esc(sizeText(r.size_qty))}</div>` : ''}</div>
+      <div class="note">รับของ<br><b style="color:var(--ink)">${r.received_date ? esc(shortDate(r.received_date)) : '-'}</b></div>
+      <div class="note">สัญญาส่ง<br>${r.ship_promise ? dueHtml(r.ship_promise) : '<span class="due muted">ไม่ได้ระบุ</span>'}</div>
+      <div class="icact">${sh ? `<button class="btn btn-sm btn-p" type="button" data-runship="${r.id}">ส่งลูกค้าแล้ว</button>` : ''}</div></div>`; };
+  const preRow = i => { const L = runsAll(i.id), last = L[L.length - 1], since = last?.cutoff_to || i.target_launch;
+    return `<div class="icrow2"><div style="min-width:0"><button type="button" class="linklike" data-item="${i.id}" data-stage="production">${itemLabel(i)}</button><div class="note">${esc(pById(i.project_id).name)} · ${L.length ? `ตัดไปแล้ว ${L.length} รอบ · ยอดพรีรวม ${fmt(L.reduce((s, r) => s + (+r.preorder_qty || 0), 0))}` : 'ยังไม่เคยตัดรอบ'}${i.sample_status !== 'Sample Approved' ? ' · <span style="color:#8A5A00">ตัวอย่างยังไม่ผ่าน</span>' : ''}</div></div>
+      <div class="note">${last ? 'ตัดรอบล่าสุด' : 'เปิดพรี'}<br><b style="color:var(--ink)">${since ? esc(shortDate(since)) : '-'}</b></div>
+      <div class="note">ออเดอร์สะสม<br><b style="color:var(--ink)">${since && daysTo(since) <= 0 ? fmt(-daysTo(since)) + ' วัน' : '-'}</b></div>
+      <div class="note">ปิดพรี<br>${i.preorder_close ? dueHtml(i.preorder_close) : '<span class="due muted">ต่อเนื่อง</span>'}</div>
+      <div class="icact">${ok ? `<button class="btn btn-sm btn-p" type="button" data-runnew="${i.id}">✂️ ตัดรอบ</button>` : ''}</div></div>`; };
+  const sec = (title, note, body, show = true) => show ? `<section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">${title}</h2><span class="note">${note}</span></div>${body}</section>` : '';
+  $('ic-list').innerHTML =
+    sec('พรีออเดอร์ · รอส่งลูกค้า', 'รับของจากโรงงานแล้ว เรียงตามวันสัญญาส่ง', toShip.length ? toShip.map(shipRow).join('') : '<div class="empty">ไม่มีรอบที่รอส่ง</div>', toShip.length || preItems.length) +
+    sec('พรีออเดอร์ · เปิดรับอยู่', 'กด "✂️ ตัดรอบ" เมื่อส่งยอดพรีให้โรงงาน', preItems.length ? preItems.map(preRow).join('') : '<div class="empty">ไม่มีสินค้าที่เปิดพรีอยู่</div>', preItems.length) +
+    sec('กำลังผลิต / รอรับของ', 'เรียงตามวันนัดรับ', open.length ? open.map(r => runRow(r, false)).join('') : '<div class="empty">ไม่มีรอบที่กำลังผลิต</div>') +
+    sec('ตัวอย่างผ่านแล้ว · ยังไม่ได้สั่งผลิต', 'ส่งยอดให้โรงงานแล้วกด "+ สั่งผลิต"', waiting.length ? waiting.map(i => `<div class="icrow2"><div style="min-width:0"><button type="button" class="linklike" data-item="${i.id}" data-stage="production">${itemLabel(i)}</button><div class="note">${esc(pById(i.project_id).name)}${i.supplier_name ? ' · ' + esc(i.supplier_name) : ''}</div></div>
+        <div class="note">ตัวอย่างผ่าน<br><b style="color:var(--ink)">${i.sample_date ? esc(shortDate(i.sample_date)) : '-'}</b></div><div class="note">สั่งผลิตภายใน<br>${i.sample_date ? dueHtml(addDays(i.sample_date, SLA('order'))) : '-'}</div><div class="note">เปิดขาย<br>${dueHtml(i.target_launch)}</div>
+        <div class="icact">${ok ? `<button class="btn btn-sm btn-p" type="button" data-runnew="${i.id}">+ สั่งผลิต</button>` : ''}</div></div>`).join('') : '<div class="empty">ไม่มีรายการค้าง</div>') +
+    `<details class="card" style="padding:0" ${recv.length ? '' : 'hidden'}><summary class="card-hd" style="padding:16px 20px;cursor:pointer"><h2 class="sec">▸ รับของ / ส่งลูกค้าแล้ว · 30 วันล่าสุด (${recv.length} รอบ)</h2><span class="note">เก่ากว่านี้ดูที่คลังงาน</span></summary>
+      ${recv.map(r => runRow(r, true)).join('')}</details>`;
+}
+
+// ----- ปิดงาน: สินค้าพรีต้องปิดรับและส่งลูกค้าครบทุกรอบก่อน -----
+function doneButNotClosed(){ return proj.data.items.filter(i => i.status !== 'Completed' && i.status !== 'On Hold' && STAGES.every(g => isDoneS(stageOf(i, g.k))) && !preUnfinished(i)); }
 
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
