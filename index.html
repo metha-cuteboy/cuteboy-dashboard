@@ -443,6 +443,28 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
 @media (min-width:861px){.icrow2{grid-template-columns:minmax(0,1.6fr) minmax(90px,.9fr) 90px 140px auto}}
 @media (max-width:1100px){.mrow{grid-template-columns:96px minmax(0,1fr) 120px 130px 28px}}
 @media (max-width:860px){.mrow{grid-template-columns:minmax(0,1fr) auto}.mrow .dcell{text-align:right;align-items:flex-end}}
+/* รอบ 10 */
+.pipe{display:flex;flex-wrap:wrap;align-items:stretch;gap:4px;margin-top:6px;width:100%}
+.parr{align-self:center;color:var(--muted);font-size:13px}
+.pst{display:flex;flex-direction:column;gap:1px;text-align:left;font:inherit;font-size:12px;line-height:1.35;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;min-height:40px;cursor:pointer;max-width:220px}
+.pst b{font-size:13px;font-weight:600}.pst span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pst.done{background:#F1FAF4;border-color:#CDE9D7}.pst.cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}.pst.bad{background:#FDF0EF;border-color:#F3C9C5}
+.pst em{font-style:normal}
+.rsteps{display:flex;flex-direction:column;gap:4px;width:100%}
+.stlist{display:grid;gap:6px}
+.strow{display:grid;grid-template-columns:28px minmax(0,1fr) 96px auto;gap:10px;align-items:center;border:1px solid var(--line2);border-radius:10px;padding:8px 10px;font-size:13.5px}
+.stn{width:26px;height:26px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-weight:600;font-size:12.5px}
+.stfoot{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.stsep{flex:1}
+.sttpl{display:inline-flex;gap:6px;flex-wrap:wrap}
+.tchk{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--line);background:#fff;font-weight:700;color:#fff;cursor:pointer;display:grid;place-items:center;flex:none}
+.tchk.on{background:var(--good,#1F7A4D);border-color:var(--good,#1F7A4D)}
+.mgrp{padding:10px 20px 6px;font-size:12px;font-weight:600;color:var(--muted);border-top:1px solid var(--line2);background:var(--soft)}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:12px 20px 16px}
+.wbox{border:1px solid var(--line2);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.wbh{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.wln{display:flex;justify-content:space-between;gap:8px;align-items:center;text-align:left;font:inherit;font-size:13px;background:none;border:0;border-top:1px solid var(--line2);padding:8px 0;min-height:40px;cursor:pointer;color:inherit}
+.wln:hover{background:var(--soft)}
+@media (max-width:860px){.strow{grid-template-columns:28px minmax(0,1fr) auto}.strow .icact{grid-column:1/-1;justify-content:flex-start}.wgrid{padding:12px 16px;grid-template-columns:minmax(0,1fr)}.pst{max-width:100%}.mgrp{padding:10px 16px 6px}}
 </style>
 </head>
 <body>
@@ -824,6 +846,11 @@ const API = DEMO ? DEMO.api : {
   sampleDelete: id => rpc('sample_event_delete', { p_id:id }),
   runSave: d => rpc('run_save', { d }),
   runDelete: id => rpc('run_delete', { p_id:id }),
+  stepSave: d => rpc('step_save', { d }),
+  stepDelete: id => rpc('step_delete', { p_id:id }),
+  stepMove: (id, dir) => rpc('step_move', { p_id:id, p_dir:dir }),
+  stepTemplate: (item, scope, run, name) => rpc('steps_apply_template', { p_item:item, p_scope:scope, p_run:run, p_template:name }),
+  templateSave: (name, steps) => rpc('template_save', { p_name:name, p_steps:steps }),
   itemsDone: (ids, done) => rpc('items_set_done', { p_ids:ids, p_done:done }),
   archive: (q, f, t) => rpc('archive_list', { p_q:q, p_from:f, p_to:t }),
   mkBoard: () => rpc('mk_board'),
@@ -1640,7 +1667,7 @@ function editItem(it, focus){
     const g = STAGES.find(x => x.k === sk), x = g ? stageOf(it, sk) : null;
     return `<section class="isec ${anyOk?'':'locked'}" id="sec-${sk}"><h4>${esc(SEC[sk])}${x ? ` <span class="sc ${x.s}" style="display:inline-flex;font-family:var(--body);font-weight:500">${esc(x.t)}</span>` : ''}
       <small>${anyOk ? (t === '*' ? 'ทุกคนแก้ได้' : 'คุณแก้ได้') : `แก้ได้เฉพาะ${t ? ' ทีม ' + esc(teamLabel(t)) + ' หรือ' : ''} admin/editor`}</small></h4>
-      <div class="fgrid">${fs.map(f => `<div class="field ${f.kind==='longtext'||f.field==='shoot_location'||f.kind==='link'||f.kind==='sizes'?'wide':''}"><label class="lbl" for="f-${f.field}">${esc(f.label)}</label>${fieldInput(f, it[f.field], canField(f))}</div>`).join('')}${sk === 'production' ? sampleTimeline(it) + runsBlock(it) : ''}</div></section>`;
+      <div class="fgrid">${fs.map(f => `<div class="field ${f.kind==='longtext'||f.field==='shoot_location'||f.kind==='link'||f.kind==='sizes'?'wide':''}"><label class="lbl" for="f-${f.field}">${esc(f.label)}</label>${fieldInput(f, it[f.field], canField(f))}</div>`).join('')}${sk === 'production' ? sampleTimeline(it) + sampleSteps(it) + runsBlockWithSteps(it) : ''}${sk === 'general' ? tasksBlock(it) : ''}</div></section>`;
   }).join('');
   const hist = d.log.filter(l => l.item_id === it.id).slice(0, 6);
   openModal(`${p.name} · ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''}`, `${secs}
@@ -2368,7 +2395,7 @@ function editRun(r, itemId, preset){
   const no = r ? r.run_no : (runsOf(it.id).reduce((m, x) => Math.max(m, x.run_no), 0) + 1);
   openModal(`${pById(it.project_id).name} · ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''} · รอบผลิตที่ ${no}`, `
     <div class="fgrid">
-      <div class="field"><label class="lbl" for="rn-st">สถานะ</label><select class="sel" id="rn-st">${RUN_ST.map(s => `<option ${s===v.status?'selected':''}>${s}</option>`).join('')}</select></div>
+      ${!r ? stepTplField(it) : ''}<div class="field"><label class="lbl" for="rn-st">สถานะ</label><select class="sel" id="rn-st">${RUN_ST.map(s => `<option ${s===v.status?'selected':''}>${s}</option>`).join('')}</select></div>
       <div class="field"><label class="lbl" for="rn-fac">โรงงาน</label><input class="inp" id="rn-fac" list="rn-facs" value="${esc(v.factory || '')}" placeholder="เลือกหรือพิมพ์ชื่อใหม่"><datalist id="rn-facs">${facs.map(f => `<option value="${esc(f)}">`).join('')}</datalist></div>
       <div class="field"><label class="lbl" for="rn-od">วันส่งยอดผลิตให้โรงงาน</label><input class="inp" type="date" id="rn-od" value="${esc(v.order_date || '')}"></div>
       <div class="field"><label class="lbl" for="rn-pd">วันนัดรับสินค้า</label><input class="inp" type="date" id="rn-pd" value="${esc(v.pickup_date || '')}"></div>
@@ -2498,7 +2525,7 @@ function stageOf(it, k){
 }
 
 // กำหนดของขั้นงาน (แทนการนับจากวันเปิดขายอย่างเดียว)
-function stageDue(it, k){
+function stageDue0(it, k){
   const pre = isPre(it), R = runsAll(it.id), L = it.target_launch;
   if (k === 'production') {
     const op = R.filter(runOpen).sort((a,b) => (a.pickup_date || '9999').localeCompare(b.pickup_date || '9999'));
@@ -2525,7 +2552,7 @@ function dueCell(it, k){
 }
 
 // ----- งานของฉัน (นับตามขั้นงาน) -----
-function renderMe(){
+function renderMe9b(){
   const d = proj.data, team = proj.view ?? proj.myTeam ?? '';
   $('me-team').innerHTML = `<option value="">ทุกทีม</option>` + Object.entries(TEAMS).filter(([k]) => k !== 'management').map(([k,n]) => `<option value="${k}" ${team===k?'selected':''}>${n}${k===proj.myTeam?' (ทีมฉัน)':''}</option>`).join('');
   $('me-noteam').hidden = !!proj.myTeam;
@@ -2608,7 +2635,7 @@ function editRun(r, itemId, preset){
       <div class="field"><label class="lbl" for="rn-sp">วันสัญญาส่งลูกค้ารอบนี้</label><input class="inp" type="date" id="rn-sp" value="${esc(v.ship_promise || '')}"></div></div>
       <h4 class="rnh">สั่งผลิตกับโรงงาน</h4>` : ''}
     <div class="fgrid">
-      <div class="field"><label class="lbl" for="rn-st">สถานะ</label><select class="sel" id="rn-st">${sts.map(s => `<option ${s===v.status?'selected':''}>${s}</option>`).join('')}</select></div>
+      ${!r ? stepTplField(it) : ''}<div class="field"><label class="lbl" for="rn-st">สถานะ</label><select class="sel" id="rn-st">${sts.map(s => `<option ${s===v.status?'selected':''}>${s}</option>`).join('')}</select></div>
       <div class="field"><label class="lbl" for="rn-fac">โรงงาน</label><input class="inp" id="rn-fac" list="rn-facs" value="${esc(v.factory || '')}" placeholder="เลือกหรือพิมพ์ชื่อใหม่"><datalist id="rn-facs">${facs.map(f => `<option value="${esc(f)}">`).join('')}</datalist></div>
       <div class="field"><label class="lbl" for="rn-od">วันส่งยอดผลิตให้โรงงาน</label><input class="inp" type="date" id="rn-od" value="${esc(v.order_date || '')}"></div>
       <div class="field"><label class="lbl" for="rn-pd">วันนัดรับสินค้า</label><input class="inp" type="date" id="rn-pd" value="${esc(v.pickup_date || '')}"></div>
@@ -2628,12 +2655,13 @@ function editRun(r, itemId, preset){
       await API.runSave({ id: r?.id, item_id: it.id, status: st, factory: $('rn-fac').value, order_date: $('rn-od').value, pickup_date: $('rn-pd').value,
         size_qty: has(sz) ? sz : null, qty: has(sz) ? null : $('rn-qty').value, unit_cost: $('rn-cost').value, received_date: $('rn-rd').value, received_qty: $('rn-rq').value, note: $('rn-note').value,
         cutoff_from: $('rn-cf')?.value || null, cutoff_to: $('rn-ct')?.value || null, preorder_sizes: has(psz) ? psz : null, preorder_qty: has(psz) ? null : ($('rn-pq')?.value || null),
-        ship_promise: $('rn-sp')?.value || null, shipped_date: $('rn-sd')?.value || null }); });
+        ship_promise: $('rn-sp')?.value || null, shipped_date: $('rn-sd')?.value || null, template: $('rn-tpl')?.value || null }); });
   $('modal').querySelector('.box2').classList.add('wide');
   document.querySelectorAll('[data-szbox]').forEach(szSync);
   const chk = () => { const pd = $('rn-pd').value, sp = $('rn-sp')?.value, w = $('rn-warn');
     const late = pd && sp && addDays(pd, SLA('pack')) > sp && !['รับของแล้ว','ส่งลูกค้าแล้ว','ยกเลิก'].includes($('rn-st').value);
     w.hidden = !late; if (late) w.textContent = `⚠ วันนัดรับ + แพ็ก ${SLA('pack')} วัน เลยวันสัญญาส่งลูกค้า · ควรเลื่อนนัดโรงงานหรือแจ้งลูกค้า`; };
+  runStepsLock(r);
   ['rn-pd','rn-sp','rn-st'].forEach(id => $(id)?.addEventListener('change', chk)); chk();
   $('rn-st').addEventListener('change', () => { const s = $('rn-st').value;
     if (['รับของแล้ว','ส่งลูกค้าแล้ว'].includes(s) && !$('rn-rd').value) $('rn-rd').value = today;
@@ -2647,7 +2675,7 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-runs
   const r = proj.data.runs.find(x => x.id === +b.dataset.runship); if (r) editRun(r, null, { status:'ส่งลูกค้าแล้ว', shipped_date: today }); });
 
 // ----- Inventory (Project) + พรีออเดอร์ -----
-function renderIncoming(){
+function renderIncoming9(){
   const d = proj.data, R = d.runs || [], fac = ic.fac;
   const item = id => d.items.find(i => i.id === id);
   const live = r => { const it = item(r.item_id); return it && (!fac || r.factory === fac); };
@@ -2699,6 +2727,277 @@ function renderIncoming(){
 
 // ----- ปิดงาน: สินค้าพรีต้องปิดรับและส่งลูกค้าครบทุกรอบก่อน -----
 function doneButNotClosed(){ return proj.data.items.filter(i => i.status !== 'Completed' && i.status !== 'On Hold' && STAGES.every(g => isDoneS(stageOf(i, g.k))) && !preUnfinished(i)); }
+
+// ===== รอบ 10: ขั้นตอนย่อยการผลิต · ประสานส่งต่อ · ผู้รับผิดชอบรายขั้น · Task เพิ่มเติม =====
+const STEP_ST = ['รอ','กำลังทำ','เสร็จ','มีปัญหา'];
+const STEP_PILL = { 'รอ':'p-idle', 'กำลังทำ':'p-low', 'เสร็จ':'p-ok', 'มีปัญหา':'p-out' };
+const STEP_KIND = { factory:'ทำที่โรงงาน', handoff:'ทีมประสานรับ-ส่งต่อ', task:'งานทั่วไป' };
+const stepsOf = (scope, itemId, runId) => (proj.data.steps || []).filter(s => s.scope === scope && s.item_id === itemId && (scope !== 'run' || s.run_id === runId)).sort((a,b) => a.seq - b.seq);
+const curStep = L => L.find(s => s.status !== 'เสร็จ') || null;
+const stepWhere = s => s.kind === 'handoff' ? '🚚 ทีมประสาน' : (s.factory || 'ไม่ระบุโรงงาน');
+const canStep = s => !!proj.data && (canRun() || (s && s.owner && s.owner === proj.data.me.id) || (s && s.scope === 'task' && s.created_by_id === proj.data.me.id));
+const runOfStep = s => s.run_id ? (proj.data.runs || []).find(r => r.id === s.run_id) : null;
+const stepCtx = s => { const it = proj.data.items.find(i => i.id === s.item_id); const r = runOfStep(s);
+  return { it, label: it ? `${pById(it.project_id).name} · ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''}` : '-', where: s.scope === 'run' ? `รอบ ${r?.run_no ?? '-'}` : s.scope === 'sample' ? 'ตัวอย่าง' : 'Task' }; };
+const stepLoss = s => s.qty_in != null && s.qty_out != null && +s.qty_out < +s.qty_in ? +s.qty_in - +s.qty_out : 0;
+
+// เส้นทางขั้นตอน: ตัดเย็บ · A ✓ 11 ต.ค. → สกรีน · B ● นัด 18 ต.ค.
+function pipeline(L){
+  if (!L.length) return '';
+  return `<div class="pipe">${L.map((s, i) => `${i ? '<span class="parr" aria-hidden="true">→</span>' : ''}<button type="button" class="pst ${s.status === 'เสร็จ' ? 'done' : s.status === 'มีปัญหา' ? 'bad' : s.status === 'กำลังทำ' ? 'cur' : ''}" data-step="${s.id}" title="${esc(s.name + ' · ' + s.status)}">
+      <b>${s.status === 'เสร็จ' ? '✓ ' : s.status === 'มีปัญหา' ? '⚠ ' : s.status === 'กำลังทำ' ? '● ' : ''}${esc(s.name)}</b><span>${esc(stepWhere(s))}${s.owner ? ' · 👤 ' + esc(memName(s.owner)) : ''}</span>
+      <span>${s.status === 'เสร็จ' ? 'เสร็จ ' + esc(s.done_date ? shortDate(s.done_date) : '') + (s.qty_out != null ? ` · ${fmt(s.qty_out)}` : '') + (stepLoss(s) ? ` <em class="due late">-${fmt(stepLoss(s))}</em>` : '') : s.due_date ? 'นัด ' + esc(shortDate(s.due_date)) : 'ยังไม่นัด'}</span></button>`).join('')}</div>`;
+}
+
+// ----- ตัวอย่าง: ขั้นตอนย่อย (ถ้ามี) -----
+function sampleSteps(it){
+  const L = stepsOf('sample', it.id), ok = canRun();
+  if (!L.length && !ok) return '';
+  return `<div class="smpl"><div class="lbl" style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap">ขั้นตอนทำตัวอย่าง ${ok ? `<button class="btn btn-sm" type="button" data-steps="sample:${it.id}:">${L.length ? 'จัดการขั้นตอน' : '+ แบ่งขั้นตอน (หลายโรงงาน)'}</button>` : ''}</div>
+    ${L.length ? pipeline(L) : '<p class="note" style="margin:4px 0 0">ตัวอย่างทำที่โรงงานเดียว · ถ้าต้องผ่านหลายโรงงาน กด "แบ่งขั้นตอน"</p>'}</div>`;
+}
+// ----- Task เพิ่มเติมของสินค้า -----
+function tasksBlock(it){
+  const L = stepsOf('task', it.id);
+  return `<div class="smpl"><div class="lbl" style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap">Task เพิ่มเติม <button class="btn btn-sm" type="button" data-tasknew="${it.id}">+ เพิ่ม Task</button></div>
+    ${L.length ? `<div class="runs">${L.map(s => `<div class="runrow"><button type="button" class="tchk ${s.status === 'เสร็จ' ? 'on' : ''}" data-tdone="${s.id}" aria-label="ทำเครื่องหมายว่าเสร็จ" ${canStep(s) ? '' : 'disabled'}>${s.status === 'เสร็จ' ? '✓' : ''}</button>
+      <b style="${s.status === 'เสร็จ' ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(s.name)}</b><span class="note">${s.owner ? '👤 ' + esc(memName(s.owner)) : 'ยังไม่มีคนรับ'}</span>${s.status === 'เสร็จ' ? `<span class="note">เสร็จ ${esc(shortDate(s.done_date))}</span>` : dueHtml(s.due_date)}
+      ${s.status === 'มีปัญหา' ? '<span class="pill p-out">มีปัญหา</span>' : ''}<button type="button" class="linklike" data-step="${s.id}" style="font-weight:500;font-size:13px">แก้ไข</button></div>`).join('')}</div>`
+      : '<p class="note" style="margin:4px 0 0">เช่น สั่งป้ายคอ · สั่งถุงแพ็ก · ทำ Hang tag · QC ก่อนส่ง</p>'}</div>`;
+}
+// ----- รอบผลิต: แสดงเส้นทางขั้นตอนใต้แต่ละรอบ -----
+const runsBlock9 = runsBlock;
+function runsBlockWithSteps(it){
+  const html = runsBlock9(it), ok = canRun();
+  const tmp = document.createElement('div'); tmp.innerHTML = html;
+  tmp.querySelectorAll('.runrow').forEach((row, k) => { const r = runsOf(it.id)[k]; if (!r) return;
+    const L = stepsOf('run', it.id, r.id);
+    row.insertAdjacentHTML('beforeend', `<div class="rsteps">${L.length > 1 ? pipeline(L) : ''}${ok && r.status !== 'ยกเลิก' ? `<button type="button" class="linklike" data-steps="run:${it.id}:${r.id}" style="font-size:13px;font-weight:500">${L.length > 1 ? 'จัดการขั้นตอน' : '+ แบ่งขั้นตอน (หลายโรงงาน)'}</button>` : ''}</div>`); });
+  return tmp.innerHTML;
+}
+
+// ----- จัดการขั้นตอนของรอบ / ตัวอย่าง -----
+function stepsModal(scope, itemId, runId){
+  const it = proj.data.items.find(i => i.id === itemId), r = runId ? proj.data.runs.find(x => x.id === runId) : null, L = stepsOf(scope, itemId, runId), ok = canRun();
+  const tpl = proj.data.templates || [], anyDone = L.some(s => s.status === 'เสร็จ');
+  openModal(`${pById(it.project_id).name} · ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''} · ${scope === 'run' ? 'ขั้นตอนรอบผลิตที่ ' + r.run_no : 'ขั้นตอนทำตัวอย่าง'}`, `
+    ${L.length ? `<div class="stlist">${L.map((s, i) => `<div class="strow"><span class="stn">${i + 1}</span>
+        <div style="min-width:0"><b>${esc(s.name)}</b> <span class="pill ${STEP_PILL[s.status]}">${esc(s.status)}</span><div class="note">${esc(stepWhere(s))} · ${s.owner ? '👤 ' + esc(memName(s.owner)) : 'ยังไม่มีคนรับ'}${s.qty_in != null ? ` · เข้า ${fmt(s.qty_in)}` : ''}${s.qty_out != null ? ` → ออก ${fmt(s.qty_out)}` : ''}${stepLoss(s) ? ` <span class="due late">หาย ${fmt(stepLoss(s))}</span>` : ''}${s.unit_cost != null ? ` · ค่าทำ ${fmt(s.unit_cost)}/ชิ้น` : ''}</div></div>
+        <div class="note">${s.status === 'เสร็จ' ? 'เสร็จ<br><b style="color:var(--ink)">' + esc(s.done_date ? shortDate(s.done_date) : '-') + '</b>' : 'นัดเสร็จ<br>' + dueHtml(s.due_date)}</div>
+        <div class="icact">${ok ? `<button class="btn btn-sm" type="button" data-smove="${s.id}:-1" aria-label="เลื่อนขึ้น" ${i ? '' : 'disabled'}>↑</button><button class="btn btn-sm" type="button" data-smove="${s.id}:1" aria-label="เลื่อนลง" ${i < L.length - 1 ? '' : 'disabled'}>↓</button>` : ''}
+          ${s.status !== 'เสร็จ' && canStep(s) ? `<button class="btn btn-sm btn-p" type="button" data-sdone="${s.id}">เสร็จ</button>` : ''}<button class="btn btn-sm" type="button" data-step="${s.id}">แก้ไข</button></div></div>`).join('')}</div>`
+      : '<p class="note">ยังไม่ได้แบ่งขั้นตอน · เลือกสูตรด้านล่าง หรือเพิ่มทีละขั้น</p>'}
+    ${scope === 'run' && L.length > 1 ? `<p class="note" style="margin:0">วันนัดรับของของรอบ = วันนัดเสร็จของขั้นสุดท้าย · ทุนต่อชิ้น = ค่าทำทุกขั้นรวมกัน (ถ้ากรอก)</p>` : ''}
+    ${ok ? `<div class="stfoot"><button class="btn btn-sm" type="button" id="st-add">+ เพิ่มขั้นตอน</button>
+      <span class="stsep"></span><label class="lbl" for="st-tpl" style="margin:0">สูตร</label><select class="sel" id="st-tpl" style="max-width:200px">${tpl.map(t => `<option>${esc(t.name)}</option>`).join('')}</select>
+      <button class="btn btn-sm" type="button" id="st-apply" ${anyDone ? 'disabled title="มีขั้นที่เสร็จแล้ว ใช้สูตรทับไม่ได้"' : ''}>${L.length ? 'ใช้สูตรนี้แทน' : 'ใช้สูตรนี้'}</button>
+      ${L.length ? '<button class="btn btn-sm" type="button" id="st-savetpl">บันทึกเป็นสูตรใหม่</button>' : ''}</div>
+      <p class="note" style="margin:0">ใส่สูตร = ${esc((tpl[0]?.steps || []).map(x => x.name).join(' → '))}</p>` : ''}`, null);
+  $('m-save').hidden = true;
+  $('modal').querySelector('.box2').classList.add('wide');
+  const back = () => stepsModal(scope, itemId, runId);
+  const reload = async () => { await loadProjects(true); back(); };
+  if ($('st-tpl')) $('st-tpl').onchange = () => { const t = tpl.find(x => x.name === $('st-tpl').value); $('st-tpl').closest('.stfoot').nextElementSibling.textContent = 'ใส่สูตร = ' + (t?.steps || []).map(x => x.name).join(' → '); };
+  if ($('st-add')) $('st-add').onclick = () => editStep(null, { scope, item_id: itemId, run_id: runId }, back);
+  if ($('st-apply')) $('st-apply').onclick = async () => { const b = $('st-apply'); if (L.length && !b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'กดอีกครั้ง: ลบขั้นเดิมแล้วใช้สูตร'; return; }
+    try { await API.stepTemplate(itemId, scope, runId, $('st-tpl').value); toast('ใช้สูตรแล้ว'); await reload(); } catch(e){ $('m-err').textContent = e.message || String(e); $('m-err').hidden = false; } };
+  if ($('st-savetpl')) $('st-savetpl').onclick = async () => { const nm = prompt2(); if (!nm) return; };
+  $('m-body').querySelectorAll('[data-smove]').forEach(b => b.onclick = async () => { const [id, dir] = b.dataset.smove.split(':').map(Number);
+    try { await API.stepMove(id, dir); await reload(); } catch(e){ toast(e.message || String(e)); } });
+  function prompt2(){ const f = $('st-savetpl'); if (f.dataset.open) return null; f.dataset.open = 1;
+    f.insertAdjacentHTML('afterend', `<span class="sttpl"><input class="inp" id="st-tname" placeholder="ชื่อสูตร เช่น เสื้อฮู้ดสกรีน" style="max-width:220px"><button class="btn btn-sm btn-p" type="button" id="st-tok">บันทึกสูตร</button></span>`);
+    $('st-tname').focus();
+    $('st-tok').onclick = async () => { const nm = $('st-tname').value.trim(); if (!nm) return;
+      try { await API.templateSave(nm, L.map(s => ({ name: s.name, kind: s.kind }))); toast('บันทึกสูตร "' + nm + '" แล้ว'); await reload(); } catch(e){ toast(e.message || String(e)); } };
+    return null; }
+}
+
+// ----- แก้ไขขั้นตอน / Task -----
+function editStep(s, preset, back){
+  const isNew = !s, v = s ? { ...s } : { name:'', kind: preset.scope === 'task' ? 'task' : 'factory', factory:'', owner:'', status:'รอ', start_date:'', due_date:'', done_date:'', qty_in:'', qty_out:'', unit_cost:'', note:'', ...preset };
+  if (preset && s) Object.assign(v, preset);
+  const scope = v.scope, isTask = scope === 'task', ctx = stepCtx(v), can = isNew ? (isTask || canRun()) : canStep(s), full = isNew ? (isTask || canRun()) : (canRun() || (isTask && s.created_by_id === proj.data.me.id));
+  const names = [...new Set([...(proj.data.lookups?.step || []), ...(proj.data.templates || []).flatMap(t => t.steps.map(x => x.name))])].sort();
+  const facs = lookupOpts({ options:['factory'] }), ms = proj.data.members;
+  const prodTeam = isTask ? null : 'production';
+  openModal(`${ctx.label} · ${ctx.where} · ${isNew ? (isTask ? 'เพิ่ม Task' : 'เพิ่มขั้นตอน') : esc(v.name)}`, `
+    ${!full && can ? '<p class="note" style="margin:0">คุณเป็นผู้รับผิดชอบขั้นนี้ · แก้สถานะ วันที่ จำนวน และหมายเหตุได้</p>' : ''}
+    <div class="fgrid">
+      <div class="field"><label class="lbl" for="sp-name">${isTask ? 'ชื่องาน' : 'ชื่อขั้นตอน'}</label><input class="inp" id="sp-name" list="sp-names" value="${esc(v.name)}" placeholder="${isTask ? 'เช่น สั่งป้ายคอ' : 'เช่น ตัดเย็บ / สกรีน / ปัก'}"><datalist id="sp-names">${isTask ? '' : names.map(n => `<option value="${esc(n)}">`).join('')}</datalist></div>
+      ${isTask ? '' : `<div class="field"><label class="lbl" for="sp-kind">ประเภท</label><select class="sel" id="sp-kind">${['factory','handoff'].map(k => `<option value="${k}" ${k===v.kind?'selected':''}>${STEP_KIND[k]}</option>`).join('')}</select></div>`}
+      ${isTask ? '' : `<div class="field" id="sp-facw"><label class="lbl" for="sp-fac">โรงงาน</label><input class="inp" id="sp-fac" list="sp-facs" value="${esc(v.factory || '')}" placeholder="เลือกหรือพิมพ์ชื่อใหม่"><datalist id="sp-facs">${facs.map(f => `<option value="${esc(f)}">`).join('')}</datalist></div>`}
+      <div class="field"><label class="lbl" for="sp-own">ผู้รับผิดชอบ</label><select class="sel" id="sp-own"><option value="">ยังไม่มีคนรับ</option>${(prodTeam ? [['ทีม Production', ms.filter(m => m.team === prodTeam)], ['ทีมอื่น', ms.filter(m => m.team !== prodTeam)]] : [['', ms]]).map(([g, L]) => L.length ? `${g ? `<optgroup label="${g}">` : ''}${L.map(m => `<option value="${esc(m.id)}" ${m.id===v.owner?'selected':''}>${esc(m.name)}</option>`).join('')}${g ? '</optgroup>' : ''}` : '').join('')}</select></div>
+      <div class="field"><label class="lbl" for="sp-st">สถานะ</label><select class="sel" id="sp-st">${STEP_ST.map(x => `<option ${x===v.status?'selected':''}>${x}</option>`).join('')}</select></div>
+      ${isTask ? '' : `<div class="field"><label class="lbl" for="sp-sd">วันส่งเข้า / เริ่ม</label><input class="inp" type="date" id="sp-sd" value="${esc(v.start_date || '')}"></div>`}
+      <div class="field"><label class="lbl" for="sp-dd">${isTask ? 'กำหนดเสร็จ' : 'วันนัดเสร็จ'}</label><input class="inp" type="date" id="sp-dd" value="${esc(v.due_date || '')}"></div>
+      <div class="field"><label class="lbl" for="sp-done">วันเสร็จจริง</label><input class="inp" type="date" id="sp-done" value="${esc(v.done_date || '')}"></div>
+      ${isTask ? '' : `<div class="field"><label class="lbl" for="sp-qi">จำนวนเข้า</label><input class="inp" id="sp-qi" inputmode="numeric" value="${esc(v.qty_in ?? '')}"></div>
+      <div class="field"><label class="lbl" for="sp-qo">จำนวนออก (ได้จริง)</label><input class="inp" id="sp-qo" inputmode="numeric" value="${esc(v.qty_out ?? '')}" placeholder="เว้นว่าง = เท่าจำนวนเข้า"></div>
+      <div class="field"><label class="lbl" for="sp-cost">ค่าทำต่อชิ้น (ขั้นนี้)</label><input class="inp" id="sp-cost" inputmode="decimal" value="${esc(v.unit_cost ?? '')}"></div>`}
+      <div class="field wide"><label class="lbl" for="sp-note">หมายเหตุ</label><textarea class="inp" id="sp-note" rows="2" style="font:inherit">${esc(v.note || '')}</textarea></div></div>
+    <p class="note" id="sp-loss" style="margin:0;color:var(--bad)" hidden></p>
+    ${!isNew && full ? '<div><button class="btn btn-sm" type="button" id="sp-del">ลบ</button></div>' : ''}`,
+    async () => { const g = id => $(id) ? $(id).value : undefined;
+      const d = { id: s?.id, item_id: v.item_id, scope, run_id: v.run_id, name: g('#sp-name'.slice(1)), status: g('sp-st'), owner: g('sp-own'), due_date: g('sp-dd'), done_date: g('sp-done'), note: g('sp-note') };
+      if (!isTask) Object.assign(d, { kind: g('sp-kind'), factory: g('sp-fac'), start_date: g('sp-sd'), qty_in: g('sp-qi'), qty_out: g('sp-qo'), unit_cost: g('sp-cost') });
+      if (!full) { delete d.name; delete d.kind; delete d.factory; delete d.owner; delete d.unit_cost; }
+      Object.keys(d).forEach(k => d[k] === undefined && delete d[k]);
+      await API.stepSave(d);
+      if (back) setTimeout(async () => { await (proj.loading || loadProjects(true)); back(); }, 0); });
+  $('modal').querySelector('.box2').classList.add('wide');
+  if (!full) ['sp-name','sp-kind','sp-fac','sp-own','sp-cost'].forEach(id => { if ($(id)) $(id).disabled = true; });
+  if (!can) { $('m-body').querySelectorAll('input,select,textarea').forEach(el => el.disabled = true); $('m-save').hidden = true; }
+  const kindUpd = () => { if ($('sp-facw')) $('sp-facw').style.display = $('sp-kind').value === 'handoff' ? 'none' : ''; };
+  if ($('sp-kind')) { $('sp-kind').onchange = kindUpd; kindUpd(); }
+  const loss = () => { const qi = +($('sp-qi')?.value || 0), qo = $('sp-qo')?.value; const w = $('sp-loss'); if (!w) return;
+    const n = qo !== '' && qo != null && qi ? qi - +qo : 0; w.hidden = !(n > 0); if (n > 0) w.textContent = `จำนวนออกน้อยกว่าที่ส่งเข้า ${fmt(n)} ชิ้น · ใส่เหตุผลในหมายเหตุ (เช่น ของเสีย / ตกหล่น)`; };
+  ['sp-qi','sp-qo'].forEach(id => $(id)?.addEventListener('input', loss)); loss();
+  $('sp-st').addEventListener('change', () => { if ($('sp-st').value === 'เสร็จ' && !$('sp-done').value) $('sp-done').value = today; if ($('sp-st').value === 'กำลังทำ' && $('sp-sd') && !$('sp-sd').value) $('sp-sd').value = today; });
+  if ($('sp-del')) $('sp-del').onclick = async () => { const b = $('sp-del'); if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'กดอีกครั้งเพื่อยืนยันการลบ'; return; }
+    try { await API.stepDelete(s.id); closeModal(); toast('ลบแล้ว'); await loadProjects(true); if (back) back(); } catch(e){ $('m-err').textContent = e.message || String(e); $('m-err').hidden = false; } };
+  setTimeout(() => (isNew ? $('sp-name') : $('sp-st'))?.focus(), 40);
+}
+document.addEventListener('click', async e => {
+  if (!proj.data) return;
+  const st = e.target.closest('[data-steps]'); if (st) { e.preventDefault(); e.stopPropagation(); const [sc, it, r] = st.dataset.steps.split(':'); stepsModal(sc, +it, r ? +r : null); return; }
+  const sp = e.target.closest('[data-step]'); if (sp) { e.preventDefault(); e.stopPropagation(); const s = proj.data.steps.find(x => x.id === +sp.dataset.step); if (!s) return;
+    const fromMgr = !!sp.closest('.stlist'); editStep(s, null, fromMgr ? () => stepsModal(s.scope, s.item_id, s.run_id) : null); return; }
+  const sd = e.target.closest('[data-sdone]'); if (sd) { const s = proj.data.steps.find(x => x.id === +sd.dataset.sdone); if (s) editStep(s, { status:'เสร็จ', done_date: today }, sd.closest('.stlist') ? () => stepsModal(s.scope, s.item_id, s.run_id) : null); return; }
+  const tn = e.target.closest('[data-tasknew]'); if (tn) { editStep(null, { scope:'task', item_id: +tn.dataset.tasknew, run_id: null }, null); return; }
+  const td = e.target.closest('[data-tdone]'); if (td) { const s = proj.data.steps.find(x => x.id === +td.dataset.tdone); if (!s) return;
+    try { const done = s.status !== 'เสร็จ'; await API.stepSave({ id: s.id, status: done ? 'เสร็จ' : 'กำลังทำ', ...(done ? {} : { done_date: '' }) }); s.status = done ? 'เสร็จ' : 'กำลังทำ'; s.done_date = done ? today : null;
+          td.classList.toggle('on', done); td.textContent = done ? '✓' : ''; const b = td.nextElementSibling; if (b) b.style.cssText = done ? 'text-decoration:line-through;color:var(--muted)' : ''; toast(done ? 'ทำเครื่องหมายเสร็จแล้ว' : 'เปิดงานอีกครั้ง'); loadProjects(true); }
+    catch(err){ toast(err.message || String(err)); } }
+}, true);
+function runStepsLock(r){
+  if (!r || stepsOf('run', r.item_id, r.id).length < 2) return;
+  ['rn-fac','rn-pd'].forEach(id => { if ($(id)) { $(id).disabled = true; $(id).insertAdjacentHTML('afterend', '<span class="note">มาจากขั้นตอน · แก้ที่ "จัดการขั้นตอน"</span>'); } });
+}
+function stepTplField(it){
+  const tpl = proj.data.templates || [];
+  return `<div class="field"><label class="lbl" for="rn-tpl">ขั้นตอนผลิต</label><select class="sel" id="rn-tpl">${tpl.map(t => `<option value="${esc(t.name)}">${esc(t.name)}${t.steps.length > 1 ? ' (' + esc(t.steps.map(x => x.name).join(' → ')) + ')' : ''}</option>`).join('')}</select></div>`;
+}
+
+// ----- กำหนดของขั้น Production: ใช้ขั้นตอนที่กำลังทำ -----
+function stageDue(it, k){
+  const d = stageDue0(it, k);
+  if (k !== 'production' || !proj.data?.steps) return d;
+  const R = runsAll(it.id).filter(runOpen);
+  if (R.length) { const r = R.find(x => d.lbl.endsWith('รอบ ' + x.run_no)) || R[0], c = curStep(stepsOf('run', it.id, r.id));
+    if (c && stepsOf('run', it.id, r.id).length > 1) return { ...d, date: c.due_date || d.date, lbl: `${c.name} · ${c.kind === 'handoff' ? 'ทีมประสาน' : (c.factory || '-')} · รอบ ${r.run_no}` }; }
+  if (it.sample_status !== 'Sample Approved' && it.sample_status !== 'Sample Received') { const c = curStep(stepsOf('sample', it.id));
+    if (c) return { date: c.due_date || it.sample_due, lbl: `ตัวอย่าง: ${c.name}${c.factory ? ' · ' + c.factory : ''}` }; }
+  return d;
+}
+
+// ----- งานของฉัน: ขั้นตอน / Task ที่ได้รับมอบหมาย -----
+function myStepRows(){
+  const d = proj.data, team = proj.view ?? proj.myTeam ?? '', meId = d.me.id, mine = (proj.scope ?? 'mine') === 'mine';
+  const tOf = s => s.owner ? (d.members.find(m => m.id === s.owner)?.team || '') : (s.scope === 'task' ? '' : 'production');
+  return (d.steps || []).filter(s => { const it = d.items.find(i => i.id === s.item_id); if (!it || it.status === 'Completed') return false;
+      if (s.scope === 'task' ? s.status === 'เสร็จ' : !['กำลังทำ','มีปัญหา'].includes(s.status)) return false;
+      if (s.scope === 'run') { const r = runOfStep(s); if (!r || !runOpen(r)) return false; if (stepsOf('run', s.item_id, s.run_id).length < 2) return false; }
+      if (mine) return s.owner ? s.owner === meId : ((s.scope === 'task' && s.created_by_id === meId) || !team || tOf(s) === team);
+      return !team || tOf(s) === team; })
+    .sort((a,b) => (a.due_date || '9999').localeCompare(b.due_date || '9999'));
+}
+function renderMe(){
+  renderMe9b();
+  const L = myStepRows(); if (!L.length) return;
+  const html = L.map(s => { const c = stepCtx(s);
+    return `<button class="mrow" type="button" data-step="${s.id}"><div class="ms"><span class="sc ${s.status === 'มีปัญหา' ? 'todo' : 'active'}" style="display:inline-flex">${s.scope === 'task' ? 'Task' : 'ขั้นตอน'}</span></div>
+      <div style="min-width:0"><div class="nm" style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s.name)}${s.scope !== 'task' ? ` <span class="muted">· ${esc(stepWhere(s))}</span>` : ''}</div><div class="sub" style="font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.label)} · ${esc(c.where)}</div></div>
+      <div class="mstat note">${esc(s.status)}${s.qty_in != null ? ' · ' + fmt(s.qty_in) + ' ชิ้น' : ''}<br>${s.owner ? '👤 ' + esc(memName(s.owner)) : '<span style="color:#8A5A00">ยังไม่มีคนรับ</span>'}</div>
+      <div class="dcell"><span class="note">${s.scope === 'task' ? 'กำหนดเสร็จ' : 'นัดเสร็จ'}</span>${dueHtml(s.due_date)}</div>${s.status === 'มีปัญหา' ? `<span class="flag" title="${esc(s.note || 'มีปัญหา')}">!</span>` : '<span></span>'}</button>`; }).join('');
+  const list = $('me-list'), empty = list.querySelector('.empty');
+  if (empty) list.innerHTML = '';
+  list.insertAdjacentHTML('afterbegin', `<div class="mgrp">ขั้นตอนผลิต / Task ที่ต้องทำ (${L.length})</div>${html}${empty ? '' : '<div class="mgrp">รายการสินค้าตามขั้นงาน</div>'}`);
+  const n = list.querySelectorAll('.mrow').length; $('me-count').textContent = `${n} รายการ`;
+}
+
+// ----- Workload: รวมขั้นตอน / Task ที่มีผู้รับผิดชอบ -----
+function wlTasks(){
+  const T = openTasks().filter(t => t.cur || t.owner).map(t => ({ key:'i' + t.it.id + t.g.k, type:'item', it:t.it, g:t.g, x:t.x, owner:t.owner, team:t.g.team, due:stageDue(t.it, t.g.k).date || t.it.target_launch, field:OWNER[t.g.k] }));
+  for (const m of (mkb.data?.tasks || [])) if (m.status !== 'โพสต์แล้ว') T.push({ key:'m' + m.id, type:'mk', mk:m, owner:m.assignee || null, team:'pr', due:m.due_date });
+  for (const s of (proj.data.steps || [])) { const it = proj.data.items.find(i => i.id === s.item_id); if (!it || it.status === 'Completed') continue;
+    if (s.scope === 'task' ? s.status === 'เสร็จ' : !['กำลังทำ','มีปัญหา'].includes(s.status)) continue;
+    if (s.scope === 'run') { const r = runOfStep(s); if (!r || !runOpen(r) || stepsOf('run', s.item_id, s.run_id).length < 2) continue; }
+    T.push({ key:'s' + s.id, type:'step', st:s, owner:s.owner || null, team: s.owner ? (proj.data.members.find(m => m.id === s.owner)?.team || '') : (s.scope === 'task' ? '' : 'production'), due:s.due_date }); }
+  return T;
+}
+function renderTeam(){
+  if (!mkb.data && !mkb.loading) mkb.loading = loadMkBoard().then(() => { if (st.page === 'team') renderTeam(); });
+  const d = proj.data, mem = d.members.filter(m => !wl.team || m.team === wl.team);
+  $('tm-tabs').innerHTML = segHtml([['','ทุกทีม'], ...Object.entries(TEAMS).filter(([k]) => k !== 'management')], wl.team, 'data-k');
+  const T = wlTasks().filter(t => !wl.team || t.team === wl.team || mem.some(m => m.id === t.owner));
+  const by = id => T.filter(t => t.owner === id), un = T.filter(t => !t.owner);
+  const max = Math.max(1, ...mem.map(m => by(m.id).length));
+  const soon = L => L.filter(t => t.due && daysTo(t.due) <= 7).length;
+  $('tm-kpis').innerHTML = `
+    <div class="card"><div class="lbl">งานทั้งหมดในบอร์ด</div><div class="kpi">${fmt(T.length)}</div><div class="delta">รวมงาน PR · ขั้นตอนผลิต · Task</div></div>
+    <div class="card"><div class="lbl">ยังไม่มีคนรับ</div><div class="kpi ${un.length?'down':''}">${fmt(un.length)}</div><div class="delta">ลากการ์ดไปที่ชื่อคนเพื่อมอบหมาย</div></div>
+    <div class="card"><div class="lbl">คนในทีม</div><div class="kpi">${fmt(mem.length)}</div><div class="delta">งานเฉลี่ย ${mem.length ? (mem.reduce((s,m) => s + by(m.id).length, 0) / mem.length).toFixed(1) : '-'} ต่อคน</div></div>
+    <div class="card"><div class="lbl">ใกล้/เลยกำหนด (7 วัน)</div><div class="kpi ${soon(T)?'down':''}">${fmt(soon(T))}</div><div class="delta">ทั้งบอร์ด</div></div>`;
+  const card = t => { const can = t.type === 'mk' ? (mkb.data?.can_edit || t.owner === mkb.data?.me) : t.type === 'step' ? canRun() : canField(fieldOf(t.field));
+    if (t.type === 'step') { const s = t.st, c = stepCtx(s);
+      return `<article class="kcard wk" ${can?'draggable="true"':''} data-wk="${t.key}" data-step="${s.id}" tabindex="0"><div class="kp">${s.scope === 'task' ? '☑️ Task' : '🏭 ขั้นตอน'} · ${esc(c.where)}</div><div class="kn">${esc(s.name)}${s.scope !== 'task' ? ` <span class="muted">· ${esc(stepWhere(s))}</span>` : ''}</div><div class="km"><span class="note" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.label)}</span></div><div class="kd">${dueHtml(t.due)}${s.status === 'มีปัญหา' ? '<span class="flag" title="มีปัญหา">!</span>' : ''}</div></article>`; }
+    return t.type === 'mk'
+      ? `<article class="kcard wk" ${can?'draggable="true"':''} data-wk="${t.key}" data-mk="${t.mk.id}" tabindex="0"><div class="kp">📣 ${esc(t.mk.kind || 'PR')} · ${esc(t.mk.status)}</div><div class="kn">${esc(t.mk.title)}</div><div class="kd">${dueHtml(t.due)}</div></article>`
+      : `<article class="kcard wk" ${can?'draggable="true"':''} data-wk="${t.key}" data-item="${t.it.id}" data-stage="${t.g.k}" tabindex="0"><div class="kp">${esc(pById(t.it.project_id).name)}</div><div class="kn">${itemLabel(t.it)}</div>
+          <div class="km"><span class="sc ${t.x.s}" style="display:inline-flex">${esc(t.g.n)}</span><span class="note" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.x.t)}</span></div><div class="kd">${dueHtml(t.due)}${t.it.blocker ? '<span class="flag" title="ติดปัญหา">!</span>' : ''}</div></article>`; };
+  const col = (id, title, sub, L, warn) => `<section class="kcol wcol ${warn?'warn':''}" data-owner="${esc(id)}"><h3><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title}</span><span>${L.length}</span></h3>
+      ${sub ? `<div class="wsub">${sub}</div>` : ''}<div class="kcards">${L.sort((a,b) => (a.due||'9999').localeCompare(b.due||'9999')).map(card).join('') || '<div class="kempty">ว่าง · ลากงานมาวางได้</div>'}</div></section>`;
+  $('tm-board').innerHTML = `<div class="kb wkb">${col('', '📥 ยังไม่มีคนรับ', 'งานที่ถึงคิวแล้ว', un, false)}${mem.sort((a,b) => by(b.id).length - by(a.id).length).map(m => { const L = by(m.id), n = L.length;
+    const st2 = STAGES.map(g => [g.n, L.filter(t => t.g === g).length]).concat([['PR', L.filter(t => t.type === 'mk').length], ['ขั้นตอน/Task', L.filter(t => t.type === 'step').length]]).filter(([,c]) => c);
+    return col(m.id, `${esc(m.name)} <small class="note">${esc(TEAMS[m.team] || 'ไม่มีทีม')}</small>`, `<div class="wbar"><i style="width:${(n/max*100).toFixed(0)}%;background:${n/max > .8 && n > 3 ? 'var(--bad)' : 'var(--accent)'}"></i></div>${st2.map(([k,c]) => `<span class="pill p-idle">${esc(k)} ${c}</span>`).join(' ')}${soon(L) ? ` <span class="due late">ด่วน ${soon(L)}</span>` : ''}`, L, n/max > .8 && n > 3); }).join('')}</div>`;
+  let drag = null;
+  $('tm-board').querySelectorAll('.kcard[draggable="true"]').forEach(c => { c.ondragstart = e => { drag = c.dataset.wk; c.classList.add('drag'); e.dataTransfer.effectAllowed = 'move'; }; c.ondragend = () => c.classList.remove('drag'); });
+  $('tm-board').querySelectorAll('.wcol').forEach(cl => { cl.ondragover = e => { e.preventDefault(); cl.classList.add('over'); }; cl.ondragleave = () => cl.classList.remove('over');
+    cl.ondrop = async e => { e.preventDefault(); cl.classList.remove('over'); const t = T.find(x => x.key === drag); const to = cl.dataset.owner || null; if (!t || (t.owner || null) === to) return;
+      const who = to ? (d.members.find(m => m.id === to)?.name || '') : 'ยังไม่มีคนรับ';
+      try {
+        if (t.type === 'mk') { t.mk.assignee = to; renderTeam(); await API.mkPatch(t.mk.id, to ? { assignee: to } : { unassign: true }); }
+        else if (t.type === 'step') { t.st.owner = to; renderTeam(); await API.stepSave({ id: t.st.id, owner: to || '' }); }
+        else { t.it[t.field] = to; renderTeam(); await API.projUpdate(t.it.id, { [t.field]: to || '' }); }
+        toast(`มอบหมาย ${t.type === 'mk' ? t.mk.title : t.type === 'step' ? t.st.name : t.it.item_name} → ${who}`); loadProjects(true);
+      } catch(err){ toast('มอบหมายไม่สำเร็จ: ' + (err.message || err)); loadProjects(true); } }; });
+}
+
+// ----- Inventory (Project): ของอยู่ที่โรงงานไหนตอนนี้ + ข้อความเช็คงาน -----
+function whereNow(){
+  const d = proj.data, out = new Map();
+  for (const s of (d.steps || [])) { if (!['กำลังทำ','มีปัญหา'].includes(s.status) || s.scope === 'task') continue;
+    const it = d.items.find(i => i.id === s.item_id); if (!it || it.status === 'Completed') continue;
+    if (s.scope === 'run') { const r = runOfStep(s); if (!r || !runOpen(r)) continue; }
+    if (s.scope === 'sample' && ['Sample Approved'].includes(it.sample_status)) continue;
+    const k = s.kind === 'handoff' ? '🚚 ทีมกำลังประสานส่งต่อ' : (s.factory || 'ไม่ระบุโรงงาน');
+    if (!out.has(k)) out.set(k, []); out.get(k).push(s); }
+  return [...out.entries()].sort((a,b) => b[1].length - a[1].length);
+}
+function checkText(fac, L){
+  const lines = L.sort((a,b) => (a.due_date || '9999').localeCompare(b.due_date || '9999')).map((s, i) => { const c = stepCtx(s), r = runOfStep(s);
+    return `${i + 1}) ${c.label} · ${c.where} · ${s.name} · ${fmt(s.qty_in ?? r?.qty ?? 0)} ชิ้น${r?.size_qty && s.scope === 'run' ? ' (' + sizeText(r.size_qty) + ')' : ''} · นัดเสร็จ ${s.due_date ? thDate(s.due_date) : 'ยังไม่นัด'}`; });
+  return `เช็คงาน ${fac} (${thDate(today)})\n${lines.join('\n')}\nรบกวนยืนยันจำนวนและวันเสร็จด้วยครับ 🙏`;
+}
+function renderIncoming(){
+  renderIncoming9(); incStepNotes();
+  const G = whereNow().filter(([k]) => !ic.fac || k === ic.fac); if (!G.length) return;
+  const html = `<section class="card" style="padding:0"><div class="card-hd" style="padding:16px 20px"><h2 class="sec">ของอยู่ที่ไหนตอนนี้</h2><span class="note">ตามขั้นตอนที่กำลังทำ · กดคัดลอกเพื่อส่งเช็คงานกับโรงงาน</span></div>
+    <div class="wgrid">${G.map(([k, L]) => `<div class="wbox"><div class="wbh"><b>${esc(k)}</b><span class="note">${L.length} งาน · ${fmt(L.reduce((s, x) => s + (+x.qty_in || +runOfStep(x)?.qty || 0), 0))} ชิ้น</span></div>
+      ${L.sort((a,b) => (a.due_date || '9999').localeCompare(b.due_date || '9999')).map(s => { const c = stepCtx(s); return `<button type="button" class="wln" data-step="${s.id}"><span style="min-width:0"><b>${esc(s.name)}</b> · ${esc(c.label)} <span class="note">· ${esc(c.where)}${s.owner ? ' · 👤 ' + esc(memName(s.owner)) : ''}</span></span>${s.status === 'มีปัญหา' ? '<span class="pill p-out">มีปัญหา</span>' : dueHtml(s.due_date)}</button>`; }).join('')}
+      ${k.startsWith('🚚') ? '' : `<button class="btn btn-sm" type="button" data-copychk="${esc(k)}">📋 คัดลอกข้อความเช็คงาน</button>`}</div>`).join('')}</div></section>`;
+  $('ic-list').insertAdjacentHTML('afterbegin', html);
+}
+function incStepNotes(){
+  document.querySelectorAll('#ic-list .icrow2').forEach(row => { const b = row.querySelector('[data-runedit]'); if (!b) return;
+    const r = proj.data.runs.find(x => x.id === +b.dataset.runedit); if (!r || !runOpen(r)) return;
+    const L = stepsOf('run', r.item_id, r.id); if (L.length < 2) return; const c = curStep(L);
+    const n = row.querySelector('div > .note'); if (n && c) n.insertAdjacentHTML('beforeend', `<br><button type="button" class="linklike" data-steps="run:${r.item_id}:${r.id}" style="font-size:12.5px">ตอนนี้: ขั้น ${L.indexOf(c) + 1}/${L.length} ${esc(c.name)} · ${esc(stepWhere(c))}${c.due_date ? ' · นัด ' + esc(shortDate(c.due_date)) : ''}</button>`); });
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-copychk]'); if (!b || !proj.data) return;
+  const k = b.dataset.copychk, L = (whereNow().find(([x]) => x === k) || [, []])[1], txt = checkText(k, L);
+  const fallback = () => openModal('ข้อความเช็คงาน · ' + k, `<textarea class="inp" rows="10" style="font:inherit;width:100%" readonly>${esc(txt)}</textarea><p class="note" style="margin:0">กดค้างเพื่อเลือกทั้งหมดแล้วคัดลอก</p>`, null);
+  if (navigator.clipboard?.writeText) navigator.clipboard.writeText(txt).then(() => toast('คัดลอกแล้ว · วางในแชตโรงงานได้เลย'), fallback); else fallback(); });
 
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
