@@ -438,7 +438,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
 .dcell{display:flex;flex-direction:column;gap:1px;min-width:0;line-height:1.35}
 .dcell>.note{font-size:11.5px}
 .due.warn2{color:#8A4B00;font-weight:600;white-space:normal}
-.pre{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#5B2A86;background:#F1E9FA;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.pre{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;color:#5B2A86;background:#F1E9FA;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
 .rnh{margin:4px 0 0;font-size:14px;font-weight:600}
 @media (min-width:861px){.icrow2{grid-template-columns:minmax(0,1.6fr) minmax(90px,.9fr) 90px 140px auto}}
 @media (max-width:1100px){.mrow{grid-template-columns:96px minmax(0,1fr) 120px 130px 28px}}
@@ -464,7 +464,7 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
 .wbh{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
 .wln{display:flex;justify-content:space-between;gap:8px;align-items:center;text-align:left;font:inherit;font-size:13px;background:none;border:0;border-top:1px solid var(--line2);padding:8px 0;min-height:40px;cursor:pointer;color:inherit}
 .wln:hover{background:var(--soft)}
-@media (max-width:860px){.strow{grid-template-columns:28px minmax(0,1fr) auto}.strow .icact{grid-column:1/-1;justify-content:flex-start}.wgrid{padding:12px 16px;grid-template-columns:minmax(0,1fr)}.pst{max-width:100%}.mgrp{padding:10px 16px 6px}}
+@media (max-width:860px){.tchk{width:40px;height:40px}.strow{grid-template-columns:28px minmax(0,1fr) auto}.strow .icact{grid-column:1/-1;justify-content:flex-start}.wgrid{padding:12px 16px;grid-template-columns:minmax(0,1fr)}.pst{max-width:100%}.mgrp{padding:10px 16px 6px}}
 </style>
 </head>
 <body>
@@ -2823,39 +2823,39 @@ function editStep(s, preset, back){
   openModal(`${ctx.label} · ${ctx.where} · ${isNew ? (isTask ? 'เพิ่ม Task' : 'เพิ่มขั้นตอน') : esc(v.name)}`, `
     ${!full && can ? '<p class="note" style="margin:0">คุณเป็นผู้รับผิดชอบขั้นนี้ · แก้สถานะ วันที่ จำนวน และหมายเหตุได้</p>' : ''}
     <div class="fgrid">
-      <div class="field"><label class="lbl" for="sp-name">${isTask ? 'ชื่องาน' : 'ชื่อขั้นตอน'}</label><input class="inp" id="sp-name" list="sp-names" value="${esc(v.name)}" placeholder="${isTask ? 'เช่น สั่งป้ายคอ' : 'เช่น ตัดเย็บ / สกรีน / ปัก'}"><datalist id="sp-names">${isTask ? '' : names.map(n => `<option value="${esc(n)}">`).join('')}</datalist></div>
-      ${isTask ? '' : `<div class="field"><label class="lbl" for="sp-kind">ประเภท</label><select class="sel" id="sp-kind">${['factory','handoff'].map(k => `<option value="${k}" ${k===v.kind?'selected':''}>${STEP_KIND[k]}</option>`).join('')}</select></div>`}
-      ${isTask ? '' : `<div class="field" id="sp-facw"><label class="lbl" for="sp-fac">โรงงาน</label><input class="inp" id="sp-fac" list="sp-facs" value="${esc(v.factory || '')}" placeholder="เลือกหรือพิมพ์ชื่อใหม่"><datalist id="sp-facs">${facs.map(f => `<option value="${esc(f)}">`).join('')}</datalist></div>`}
-      <div class="field"><label class="lbl" for="sp-own">ผู้รับผิดชอบ</label><select class="sel" id="sp-own"><option value="">ยังไม่มีคนรับ</option>${(prodTeam ? [['ทีม Production', ms.filter(m => m.team === prodTeam)], ['ทีมอื่น', ms.filter(m => m.team !== prodTeam)]] : [['', ms]]).map(([g, L]) => L.length ? `${g ? `<optgroup label="${g}">` : ''}${L.map(m => `<option value="${esc(m.id)}" ${m.id===v.owner?'selected':''}>${esc(m.name)}</option>`).join('')}${g ? '</optgroup>' : ''}` : '').join('')}</select></div>
-      <div class="field"><label class="lbl" for="sp-st">สถานะ</label><select class="sel" id="sp-st">${STEP_ST.map(x => `<option ${x===v.status?'selected':''}>${x}</option>`).join('')}</select></div>
-      ${isTask ? '' : `<div class="field"><label class="lbl" for="sp-sd">วันส่งเข้า / เริ่ม</label><input class="inp" type="date" id="sp-sd" value="${esc(v.start_date || '')}"></div>`}
-      <div class="field"><label class="lbl" for="sp-dd">${isTask ? 'กำหนดเสร็จ' : 'วันนัดเสร็จ'}</label><input class="inp" type="date" id="sp-dd" value="${esc(v.due_date || '')}"></div>
-      <div class="field"><label class="lbl" for="sp-done">วันเสร็จจริง</label><input class="inp" type="date" id="sp-done" value="${esc(v.done_date || '')}"></div>
-      ${isTask ? '' : `<div class="field"><label class="lbl" for="sp-qi">จำนวนเข้า</label><input class="inp" id="sp-qi" inputmode="numeric" value="${esc(v.qty_in ?? '')}"></div>
-      <div class="field"><label class="lbl" for="sp-qo">จำนวนออก (ได้จริง)</label><input class="inp" id="sp-qo" inputmode="numeric" value="${esc(v.qty_out ?? '')}" placeholder="เว้นว่าง = เท่าจำนวนเข้า"></div>
-      <div class="field"><label class="lbl" for="sp-cost">ค่าทำต่อชิ้น (ขั้นนี้)</label><input class="inp" id="sp-cost" inputmode="decimal" value="${esc(v.unit_cost ?? '')}"></div>`}
-      <div class="field wide"><label class="lbl" for="sp-note">หมายเหตุ</label><textarea class="inp" id="sp-note" rows="2" style="font:inherit">${esc(v.note || '')}</textarea></div></div>
-    <p class="note" id="sp-loss" style="margin:0;color:var(--bad)" hidden></p>
-    ${!isNew && full ? '<div><button class="btn btn-sm" type="button" id="sp-del">ลบ</button></div>' : ''}`,
+      <div class="field"><label class="lbl" for="ps-name">${isTask ? 'ชื่องาน' : 'ชื่อขั้นตอน'}</label><input class="inp" id="ps-name" list="ps-names" value="${esc(v.name)}" placeholder="${isTask ? 'เช่น สั่งป้ายคอ' : 'เช่น ตัดเย็บ / สกรีน / ปัก'}"><datalist id="ps-names">${isTask ? '' : names.map(n => `<option value="${esc(n)}">`).join('')}</datalist></div>
+      ${isTask ? '' : `<div class="field"><label class="lbl" for="ps-kind">ประเภท</label><select class="sel" id="ps-kind">${['factory','handoff'].map(k => `<option value="${k}" ${k===v.kind?'selected':''}>${STEP_KIND[k]}</option>`).join('')}</select></div>`}
+      ${isTask ? '' : `<div class="field" id="ps-facw"><label class="lbl" for="ps-fac">โรงงาน</label><input class="inp" id="ps-fac" list="ps-facs" value="${esc(v.factory || '')}" placeholder="เลือกหรือพิมพ์ชื่อใหม่"><datalist id="ps-facs">${facs.map(f => `<option value="${esc(f)}">`).join('')}</datalist></div>`}
+      <div class="field"><label class="lbl" for="ps-own">ผู้รับผิดชอบ</label><select class="sel" id="ps-own"><option value="">ยังไม่มีคนรับ</option>${(prodTeam ? [['ทีม Production', ms.filter(m => m.team === prodTeam)], ['ทีมอื่น', ms.filter(m => m.team !== prodTeam)]] : [['', ms]]).map(([g, L]) => L.length ? `${g ? `<optgroup label="${g}">` : ''}${L.map(m => `<option value="${esc(m.id)}" ${m.id===v.owner?'selected':''}>${esc(m.name)}</option>`).join('')}${g ? '</optgroup>' : ''}` : '').join('')}</select></div>
+      <div class="field"><label class="lbl" for="ps-st">สถานะ</label><select class="sel" id="ps-st">${STEP_ST.map(x => `<option ${x===v.status?'selected':''}>${x}</option>`).join('')}</select></div>
+      ${isTask ? '' : `<div class="field"><label class="lbl" for="ps-sd">วันส่งเข้า / เริ่ม</label><input class="inp" type="date" id="ps-sd" value="${esc(v.start_date || '')}"></div>`}
+      <div class="field"><label class="lbl" for="ps-dd">${isTask ? 'กำหนดเสร็จ' : 'วันนัดเสร็จ'}</label><input class="inp" type="date" id="ps-dd" value="${esc(v.due_date || '')}"></div>
+      <div class="field"><label class="lbl" for="ps-done">วันเสร็จจริง</label><input class="inp" type="date" id="ps-done" value="${esc(v.done_date || '')}"></div>
+      ${isTask ? '' : `<div class="field"><label class="lbl" for="ps-qi">จำนวนเข้า</label><input class="inp" id="ps-qi" inputmode="numeric" value="${esc(v.qty_in ?? '')}"></div>
+      <div class="field"><label class="lbl" for="ps-qo">จำนวนออก (ได้จริง)</label><input class="inp" id="ps-qo" inputmode="numeric" value="${esc(v.qty_out ?? '')}" placeholder="เว้นว่าง = เท่าจำนวนเข้า"></div>
+      <div class="field"><label class="lbl" for="ps-cost">ค่าทำต่อชิ้น (ขั้นนี้)</label><input class="inp" id="ps-cost" inputmode="decimal" value="${esc(v.unit_cost ?? '')}"></div>`}
+      <div class="field wide"><label class="lbl" for="ps-note">หมายเหตุ</label><textarea class="inp" id="ps-note" rows="2" style="font:inherit">${esc(v.note || '')}</textarea></div></div>
+    <p class="note" id="ps-loss" style="margin:0;color:var(--bad)" hidden></p>
+    ${!isNew && full ? '<div><button class="btn btn-sm" type="button" id="ps-del">ลบ</button></div>' : ''}`,
     async () => { const g = id => $(id) ? $(id).value : undefined;
-      const d = { id: s?.id, item_id: v.item_id, scope, run_id: v.run_id, name: g('#sp-name'.slice(1)), status: g('sp-st'), owner: g('sp-own'), due_date: g('sp-dd'), done_date: g('sp-done'), note: g('sp-note') };
-      if (!isTask) Object.assign(d, { kind: g('sp-kind'), factory: g('sp-fac'), start_date: g('sp-sd'), qty_in: g('sp-qi'), qty_out: g('sp-qo'), unit_cost: g('sp-cost') });
+      const d = { id: s?.id, item_id: v.item_id, scope, run_id: v.run_id, name: g('ps-name'), status: g('ps-st'), owner: g('ps-own'), due_date: g('ps-dd'), done_date: g('ps-done'), note: g('ps-note') };
+      if (!isTask) Object.assign(d, { kind: g('ps-kind'), factory: g('ps-fac'), start_date: g('ps-sd'), qty_in: g('ps-qi'), qty_out: g('ps-qo'), unit_cost: g('ps-cost') });
       if (!full) { delete d.name; delete d.kind; delete d.factory; delete d.owner; delete d.unit_cost; }
       Object.keys(d).forEach(k => d[k] === undefined && delete d[k]);
       await API.stepSave(d);
       if (back) setTimeout(async () => { await (proj.loading || loadProjects(true)); back(); }, 0); });
   $('modal').querySelector('.box2').classList.add('wide');
-  if (!full) ['sp-name','sp-kind','sp-fac','sp-own','sp-cost'].forEach(id => { if ($(id)) $(id).disabled = true; });
+  if (!full) ['ps-name','ps-kind','ps-fac','ps-own','ps-cost'].forEach(id => { if ($(id)) $(id).disabled = true; });
   if (!can) { $('m-body').querySelectorAll('input,select,textarea').forEach(el => el.disabled = true); $('m-save').hidden = true; }
-  const kindUpd = () => { if ($('sp-facw')) $('sp-facw').style.display = $('sp-kind').value === 'handoff' ? 'none' : ''; };
-  if ($('sp-kind')) { $('sp-kind').onchange = kindUpd; kindUpd(); }
-  const loss = () => { const qi = +($('sp-qi')?.value || 0), qo = $('sp-qo')?.value; const w = $('sp-loss'); if (!w) return;
+  const kindUpd = () => { if ($('ps-facw')) $('ps-facw').style.display = $('ps-kind').value === 'handoff' ? 'none' : ''; };
+  if ($('ps-kind')) { $('ps-kind').onchange = kindUpd; kindUpd(); }
+  const loss = () => { const qi = +($('ps-qi')?.value || 0), qo = $('ps-qo')?.value; const w = $('ps-loss'); if (!w) return;
     const n = qo !== '' && qo != null && qi ? qi - +qo : 0; w.hidden = !(n > 0); if (n > 0) w.textContent = `จำนวนออกน้อยกว่าที่ส่งเข้า ${fmt(n)} ชิ้น · ใส่เหตุผลในหมายเหตุ (เช่น ของเสีย / ตกหล่น)`; };
-  ['sp-qi','sp-qo'].forEach(id => $(id)?.addEventListener('input', loss)); loss();
-  $('sp-st').addEventListener('change', () => { if ($('sp-st').value === 'เสร็จ' && !$('sp-done').value) $('sp-done').value = today; if ($('sp-st').value === 'กำลังทำ' && $('sp-sd') && !$('sp-sd').value) $('sp-sd').value = today; });
-  if ($('sp-del')) $('sp-del').onclick = async () => { const b = $('sp-del'); if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'กดอีกครั้งเพื่อยืนยันการลบ'; return; }
+  ['ps-qi','ps-qo'].forEach(id => $(id)?.addEventListener('input', loss)); loss();
+  $('ps-st').addEventListener('change', () => { if ($('ps-st').value === 'เสร็จ' && !$('ps-done').value) $('ps-done').value = today; if ($('ps-st').value === 'กำลังทำ' && $('ps-sd') && !$('ps-sd').value) $('ps-sd').value = today; });
+  if ($('ps-del')) $('ps-del').onclick = async () => { const b = $('ps-del'); if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'กดอีกครั้งเพื่อยืนยันการลบ'; return; }
     try { await API.stepDelete(s.id); closeModal(); toast('ลบแล้ว'); await loadProjects(true); if (back) back(); } catch(e){ $('m-err').textContent = e.message || String(e); $('m-err').hidden = false; } };
-  setTimeout(() => (isNew ? $('sp-name') : $('sp-st'))?.focus(), 40);
+  setTimeout(() => (isNew ? $('ps-name') : $('ps-st'))?.focus(), 40);
 }
 document.addEventListener('click', async e => {
   if (!proj.data) return;
