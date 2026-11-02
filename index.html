@@ -465,6 +465,18 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
 .wln{display:flex;justify-content:space-between;gap:8px;align-items:center;text-align:left;font:inherit;font-size:13px;background:none;border:0;border-top:1px solid var(--line2);padding:8px 0;min-height:40px;cursor:pointer;color:inherit}
 .wln:hover{background:var(--soft)}
 @media (max-width:860px){.tchk{width:40px;height:40px}.strow{grid-template-columns:28px minmax(0,1fr) auto}.strow .icact{grid-column:1/-1;justify-content:flex-start}.wgrid{padding:12px 16px;grid-template-columns:minmax(0,1fr)}.pst{max-width:100%}.mgrp{padding:10px 16px 6px}}
+/* รอบ 11 */
+#bk-card{padding:16px 20px}
+.bkh{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.bkh .note{margin-top:4px}
+.bka{display:flex;gap:8px;flex-wrap:wrap}
+.bkt{border:1px solid var(--line2);border-radius:10px;overflow:hidden;font-size:13.5px}
+.bkr{display:grid;grid-template-columns:minmax(0,1fr) 80px 100px;gap:8px;padding:7px 12px;border-top:1px solid var(--line2)}
+.bkr span:not(:first-child){text-align:right;font-variant-numeric:tabular-nums}
+.bkr.hd{border-top:0;background:var(--soft);font-weight:600;font-size:12.5px}
+.bkm{border:0;padding:0;margin:0;display:grid;gap:8px}
+.bkm label{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-size:13.5px;cursor:pointer;min-height:44px}
+.bkm input{margin-top:3px;width:18px;height:18px;flex:none}
 </style>
 </head>
 <body>
@@ -732,7 +744,8 @@ pre.sql{background:var(--side);color:#E8E7F0;border-radius:10px;padding:12px;fon
   </div>
   <div id="page-admin" class="pg" hidden>
     <header class="top"><div style="min-width:0"><h1>หลังบ้าน · ประวัติการแก้ไข</h1><div class="muted" style="margin-top:4px">ทุกการแก้ไขจากหน้าเว็บและ SQL Editor: ใคร แก้อะไร เมื่อไหร่ ค่าก่อน/หลัง · กด "คืนค่า" เพื่อย้อนรายการนั้น · เปิดได้เฉพาะ admin</div></div>
-      <div class="controls"><button class="btn" id="ad-csv" type="button">Export CSV (สำรอง)</button></div></header>
+      <div class="controls"><button class="btn" id="ad-csv" type="button">Export CSV ประวัติ</button></div></header>
+    <section class="card" id="bk-card"></section>
     <div class="controls"><label class="lbl" for="ad-from">ตั้งแต่</label><input class="inp" type="date" id="ad-from"><label class="lbl" for="ad-to">ถึง</label><input class="inp" type="date" id="ad-to">
       <select class="sel" id="ad-actor" aria-label="ผู้แก้"><option value="">ทุกคน</option></select><select class="sel" id="ad-tbl" aria-label="ส่วน"><option value="">ทุกส่วน</option></select>
       <button class="btn btn-p" id="ad-apply" type="button">ดูประวัติ</button><input class="inp" id="ad-q" style="width:200px;max-width:100%" placeholder="ค้นหาในผลลัพธ์" aria-label="ค้นหา"></div>
@@ -847,6 +860,9 @@ const API = DEMO ? DEMO.api : {
   runSave: d => rpc('run_save', { d }),
   runDelete: id => rpc('run_delete', { p_id:id }),
   stepSave: d => rpc('step_save', { d }),
+  backup: () => rpc('admin_backup'),
+  backupStatus: () => rpc('admin_backup_status'),
+  backupRestore: (data, mode) => rpc('admin_backup_restore', { p_data:data, p_mode:mode }),
   stepDelete: id => rpc('step_delete', { p_id:id }),
   stepMove: (id, dir) => rpc('step_move', { p_id:id, p_dir:dir }),
   stepTemplate: (item, scope, run, name) => rpc('steps_apply_template', { p_item:item, p_scope:scope, p_run:run, p_template:name }),
@@ -2009,6 +2025,7 @@ const TBL = { team_members:'สมาชิก', products:'สินค้า', 
 const OPS = { INSERT:['เพิ่ม','p-ok'], UPDATE:['แก้ไข','p-low'], DELETE:['ลบ','p-out'], LEGACY:['ประวัติเดิม','p-idle'] };
 async function loadAdmin(){
   if (!st.isAdmin) { $('ad-body').innerHTML = '<div class="card empty">หน้านี้เปิดได้เฉพาะ admin</div>'; return; }
+  loadBackupCard();
   $('ad-body').innerHTML = '<div class="card"><div class="sk" style="height:200px"></div></div>';
   if (!proj.data) await Promise.resolve(loadProjects()).catch(() => {});
   try { adm.data = await API.adminLog({ from: adm.from || null, to: adm.to || null, actor: adm.actor || null, tbl: adm.tbl || null }); renderAdmin(); }
@@ -2998,6 +3015,129 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-copy
   const k = b.dataset.copychk, L = (whereNow().find(([x]) => x === k) || [, []])[1], txt = checkText(k, L);
   const fallback = () => openModal('ข้อความเช็คงาน · ' + k, `<textarea class="inp" rows="10" style="font:inherit;width:100%" readonly>${esc(txt)}</textarea><p class="note" style="margin:0">กดค้างเพื่อเลือกทั้งหมดแล้วคัดลอก</p>`, null);
   if (navigator.clipboard?.writeText) navigator.clipboard.writeText(txt).then(() => toast('คัดลอกแล้ว · วางในแชตโรงงานได้เลย'), fallback); else fallback(); });
+
+// ===== รอบ 11: สำรองข้อมูล (zip ของ CSV) + กู้คืน =====
+const BK_LABEL = { team_members:'สมาชิก', app_settings:'ตั้งค่าระบบ', project_fields:'ตั้งค่าช่อง Project', lookups:'รายชื่อผู้ออกแบบ/โรงงาน', step_templates:'สูตรขั้นตอน',
+  products:'สินค้า (ชื่อ/Collection/รูปที่แก้)', sku_costs:'ทุนสินค้า', sku_map:'จับคู่ชื่อสินค้า', projects:'Project', project_items:'รายการ Project', production_runs:'รอบผลิต',
+  process_steps:'ขั้นตอนผลิต/Task', sample_events:'ประวัติตัวอย่าง', project_log:'ประวัติแก้ Project', mk_tasks:'งาน PR', promotions:'โปรโมชัน', oem_customers:'ลูกค้า OEM',
+  oem_docs:'เอกสาร OEM', edit_log:'ประวัติเดิม', audit_log:'ประวัติการแก้ไข (ดูอย่างเดียว)' };
+const bk = { status:null };
+
+// --- ZIP แบบไม่ต้องพึ่งไลบรารีภายนอก ---
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = u8 => { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+function zipStore(files){   // [{name, data:Uint8Array}] → Blob (ไม่บีบอัด เปิดได้ทุกเครื่อง)
+  const enc = new TextEncoder(), parts = [], central = []; let off = 0;
+  const d = new Date(), dt = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF, dd = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+  for (const f of files) { const nm = enc.encode(f.name), crc = crc32(f.data), sz = f.data.length;
+    const h = new DataView(new ArrayBuffer(30)); h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, dt, true); h.setUint16(12, dd, true); h.setUint32(14, crc, true); h.setUint32(18, sz, true); h.setUint32(22, sz, true); h.setUint16(26, nm.length, true); h.setUint16(28, 0, true);
+    parts.push(new Uint8Array(h.buffer), nm, f.data);
+    const c = new DataView(new ArrayBuffer(46)); c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+    c.setUint16(12, dt, true); c.setUint16(14, dd, true); c.setUint32(16, crc, true); c.setUint32(20, sz, true); c.setUint32(24, sz, true); c.setUint16(28, nm.length, true); c.setUint32(42, off, true);
+    central.push(new Uint8Array(c.buffer), nm); off += 30 + nm.length + sz; }
+  const csz = central.reduce((s, x) => s + x.length, 0), e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, csz, true); e.setUint32(16, off, true);
+  return new Blob([...parts, ...central, new Uint8Array(e.buffer)], { type:'application/zip' });
+}
+async function zipRead(buf){   // อ่านไฟล์ zip (ไม่บีบอัด หรือ deflate ที่ OS บีบมาใหม่) → {name: text}
+  const v = new DataView(buf), u8 = new Uint8Array(buf), dec = new TextDecoder(), out = {};
+  let e = buf.byteLength - 22; while (e >= 0 && v.getUint32(e, true) !== 0x06054b50) e--; if (e < 0) throw new Error('ไฟล์ zip เสียหาย');
+  let p = v.getUint32(e + 16, true); const n = v.getUint16(e + 10, true);
+  for (let i = 0; i < n; i++) { const method = v.getUint16(p + 10, true), csz = v.getUint32(p + 20, true), nl = v.getUint16(p + 28, true), xl = v.getUint16(p + 30, true), cl = v.getUint16(p + 32, true), lo = v.getUint32(p + 42, true);
+    const name = dec.decode(u8.subarray(p + 46, p + 46 + nl)); p += 46 + nl + xl + cl;
+    const ds = lo + 30 + v.getUint16(lo + 26, true) + v.getUint16(lo + 28, true), raw = u8.subarray(ds, ds + csz);
+    if (name.endsWith('/')) continue;
+    let data = raw;
+    if (method === 8) { if (!window.DecompressionStream) throw new Error('เบราว์เซอร์นี้อ่าน zip ที่บีบอัดไม่ได้ ให้ใช้ไฟล์ zip ต้นฉบับที่ดาวน์โหลดจากระบบ');
+      data = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer()); }
+    else if (method !== 0) throw new Error('รูปแบบ zip ไม่รองรับ');
+    out[name.split('/').pop()] = dec.decode(data); }
+  return out;
+}
+// --- CSV ---
+const csvCell = v => { if (v == null) return ''; const s = typeof v === 'object' ? JSON.stringify(v) : String(v); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+function toCsv(rows){ const cols = [...new Set(rows.flatMap(r => Object.keys(r)))]; return '﻿' + [cols.join(','), ...rows.map(r => cols.map(c => csvCell(r[c])).join(','))].join('\r\n'); }
+function parseCsv(text){
+  text = text.replace(/^﻿/, ''); const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) { const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if (ch === '"') q = true; else if (ch === ',') { row.push(cell); cell = ''; }
+    else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += ch; }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+  const [head, ...body] = rows.filter(r => r.length > 1 || r[0] !== '');
+  return (body || []).map(r => Object.fromEntries(head.map((h, i) => { const s = r[i] ?? ''; if (s === '') return [h, null];
+    if (/^[\[{]/.test(s)) { try { return [h, JSON.parse(s)]; } catch(e){} } return [h, s]; })));
+}
+const bkTableOf = name => name.replace(/\.csv$/i, '').replace(/^\d+_/, '');
+
+// --- หน้าหลังบ้าน: การ์ดสำรองข้อมูล ---
+async function loadBackupCard(){
+  const el = $('bk-card'); if (!el) return;
+  try { bk.status = await API.backupStatus(); } catch(e){ bk.status = null; }
+  const s = bk.status, last = s?.last_at, days = last ? Math.floor((Date.now() - new Date(last)) / 864e5) : null;
+  const total = s ? Object.values(s.counts || {}).reduce((a, b) => a + b, 0) : 0;
+  el.innerHTML = `<div class="bkh"><div style="min-width:0"><h2 class="sec">สำรองข้อมูล</h2>
+      <div class="note">${last ? `สำรองล่าสุด ${esc(new Date(last).toLocaleString('th-TH', { day:'numeric', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit' }))}${s.last_by ? ' โดย ' + esc(s.last_by) : ''} · ` : ''}<b class="${days == null || days > 7 ? 'due late' : ''}" style="font-size:inherit">${days == null ? 'ยังไม่เคยสำรอง' : days === 0 ? 'วันนี้' : days + ' วันที่แล้ว'}</b>${days == null || days > 7 ? ' · แนะนำสำรองสัปดาห์ละครั้ง' : ''}</div>
+      <div class="note">ข้อมูลที่ทีมกรอก ${fmt(total)} แถว (Project · รอบผลิต · ขั้นตอน · ทุน · งาน PR · โปร · OEM · สมาชิก) · ไม่รวมยอดขาย/สต็อก (ดึงใหม่จาก Shopify ได้) และรูป/PDF</div></div>
+    <div class="bka"><button class="btn btn-p" type="button" id="bk-dl">⬇ ดาวน์โหลดไฟล์สำรอง (.zip)</button><button class="btn" type="button" id="bk-up">⬆ กู้คืนจากไฟล์สำรอง</button>
+      <input type="file" id="bk-file" accept=".zip,.json,.csv" multiple hidden></div></div>`;
+  $('bk-dl').onclick = downloadBackup;
+  $('bk-up').onclick = () => $('bk-file').click();
+  $('bk-file').onchange = e => { const f = [...e.target.files]; e.target.value = ''; if (f.length) readBackupFiles(f); };
+}
+async function downloadBackup(){
+  const b = $('bk-dl'), lbl = b.textContent; b.disabled = true; b.textContent = 'กำลังเตรียมไฟล์…';
+  try {
+    const d = await API.backup(), enc = new TextEncoder(), stamp = String(d.created_at).slice(0, 16).replace(/[-:T]/g, '').replace(/^(\d{8})(\d{4})$/, '$1-$2');
+    const names = Object.keys(d.tables), files = [];
+    files.push({ name:'00_อ่านก่อน.txt', data: enc.encode([
+      `ไฟล์สำรอง CuteBoy Dashboard · ${new Date(d.created_at).toLocaleString('th-TH')} · โดย ${d.created_by || '-'}`, '',
+      'ไฟล์ .csv = ข้อมูลแต่ละตาราง เปิดดูใน Google Sheets / Excel ได้', 'backup.json = ข้อมูลชุดเดียวกัน ใช้กู้คืนได้ตรงที่สุด', '',
+      'วิธีกู้คืน: Dashboard → หลังบ้าน → กู้คืนจากไฟล์สำรอง → เลือกไฟล์ zip นี้ทั้งไฟล์', '',
+      'ข้อควรระวัง: อย่าเปิด CSV ใน Excel แล้วกดบันทึกทับ เพราะ Excel จะแปลง Discord ID / วันที่ / ตัวเลขยาว จนกู้คืนไม่ได้',
+      'เก็บไฟล์นี้ไว้ในที่ปลอดภัย (Google Drive ส่วนตัว) เพราะมีข้อมูลต้นทุนและรายชื่อทีม', '',
+      ...names.map((t, i) => `${String(i + 1).padStart(2, '0')}_${t}.csv · ${BK_LABEL[t] || t} · ${d.tables[t].length} แถว`)].join('\r\n')) });
+    names.forEach((t, i) => files.push({ name:`${String(i + 1).padStart(2, '0')}_${t}.csv`, data: enc.encode(toCsv(d.tables[t])) }));
+    files.push({ name:'backup.json', data: enc.encode(JSON.stringify(d)) });
+    const blob = zipStore(files), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = `cuteboy-backup_${stamp}.zip`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    toast(`ดาวน์โหลดแล้ว ${names.length} ตาราง · เก็บไฟล์ไว้ใน Drive ส่วนตัว`); loadBackupCard();
+  } catch(e){ toast('สำรองไม่สำเร็จ: ' + (e.message || e)); }
+  finally { b.disabled = false; b.textContent = lbl; }
+}
+async function readBackupFiles(files){
+  let data = null; const csv = {};
+  try {
+    for (const f of files) {
+      if (/\.zip$/i.test(f.name)) { const z = await zipRead(await f.arrayBuffer()); if (z['backup.json']) data = JSON.parse(z['backup.json']); else for (const [n, t] of Object.entries(z)) if (/\.csv$/i.test(n)) csv[bkTableOf(n)] = parseCsv(t); }
+      else if (/\.json$/i.test(f.name)) data = JSON.parse(await f.text());
+      else if (/\.csv$/i.test(f.name)) csv[bkTableOf(f.name)] = parseCsv(await f.text());
+    }
+    if (!data && Object.keys(csv).length) data = { format:'cuteboy-backup', created_at: null, from_csv: true, tables: csv };
+    if (!data || data.format !== 'cuteboy-backup' || typeof data.tables !== 'object') throw new Error('ไม่ใช่ไฟล์สำรองของ CuteBoy Dashboard');
+  } catch(e){ toast('อ่านไฟล์ไม่ได้: ' + (e.message || e)); return; }
+  const known = Object.keys(BK_LABEL), T = Object.keys(data.tables).filter(t => known.includes(t) && t !== 'audit_log');
+  if (!T.length) { toast('ไม่พบตารางที่กู้คืนได้ในไฟล์นี้'); return; }
+  const cur = bk.status?.counts || {};
+  openModal('กู้คืนจากไฟล์สำรอง', `
+    <p class="note" style="margin:0">${data.created_at ? `ไฟล์สำรองวันที่ <b style="color:var(--ink)">${esc(new Date(data.created_at).toLocaleString('th-TH'))}</b>${data.created_by ? ' โดย ' + esc(data.created_by) : ''}` : 'อ่านจากไฟล์ CSV'}</p>
+    <div class="bkt"><div class="bkr hd"><span>ตาราง</span><span>ในไฟล์</span><span>ในระบบตอนนี้</span></div>${T.map(t => `<div class="bkr"><span>${esc(BK_LABEL[t] || t)}</span><span>${fmt(data.tables[t].length)}</span><span class="${cur[t] != null && cur[t] < data.tables[t].length ? 'due late' : ''}">${cur[t] != null ? fmt(cur[t]) : '-'}</span></div>`).join('')}</div>
+    <fieldset class="bkm"><legend class="lbl">วิธีกู้คืน</legend>
+      <label><input type="radio" name="bk-mode" value="missing" checked> <span><b>เติมเฉพาะข้อมูลที่หายไป</b> (แนะนำ) · แถวที่ยังอยู่ในระบบไม่ถูกแตะ ใช้เมื่อข้อมูลถูกลบ</span></label>
+      <label><input type="radio" name="bk-mode" value="overwrite"> <span><b>เติม + ทับข้อมูลปัจจุบันด้วยค่าในไฟล์</b> · การแก้ไขหลังวันที่สำรองของแถวเหล่านั้นจะหาย ใช้เมื่อข้อมูลถูกแก้ผิดจำนวนมาก</span></label></fieldset>
+    <p class="note" style="margin:0">ทำทั้งหมดในครั้งเดียว: ถ้าตารางไหนผิดพลาดจะยกเลิกทั้งหมด ข้อมูลเดิมไม่เสียหาย · ระหว่างกู้คืนไม่ส่งแจ้งเตือน Discord · ทุกแถวที่กู้คืนถูกบันทึกในประวัติการแก้ไข</p>
+    <div class="field"><label class="lbl" for="bk-ok">พิมพ์คำว่า <b>กู้คืน</b> เพื่อยืนยัน</label><input class="inp" id="bk-ok" autocomplete="off"></div>
+    <div id="bk-res"></div>`,
+    async () => { if ($('bk-ok').value.trim() !== 'กู้คืน') throw new Error('พิมพ์คำว่า "กู้คืน" ก่อนกดยืนยัน');
+      const mode = document.querySelector('input[name="bk-mode"]:checked').value, payload = { ...data, tables: Object.fromEntries(T.map(t => [t, data.tables[t]])) };
+      const r = await API.backupRestore(payload, mode);
+      const s = Object.entries(r.tables || {}).filter(([, x]) => x.inserted || x.updated);
+      setTimeout(() => openModal('กู้คืนเสร็จแล้ว', s.length ? `<div class="bkt"><div class="bkr hd"><span>ตาราง</span><span>เพิ่มกลับ</span><span>ทับค่า</span></div>${s.map(([t, x]) => `<div class="bkr"><span>${esc(BK_LABEL[t] || t)}</span><span>${fmt(x.inserted)}</span><span>${fmt(x.updated)}</span></div>`).join('')}</div>` : '<p>ข้อมูลในระบบครบอยู่แล้ว ไม่มีอะไรต้องเติม</p>', null) || ($('m-save').hidden = true), 0);
+      proj.data = null; cache.clear(); loadBackupCard(); });
+  $('m-save').textContent = 'กู้คืน';
+}
 
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
