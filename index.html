@@ -509,6 +509,29 @@ button.tdrow{cursor:pointer}button.tdrow:hover{background:var(--soft)}
 .mockflag{background:#FFF1D6;color:#7A4B00;border-radius:8px;padding:6px 10px;font-size:12.5px;font-weight:600}
 @media (max-width:860px){.tdrow{grid-template-columns:minmax(0,1fr) auto;padding:12px 16px}.tdrow .tdact{grid-column:1/-1;justify-content:flex-start}.tdact .inp{width:100%}
   .ecrow{grid-template-columns:40px minmax(0,1fr);padding:12px 16px}.ecrow>:last-child{grid-column:2;text-align:left!important}.eclink{grid-template-columns:1fr 1fr}.eclink .inp{grid-column:1/-1}}
+/* ===== รอบ 13: Live / Event ===== */
+.lpill{display:inline-flex;align-items:center;padding:1px 8px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.lvrow,.evrow{display:grid;grid-template-columns:110px minmax(0,1fr) 80px 70px 150px;gap:12px;align-items:center;width:100%;padding:10px 20px;border:0;border-top:1px solid var(--line2);background:none;text-align:left;font:inherit;color:inherit;cursor:pointer;min-height:56px}
+.evrow{grid-template-columns:minmax(0,1fr) 150px 70px 80px 70px 140px}
+.lvrow.hd,.evrow.hd{min-height:40px;border-top:0;cursor:default;font-size:12px;color:var(--muted);font-weight:500}
+.lvrow:not(.hd):hover,.evrow:not(.hd):hover{background:var(--soft)}
+.lvbar{display:block;height:4px;border-radius:2px;background:var(--line2);margin-top:6px;overflow:hidden}
+.lvbar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.dimrow{opacity:.55}
+.kpis.sm{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.kpis.sm .card{padding:12px 14px}.kpis.sm .kpi{font-size:20px}
+.evp{display:flex;flex-direction:column;border:1px solid var(--line2);border-radius:10px;max-height:420px;overflow:auto}
+.evprow{display:grid;grid-template-columns:40px minmax(0,1fr) 80px 110px;gap:10px;align-items:center;padding:8px 12px;border-top:1px solid var(--line2);min-height:48px}
+.evprow:first-child{border-top:0}
+.lvrv{display:grid;grid-template-columns:minmax(0,1fr) 130px 160px;gap:10px;align-items:center;padding:8px 12px;border-top:1px solid var(--line2)}
+.lvrv:first-child{border-top:0}
+@media (max-width:760px){
+  .lvrow{grid-template-columns:minmax(0,1fr) 110px;padding:10px 14px}.lvrow>span:nth-child(3),.lvrow>span:nth-child(4){display:none}.lvrow>span:first-child{grid-column:1/-1}
+  .lvrow.hd{display:none}
+  .evrow{grid-template-columns:minmax(0,1fr) 110px;padding:10px 14px}.evrow>span:nth-child(3),.evrow>span:nth-child(4),.evrow>span:nth-child(5){display:none}.evrow>span:nth-child(2){order:3;grid-column:1/-1}.evrow.hd{display:none}
+  .kpis.sm{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .evprow{grid-template-columns:36px minmax(0,1fr) 90px}.evprow>span:nth-of-type(1){display:none}
+  .lvrv{grid-template-columns:1fr 1fr}.lvrv>div:first-child{grid-column:1/-1}
+}
 </style>
 </head>
 <body>
@@ -556,7 +579,7 @@ button.tdrow{cursor:pointer}button.tdrow:hover{background:var(--soft)}
     <div class="me"><div id="me-av" class="av">?</div><div style="min-width:0"><div class="n" id="me-name">-</div><div class="r" id="me-role">-</div></div><button id="btn-logout" type="button">ออก</button></div>
     <div><div class="grp-l">ทั่วไป</div><div class="nav"><a href="#/me" id="nav-me">งานของฉัน</a><a href="#/overview" id="nav-overview">Overview</a><a href="#/team" id="nav-team">ทีมงาน (Workload)</a><a href="#/archive" id="nav-archive">คลังงานที่เสร็จแล้ว</a></div></div>
     <div><div class="grp-l">PROJECT</div><div class="nav"><a href="#/projects" id="nav-projects">Project</a><a href="#/design" id="nav-design">Design</a><a href="#/supplier" id="nav-supplier">Supplier</a><a href="#/forecast" id="nav-forecast">Forecast</a><a href="#/incoming" id="nav-incoming">Inventory (Project)</a><a href="#/marketing" id="nav-marketing">Marketing & PR</a><a href="#/ecom" id="nav-ecom" hidden>E-Commerce (Mockup)</a></div></div>
-    <div><div class="grp-l">รายงานรวม</div><div class="nav"><a href="#/sales" id="nav-sales">Total Sales</a><a href="#/stock" id="nav-stock">Inventory คงเหลือ</a><a href="#/oem" id="nav-oem">ยอดขาย OEM</a><a href="#/recovery" id="nav-recovery">คืนทุน & โปรโมชัน</a><a href="#/todo" id="nav-todo">ข้อมูลที่ต้องเติม</a></div></div>
+    <div><div class="grp-l">รายงานรวม</div><div class="nav"><a href="#/sales" id="nav-sales">Total Sales</a><a href="#/stock" id="nav-stock">Inventory คงเหลือ</a><a href="#/live" id="nav-live">Live</a><a href="#/event" id="nav-event">Event</a><a href="#/oem" id="nav-oem">ยอดขาย OEM</a><a href="#/recovery" id="nav-recovery">คืนทุน & โปรโมชัน</a><a href="#/todo" id="nav-todo">ข้อมูลที่ต้องเติม</a></div></div>
     <div id="nav-admin-grp" hidden><div class="grp-l">ADMIN</div><div class="nav"><a href="#/members" id="nav-members" class="adm">จัดการสมาชิก</a><a href="#/admin" id="nav-admin" class="adm">หลังบ้าน · ประวัติแก้ไข</a></div></div>
     <div class="syncbox" id="syncbox"><b>สถานะการซิงก์ข้อมูล</b><div>กำลังโหลด…</div></div>
   </nav>
@@ -793,6 +816,21 @@ button.tdrow{cursor:pointer}button.tdrow:hover{background:var(--soft)}
     <section class="card" style="padding:0" id="mb-discord"><div class="empty">กำลังโหลด…</div></section>
     <div id="mb-body"></div>
   </div>
+  <div id="page-live" class="pg" hidden>
+    <header class="top"><div style="min-width:0"><h1>ยอดขาย Live</h1><div class="muted" style="margin-top:4px">ยอดขายแต่ละรอบ Live · FB / IG จากออเดอร์ Shipnity · Shopee Live จากช่วงเวลาที่บันทึก</div></div>
+      <div class="controls"><select class="sel" id="lv-days" aria-label="ช่วงเวลา"><option value="30">30 วัน</option><option value="90">90 วัน</option><option value="180">6 เดือน</option><option value="365">1 ปี</option></select><select class="sel" id="lv-vat" aria-label="VAT"><option value="inc">รวม VAT</option><option value="ex">ไม่รวม VAT</option></select><button class="btn" id="lv-reload" type="button">โหลดใหม่</button><button class="btn btn-p" id="lv-add" type="button" hidden>+ เพิ่มรอบ Live</button></div></header>
+    <div id="lv-pending"></div>
+    <section class="kpis" id="lv-kpis"></section>
+    <div class="controls"><div class="seg" id="lv-pl" role="group" aria-label="ช่องทาง"></div></div>
+    <div id="lv-body"></div>
+  </div>
+  <div id="page-event" class="pg" hidden>
+    <header class="top"><div style="min-width:0"><h1>ยอดขาย Event</h1><div class="muted" style="margin-top:4px">แต่ละงานที่ไปออกบูธ ขายอะไรได้ จำนวนเท่าไหร่ งานกี่วัน · จากออเดอร์ Shopify POS</div></div>
+      <div class="controls"><select class="sel" id="ev-vat" aria-label="VAT"><option value="inc">รวม VAT</option><option value="ex">ไม่รวม VAT</option></select><button class="btn" id="ev-reload" type="button">โหลดใหม่</button></div></header>
+    <section class="kpis" id="ev-kpis"></section>
+    <div class="controls"><input class="inp" id="ev-q" style="width:240px;max-width:100%" placeholder="ค้นหางาน" aria-label="ค้นหางาน"><label style="display:flex;gap:6px;align-items:center;min-height:40px;font-size:13.5px"><input type="checkbox" id="ev-hid"> แสดงงานที่ซ่อน</label></div>
+    <div id="ev-body"></div>
+  </div>
   <div id="page-todo" class="pg" hidden>
     <header class="top"><div style="min-width:0"><h1>ข้อมูลที่ต้องเติม</h1><div class="muted" style="margin-top:4px">รวมทุกจุดที่ข้อมูลยังไม่ครบ ทำให้ยอดขาย ทุน และสต็อกในรายงานคลาดเคลื่อน · เติมได้จากหน้านี้เลย</div></div>
       <div class="controls"><button class="btn" id="td-reload" type="button">โหลดใหม่</button></div></header>
@@ -941,6 +979,15 @@ const API = DEMO ? DEMO.api : {
   mapProducts: () => rpc('map_products'),
   todoMap: (s, n, o, pid, size) => rpc('todo_map', { p_source:s, p_name:n, p_option:o, p_product:pid, p_size:size }),
   costSave: (sku, cost) => rpc('cost_save', { p_sku:sku, p_cost:cost }),
+  live: (f, t, vat) => rpc('dash_live', { p_from:f, p_to:t, p_vat:vat || 'inc' }),
+  liveDetail: (p, d, sid, vat) => rpc('live_detail', { p_platform:p, p_date:d, p_session:sid, p_vat:vat || 'inc' }),
+  liveReview: f => rpc('live_review', { p_file:f }),
+  liveAssign: (refs, p, d) => rpc('live_assign_save', { p_refs:refs, p_platform:p, p_date:d }),
+  liveSessionSave: x => rpc('live_session_save', { d:x }),
+  liveSessionDelete: id => rpc('live_session_delete', { p_id:id }),
+  events: vat => rpc('dash_events', { p_vat:vat || 'inc' }),
+  eventDetail: (l, s, e, vat) => rpc('event_detail', { p_location:l, p_start:s, p_end:e, p_vat:vat || 'inc' }),
+  eventMetaSave: (l, s, t, n, h) => rpc('event_meta_save', { p_location:l, p_start:s, p_title:t, p_note:n, p_hidden:h }),
   async uploadMockup(blob){ const path = `mockups/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`; const { error } = await sb.storage.from('product-images').upload(path, blob, { contentType:'image/webp' }); if (error) throw error; return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl; },
   sources: () => rpc('dash_sources'),
   inventory: () => rpc('dash_inventory', { p_idle_days: 90 }),
@@ -986,7 +1033,7 @@ function rangeDates(){
 }
 function parseHash(){
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
-  st.page = h.startsWith('todo') ? 'todo' : h.startsWith('ecom') ? 'ecom' : h.startsWith('stock') ? 'stock' : h.startsWith('oem') ? 'oem' : h.startsWith('members') ? 'members' : h.startsWith('archive') ? 'archive' : /^me(\/|$)/.test(h) ? 'me' : h.startsWith('overview') ? 'overview' : h.startsWith('projects') ? 'projects' : h.startsWith('design') ? 'design' : h.startsWith('supplier') ? 'supplier' : h.startsWith('incoming') ? 'incoming' : h.startsWith('forecast') ? 'forecast' : h.startsWith('marketing') ? 'marketing' : h.startsWith('recovery') ? 'recovery' : h.startsWith('team') ? 'team' : h.startsWith('admin') ? 'admin' : h.startsWith('members') ? 'members' : 'sales';
+  st.page = h.startsWith('live') ? 'live' : h.startsWith('event') ? 'event' : h.startsWith('todo') ? 'todo' : h.startsWith('ecom') ? 'ecom' : h.startsWith('stock') ? 'stock' : h.startsWith('oem') ? 'oem' : h.startsWith('members') ? 'members' : h.startsWith('archive') ? 'archive' : /^me(\/|$)/.test(h) ? 'me' : h.startsWith('overview') ? 'overview' : h.startsWith('projects') ? 'projects' : h.startsWith('design') ? 'design' : h.startsWith('supplier') ? 'supplier' : h.startsWith('incoming') ? 'incoming' : h.startsWith('forecast') ? 'forecast' : h.startsWith('marketing') ? 'marketing' : h.startsWith('recovery') ? 'recovery' : h.startsWith('team') ? 'team' : h.startsWith('admin') ? 'admin' : h.startsWith('members') ? 'members' : 'sales';
   fc.id = (h.match(/^forecast\/(\d+)/) || [])[1] ? +h.match(/^forecast\/(\d+)/)[1] : null;
   proj.sid = (h.match(/^supplier\/(\d+)/) || [])[1] ? +h.match(/^supplier\/(\d+)/)[1] : null;
   proj.id = (h.match(/^projects\/(\d+)/) || [])[1] ? +h.match(/^projects\/(\d+)/)[1] : null;
@@ -997,11 +1044,11 @@ function parseHash(){
   else { st.view='home'; st.coll=null; st.prod=null; }
 }
 const go = h => { location.hash = h; };
-const TITLES = { me:'งานของฉัน', overview:'Overview', projects:'Project', design:'Design', supplier:'Supplier', incoming:'Inventory (Project)', forecast:'Forecast', marketing:'Marketing & PR', recovery:'คืนทุน & โปรโมชัน', team:'ทีมงาน', archive:'คลังงานที่เสร็จแล้ว', todo:'ข้อมูลที่ต้องเติม', ecom:'E-Commerce', admin:'หลังบ้าน', members:'จัดการสมาชิก', sales:'Total Sales', stock:'Inventory', oem:'ยอดขาย OEM' };
+const TITLES = { me:'งานของฉัน', overview:'Overview', projects:'Project', design:'Design', supplier:'Supplier', incoming:'Inventory (Project)', forecast:'Forecast', marketing:'Marketing & PR', recovery:'คืนทุน & โปรโมชัน', team:'ทีมงาน', archive:'คลังงานที่เสร็จแล้ว', todo:'ข้อมูลที่ต้องเติม', live:'Live', event:'Event', ecom:'E-Commerce', admin:'หลังบ้าน', members:'จัดการสมาชิก', sales:'Total Sales', stock:'Inventory', oem:'ยอดขาย OEM' };
 const PJPAGES = ['me','overview','team','projects','design','supplier','incoming','forecast'];
 addEventListener('hashchange', () => { parseHash(); st.q=''; $('q').value=''; st.limit=30; route(); window.scrollTo(0,0); closeMenu(); });
 function route(){ const pg = st.page;
-  for (const k of ['me','overview','team','archive','todo','ecom','projects','design','supplier','incoming','forecast','marketing','recovery','admin','members','sales','stock','oem']) { $('page-'+k).hidden = pg!==k; if (pg===k) $('nav-'+k).setAttribute('aria-current','page'); else $('nav-'+k).removeAttribute('aria-current'); }
+  for (const k of ['me','overview','team','archive','todo','live','event','ecom','projects','design','supplier','incoming','forecast','marketing','recovery','admin','members','sales','stock','oem']) { $('page-'+k).hidden = pg!==k; if (pg===k) $('nav-'+k).setAttribute('aria-current','page'); else $('nav-'+k).removeAttribute('aria-current'); }
   $('pj-err').hidden = true;
   document.querySelector('.topbar b').textContent = TITLES[pg];
   if (PJPAGES.includes(pg)) { document.title = TITLES[pg] + ' · CuteBoy'; loadProjects(); if (pg==='overview') loadOverview(); return; }
@@ -1009,6 +1056,8 @@ function route(){ const pg = st.page;
   if (pg==='archive') { document.title = 'คลังงานที่เสร็จแล้ว · CuteBoy'; $('ar-from').value = ar.from; $('ar-to').value = ar.to; if (!proj.data) loadProjects(); loadArchive(); return; }
   if (pg==='members') { document.title = 'จัดการสมาชิก · CuteBoy'; loadMembers(); return; }
   if (pg==='todo') { document.title = 'ข้อมูลที่ต้องเติม · CuteBoy'; if (!proj.data) loadProjects(); loadTodo(); return; }
+  if (pg==='live') { document.title = 'Live · CuteBoy'; $('lv-vat').value = st.vat; loadLive(); return; }
+  if (pg==='event') { document.title = 'Event · CuteBoy'; $('ev-vat').value = st.vat; loadEvents(); return; }
   if (pg==='ecom') { document.title = 'E-Commerce · CuteBoy'; renderEcom(); return; }
   if (pg==='admin') { document.title = 'หลังบ้าน · CuteBoy'; $('ad-from').value = adm.from; $('ad-to').value = adm.to; loadAdmin(); return; }
   if (pg==='recovery') { document.title = 'คืนทุน & โปรโมชัน · CuteBoy'; loadRecovery(); return; }
@@ -3370,6 +3419,156 @@ function ecDetail(it){
 }
 document.addEventListener('click', e => { const r = e.target.closest('[data-ecit]'); if (r && proj.data) { ec.tab = 'links'; ec.ai = false; ecDetail(proj.data.items.find(i => i.id === +r.dataset.ecit)); return; }
   if (e.target.closest('[data-ecmock]')) toast('Mockup · ปุ่มนี้จะทำงานจริงหลังยืนยันหน้าตา'); });
+
+// ===== รอบ 13: รายงาน Live + Event =====
+const LPL = { 'FB Live':'#1877F2', 'IG Live':'#C13584', 'Shopee Live':'#EE4D2D', 'TikTok Live':'#111' };
+const DOW = ['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
+const dowOf = d => DOW[new Date(d + 'T00:00:00').getDay()];
+const hm = t => t ? String(t).slice(11, 16) : '';
+const LPT = { 'FB Live':['#0B4FB3','#E8F0FD'], 'IG Live':['#8E1F66','#FBEAF4'], 'Shopee Live':['#A82C14','#FDECE7'], 'TikTok Live':['#111','#EEEEEA'] };
+const plPill = p => { const [c, bg] = LPT[p] || ['#4A4953', '#EEEEEA']; return `<span class="lpill" style="color:${c};background:${bg}">${esc(p.replace(' Live', ''))}</span>`; };
+
+// ---------- Live ----------
+const lv = { data:null, days:90, pl:'', key:null };
+async function loadLive(force){
+  if (!force && lv.data && lv.key === lv.days + st.vat) { renderLive(); return; }
+  $('lv-body').innerHTML = '<div class="card"><div class="sk" style="height:260px"></div></div>';
+  try { lv.data = await API.live(addDays(today, -lv.days + 1), today, st.vat); lv.key = lv.days + st.vat; renderLive(); }
+  catch(e){ $('lv-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message || e)}</div></div><button class="btn btn-p" type="button" onclick="loadLive(true)">ลองอีกครั้ง</button></div>`; }
+}
+function renderLive(){
+  const d = lv.data; if (!d) return;
+  $('lv-days').value = String(lv.days); $('lv-add').hidden = !d.can_edit;
+  const plats = [...new Set(d.sessions.map(s => s.platform))];
+  $('lv-pl').innerHTML = segHtml([['', 'ทุกช่องทาง'], ...plats.map(p => [p, p])], lv.pl, 'data-k');
+  const S = d.sessions.filter(s => !lv.pl || s.platform === lv.pl), withSales = S.filter(s => +s.net > 0);
+  const tot = withSales.reduce((a, s) => a + +s.net, 0), ord = withSales.reduce((a, s) => a + +s.orders, 0), best = [...withSales].sort((a, b) => b.net - a.net)[0];
+  $('lv-kpis').innerHTML = `
+    <div class="card"><div class="lbl">จำนวนรอบ Live</div><div class="kpi">${fmt(withSales.length)}</div><div class="delta">${lv.days} วันล่าสุด</div></div>
+    <div class="card"><div class="lbl">ยอดขายจาก Live (${vatTxt()})</div><div class="kpi">${baht(tot)}</div><div class="delta">${fmt(ord)} ออเดอร์</div></div>
+    <div class="card"><div class="lbl">เฉลี่ยต่อรอบ</div><div class="kpi">${baht(withSales.length ? tot / withSales.length : 0)}</div><div class="delta">${withSales.length ? fmt(Math.round(ord / withSales.length)) : 0} ออเดอร์ต่อรอบ</div></div>
+    <div class="card"><div class="lbl">รอบที่ขายดีที่สุด</div><div class="kpi" style="font-size:20px">${best ? baht(best.net) : '-'}</div><div class="delta">${best ? `${esc(best.platform)} · ${esc(shortDate(best.live_date))}${best.title ? ' · ' + esc(best.title) : ''}` : ''}</div></div>`;
+  const pend = (d.pending || []).filter(p => !p.to || p.to >= addDays(today, -lv.days + 1));
+  $('lv-pending').innerHTML = pend.length ? `<div class="banner" style="background:#FFF8E6;border-color:#F0D9A0"><span>📋 ออเดอร์ Live จาก Shipnity ที่ยังไม่ได้ตรวจวัน Live: ${pend.slice(0, 3).map(p => `<b>${esc(p.file)}</b> (${fmt(p.orders)})`).join(' · ')}${pend.length > 3 ? ` และอีก ${pend.length - 3} ไฟล์` : ''}</span>
+      <span class="bka">${pend.slice(0, 3).map(p => `<button class="btn btn-sm btn-p" type="button" data-lvreview="${esc(p.file)}">ตรวจ ${esc(p.file.replace(/^Shipnity_|\.xlsx$/gi, ''))}</button>`).join('')}</span></div>` : '';
+  const mx = Math.max(1, ...S.map(s => +s.net));
+  $('lv-body').innerHTML = `<section class="card" style="padding:0"><div class="lvrow hd"><span>วัน Live</span><span>รอบ</span><span class="num">ออเดอร์</span><span class="num">ชิ้น</span><span class="num">ยอดขาย</span></div>
+    ${S.map(s => { const up = s.base != null && +s.base > 0 ? (s.net / s.base - 1) * 100 : null;
+      return `<button type="button" class="lvrow" data-lv='${esc(JSON.stringify({ p: s.platform, d: s.live_date, id: s.id }))}'>
+        <span><b>${esc(shortDate(s.live_date))}</b> <span class="note">${dowOf(s.live_date)}</span></span>
+        <span style="min-width:0">${plPill(s.platform)} ${s.title ? `<b>${esc(s.title)}</b>` : ''}${s.campaign ? ` <span class="note">· ${esc(s.campaign)}</span>` : ''}
+          <span class="note">${s.start_at ? (s.id > 0 ? ' · ' : ' · ออเดอร์แรก ') + hm(s.start_at) + (s.end_at ? '–' + hm(s.end_at) : '') : ''}${s.unconfirmed ? ` · <span style="color:#8A5A00">ยังไม่ตรวจ ${s.unconfirmed}</span>` : ''}</span>
+          <span class="lvbar"><i style="width:${(s.net / mx * 100).toFixed(1)}%;background:${LPL[s.platform] || 'var(--accent)'}"></i></span></span>
+        <span class="num">${fmt(s.orders)}</span><span class="num">${fmt(s.units)}</span>
+        <span class="num"><b>${baht(s.net)}</b>${up != null ? `<div class="note" title="ยอดเฉลี่ยช่วงเวลาเดียวกันใน 4 สัปดาห์ก่อน ${baht(s.base)}">ปกติ ${baht(s.base)} · <b style="color:${up >= 0 ? 'var(--good,#1F7A4D)' : 'var(--bad)'}">${up >= 0 ? '+' : ''}${Math.round(up)}%</b></div>` : ''}</span></button>`; }).join('') || '<div class="empty">ยังไม่มีรอบ Live ในช่วงนี้</div>'}</section>
+    <p class="note">FB / IG Live: นับจากออเดอร์ Shipnity ช่องทาง Live (ระบบเดาวัน Live ให้ ตรวจ/ย้ายได้ที่ปุ่ม "ตรวจ") · Shopee Live: นับออเดอร์ Shopee ทั้งหมดในช่วงเวลาที่กรอก (+${d.after_min} นาทีหลังจบ) เทียบกับยอดปกติช่วงเวลาเดียวกันใน 4 สัปดาห์ก่อน</p>`;
+}
+async function openLive(k){
+  const s = lv.data.sessions.find(x => x.platform === k.p && x.live_date === k.d && (k.p !== 'Shopee Live' || x.id === k.id)) || {};
+  openModal(`${k.p} · ${thDate(k.d)}${s.title ? ' · ' + s.title : ''}`, '<div class="sk" style="height:200px"></div>', null); $('m-save').hidden = true; $('modal').querySelector('.box2').classList.add('wide');
+  let d; try { d = await API.liveDetail(k.p, k.d, k.id > 0 ? k.id : null, st.vat); } catch(e){ $('m-body').innerHTML = `<div class="errbox">${esc(e.message || e)}</div>`; return; }
+  $('m-body').innerHTML = `<div class="kpis sm"><div class="card"><div class="lbl">ยอดขาย</div><div class="kpi">${baht(s.net || 0)}</div></div><div class="card"><div class="lbl">ออเดอร์</div><div class="kpi">${fmt(s.orders || 0)}</div></div>
+      <div class="card"><div class="lbl">ชิ้น</div><div class="kpi">${fmt(s.units || 0)}</div></div><div class="card"><div class="lbl">เฉลี่ย/ออเดอร์</div><div class="kpi">${baht(s.orders ? s.net / s.orders : 0)}</div></div></div>
+    ${lv.data.can_edit ? `<div class="bka"><button class="btn btn-sm" type="button" id="lv-edit">แก้ชื่อรอบ / แคมเปญ / เวลา</button>${s.id > 0 ? '<button class="btn btn-sm" type="button" id="lv-del">ลบรอบนี้</button>' : ''}</div>` : ''}
+    <h4 class="rnh">สินค้าที่ขายได้ (${d.products.length})</h4>
+    <div class="evp">${d.products.map(p => `<div class="evprow">${thumb(p.img, p.name)}<div style="min-width:0"><b>${esc(p.name)}</b><div class="note">${Object.entries(p.sizes || {}).map(([z, q]) => `${esc(z)} ${fmt(q)}`).join(' · ')}${p.cond && Object.keys(p.cond).some(c => c !== 'ของใหม่') ? ' · ' + Object.entries(p.cond).filter(([c]) => c !== 'ของใหม่').map(([c, q]) => `${esc(c)} ${fmt(q)}`).join(' · ') : ''}</div></div><span class="num">${fmt(p.qty)} ชิ้น</span><span class="num"><b>${baht(p.net)}</b></span></div>`).join('') || '<div class="empty">ไม่มีสินค้า</div>'}</div>
+    <details><summary class="lbl" style="cursor:pointer;min-height:40px;display:flex;align-items:center">▸ ออเดอร์ทั้งหมด (${d.orders.length})</summary><div class="evp">${d.orders.map(o => `<div class="evprow" style="grid-template-columns:minmax(0,1fr) 70px 70px 100px"><b>${esc(o.ref)}</b><span class="note">${hm(o.at)}</span><span class="num">${fmt(o.qty)}</span><span class="num">${baht(o.net)}</span></div>`).join('')}</div></details>`;
+  if ($('lv-edit')) $('lv-edit').onclick = () => editLiveSession({ ...s, platform: k.p, live_date: k.d });
+  if ($('lv-del')) $('lv-del').onclick = async () => { const b = $('lv-del'); if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'กดอีกครั้งเพื่อยืนยัน'; return; }
+    try { await API.liveSessionDelete(s.id); closeModal(); toast('ลบรอบแล้ว'); loadLive(true); } catch(e){ toast(e.message || String(e)); } };
+}
+function editLiveSession(s){
+  const isNew = !s || !s.platform, v = s || { platform:'Shopee Live', live_date: today };
+  openModal(isNew ? 'เพิ่มรอบ Live' : `แก้รอบ ${v.platform} · ${thDate(v.live_date)}`, `<div class="fgrid">
+      <div class="field"><label class="lbl" for="ls-pl">ช่องทาง</label><select class="sel" id="ls-pl" ${isNew ? '' : 'disabled'}>${Object.keys(LPL).map(p => `<option ${p === v.platform ? 'selected' : ''}>${p}</option>`).join('')}</select></div>
+      <div class="field"><label class="lbl" for="ls-d">วันที่ Live</label><input class="inp" type="date" id="ls-d" value="${esc(v.live_date || today)}" ${isNew ? '' : 'disabled'}></div>
+      <div class="field"><label class="lbl" for="ls-s">เวลาเริ่ม</label><input class="inp" type="time" id="ls-s" value="${esc(hm(v.start_at))}"></div>
+      <div class="field"><label class="lbl" for="ls-e">เวลาจบ</label><input class="inp" type="time" id="ls-e" value="${esc(hm(v.end_at))}"></div>
+      <div class="field"><label class="lbl" for="ls-t">ชื่อรอบ</label><input class="inp" id="ls-t" value="${esc(v.title || '')}" placeholder="เช่น เปิดตัว MiTH No.41"></div>
+      <div class="field"><label class="lbl" for="ls-c">แคมเปญ</label><input class="inp" id="ls-c" value="${esc(v.campaign || '')}"></div>
+      <div class="field"><label class="lbl" for="ls-h">คนไลฟ์</label><input class="inp" id="ls-h" value="${esc(v.host || '')}"></div>
+      <div class="field wide"><label class="lbl" for="ls-n">หมายเหตุ</label><textarea class="inp" id="ls-n" rows="2" style="font:inherit">${esc(v.note || '')}</textarea></div></div>
+    <p class="note" id="ls-hint" style="margin:0"></p>`,
+    async () => { const dd = $('ls-d').value, ts = t => t ? `${dd} ${t}` : '';
+      let e = ts($('ls-e').value); if ($('ls-s').value && $('ls-e').value && $('ls-e').value < $('ls-s').value) e = `${addDays(dd, 1)} ${$('ls-e').value}`;   // จบหลังเที่ยงคืน
+      await API.liveSessionSave({ id: v.id > 0 ? v.id : null, platform: $('ls-pl').value, live_date: dd, start_at: ts($('ls-s').value), end_at: e,
+        title: $('ls-t').value, campaign: $('ls-c').value, host: $('ls-h').value, note: $('ls-n').value });
+      setTimeout(() => loadLive(true), 0); });
+  const hint = () => { $('ls-hint').textContent = $('ls-pl').value === 'Shopee Live' ? 'Shopee Live: ต้องใส่เวลาเริ่ม-จบ ระบบจะนับออเดอร์ Shopee ในช่วงเวลานั้น' : 'FB / IG Live: ยอดมาจากออเดอร์ Shipnity ของวันนั้นอัตโนมัติ · ใส่เวลาเพื่อบันทึกไว้ดูอย่างเดียว'; };
+  $('ls-pl').onchange = hint; hint();
+}
+async function reviewLive(file){
+  openModal(`ตรวจวัน Live · ${file}`, '<div class="sk" style="height:160px"></div>', null); $('m-save').hidden = true; $('modal').querySelector('.box2').classList.add('wide');
+  let G; try { G = await API.liveReview(file); } catch(e){ $('m-body').innerHTML = `<div class="errbox">${esc(e.message || e)}</div>`; return; }
+  $('m-body').innerHTML = `<p class="note" style="margin:0">ระบบจัดกลุ่มออเดอร์ตามวันที่สร้างออเดอร์ (ออเดอร์ 00:00–05:59 นับเป็น Live ของคืนก่อน) · ถ้ากลุ่มไหนเป็น Live วันอื่น ให้เปลี่ยนวันที่ แล้วกดยืนยัน</p>
+    <div class="evp">${G.map((g, i) => `<div class="lvrv" data-g="${i}"><div style="min-width:0"><b>${fmt(g.orders)} ออเดอร์</b> · ${baht(g.net)}<div class="note">สร้างออเดอร์ ${esc(shortDate(g.first))} ${hm(g.first)} – ${esc(shortDate(g.last))} ${hm(g.last)}${g.confirmed ? ' · ✓ ตรวจแล้ว' : ''}</div></div>
+      <select class="sel" data-gpl>${['FB Live','IG Live','TikTok Live'].map(p => `<option ${p === g.platform ? 'selected' : ''}>${p}</option>`).join('')}</select><input class="inp" type="date" data-gd value="${esc(g.date)}" aria-label="วัน Live"></div>`).join('')}</div>
+    ${lv.data?.can_edit ? '<div class="bka"><button class="btn btn-p" type="button" id="lv-ok">✓ ยืนยันทั้งไฟล์</button></div>' : '<p class="note">ตรวจได้เฉพาะทีม PR / E-Commerce / management / Project หรือ admin</p>'}`;
+  if ($('lv-ok')) $('lv-ok').onclick = async () => { const b = $('lv-ok'); b.disabled = true; b.textContent = 'กำลังบันทึก…';
+    try { for (const row of $('m-body').querySelectorAll('[data-g]')) { const g = G[+row.dataset.g]; await API.liveAssign(g.refs, row.querySelector('[data-gpl]').value, row.querySelector('[data-gd]').value); }
+          closeModal(); toast('ยืนยันวัน Live แล้ว'); loadLive(true); } catch(e){ b.disabled = false; b.textContent = '✓ ยืนยันทั้งไฟล์'; toast(e.message || String(e)); } };
+}
+
+// ---------- Event ----------
+const evs = { data:null, showHidden:false, q:'', key:null };
+async function loadEvents(force){
+  if (!force && evs.data && evs.key === st.vat) { renderEvents(); return; }
+  $('ev-body').innerHTML = '<div class="card"><div class="sk" style="height:260px"></div></div>';
+  try { evs.data = await API.events(st.vat); evs.key = st.vat; renderEvents(); }
+  catch(e){ $('ev-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message || e)}</div></div><button class="btn btn-p" type="button" onclick="loadEvents(true)">ลองอีกครั้ง</button></div>`; }
+}
+function renderEvents(){
+  const d = evs.data; if (!d) return; const q = evs.q.trim().toLowerCase();
+  const E = d.events.filter(e => (evs.showHidden || !e.hidden) && (!q || (e.title + ' ' + e.location).toLowerCase().includes(q)));
+  const yr = E.filter(e => daysTo(e.start) >= -365), tot = yr.reduce((a, e) => a + +e.net, 0), best = [...yr].sort((a, b) => b.net / b.days - a.net / a.days)[0];
+  $('ev-kpis').innerHTML = `
+    <div class="card"><div class="lbl">งานในรอบ 1 ปี</div><div class="kpi">${fmt(yr.length)}</div><div class="delta">${fmt(yr.reduce((a, e) => a + e.days, 0))} วันขาย</div></div>
+    <div class="card"><div class="lbl">ยอดขายรวม 1 ปี (${vatTxt()})</div><div class="kpi">${baht(tot)}</div><div class="delta">${fmt(yr.reduce((a, e) => a + +e.orders, 0))} ออเดอร์</div></div>
+    <div class="card"><div class="lbl">เฉลี่ยต่อวันขาย</div><div class="kpi">${baht(yr.length ? tot / yr.reduce((a, e) => a + e.days, 0) : 0)}</div><div class="delta">ทุกงานในรอบ 1 ปี</div></div>
+    <div class="card"><div class="lbl">ยอดต่อวันสูงสุด</div><div class="kpi" style="font-size:20px">${best ? baht(best.net / best.days) : '-'}</div><div class="delta">${best ? esc(best.title) : ''}</div></div>`;
+  const mx = Math.max(1, ...E.map(e => +e.net));
+  $('ev-body').innerHTML = `<section class="card" style="padding:0"><div class="evrow hd"><span>งาน</span><span>วันที่</span><span class="num">วันขาย</span><span class="num">ออเดอร์</span><span class="num">ชิ้น</span><span class="num">ยอดขาย</span></div>
+    ${E.map(e => `<button type="button" class="evrow ${e.hidden ? 'dimrow' : ''}" data-ev='${esc(JSON.stringify({ l: e.location, s: e.start, e: e.end }))}'>
+      <span style="min-width:0"><b>${esc(e.title)}</b>${e.title !== e.location ? ` <span class="note">· ${esc(e.location)}</span>` : ''}${e.hidden ? ' <span class="pill p-idle">ซ่อน</span>' : ''}<span class="lvbar"><i style="width:${(e.net / mx * 100).toFixed(1)}%"></i></span></span>
+      <span class="note">${esc(shortDate(e.start))}${e.end !== e.start ? ' – ' + esc(shortDate(e.end)) : ''}</span>
+      <span class="num">${fmt(e.days)}</span><span class="num">${fmt(e.orders)}</span><span class="num">${fmt(e.units)}</span><span class="num"><b>${baht(e.net)}</b><div class="note">${baht(e.net / e.days)}/วัน</div></span></button>`).join('') || '<div class="empty">ไม่พบงาน</div>'}</section>
+    <p class="note">ดึงจากออเดอร์ Shopify POS แยกตามสาขา POS ที่ตั้งชื่อตามงาน · วันขายที่ห่างกันเกิน 2 วันนับเป็นคนละงาน · ไม่นับสาขา: ${esc(d.exclude || '-')}</p>`;
+}
+async function openEvent(k){
+  const e = evs.data.events.find(x => x.location === k.l && x.start === k.s) || {};
+  openModal(`${e.title || k.l} · ${thDate(k.s)}${k.e !== k.s ? ' – ' + thDate(k.e) : ''}`, '<div class="sk" style="height:220px"></div>', null); $('m-save').hidden = true; $('modal').querySelector('.box2').classList.add('wide');
+  let d; try { d = await API.eventDetail(k.l, k.s, k.e, st.vat); } catch(err){ $('m-body').innerHTML = `<div class="errbox">${esc(err.message || err)}</div>`; return; }
+  const gp = d.net_with_cost && d.cost_total ? d.net_with_cost / (st.vat === 'ex' ? 1 : 1.07) - d.cost_total : null;
+  const hrs = Object.entries(d.hours || {}).sort((a, b) => b[1] - a[1])[0];
+  $('m-body').innerHTML = `<div class="kpis sm"><div class="card"><div class="lbl">ยอดขาย</div><div class="kpi">${baht(e.net)}</div><div class="delta">${baht(e.net / e.days)}/วัน</div></div>
+      <div class="card"><div class="lbl">ออเดอร์</div><div class="kpi">${fmt(e.orders)}</div><div class="delta">เฉลี่ย ${baht(e.orders ? e.net / e.orders : 0)}</div></div>
+      <div class="card"><div class="lbl">ชิ้น</div><div class="kpi">${fmt(e.units)}</div><div class="delta">${fmt(e.days)} วันขาย${e.span !== e.days ? ` (ช่วงงาน ${e.span} วัน)` : ''}</div></div>
+      <div class="card"><div class="lbl">กำไรขั้นต้น (สินค้าที่มีทุน)</div><div class="kpi">${gp != null ? baht(gp) : '-'}</div><div class="delta">${gp != null ? 'ยอดไม่รวม VAT − ทุน' : 'ยังไม่มีทุนสินค้า'}${hrs ? ` · ขายดีสุด ${hrs[0]}:00 น.` : ''}</div></div></div>
+    <div class="bka">${evs.data.can_edit ? '<button class="btn btn-sm" type="button" id="ev-edit">แก้ชื่องาน / ซ่อน</button>' : ''}<button class="btn btn-sm" type="button" id="ev-csv">Export CSV</button></div>
+    <h4 class="rnh">รายวัน</h4><div class="evp">${d.days.map(x => `<div class="evprow" style="grid-template-columns:minmax(0,1fr) 80px 80px 110px"><span><b>${esc(shortDate(x.d))}</b> <span class="note">${dowOf(x.d)}${x.peak != null ? ' · พีค ' + x.peak + ':00' : ''}</span></span><span class="num">${fmt(x.orders)} ออเดอร์</span><span class="num">${fmt(x.units)} ชิ้น</span><span class="num"><b>${baht(x.net)}</b></span></div>`).join('')}</div>
+    <h4 class="rnh">สินค้าที่ขายได้ (${d.products.length})</h4>
+    <div class="evp">${d.products.map(p => `<div class="evprow">${thumb(p.img, p.name)}<div style="min-width:0"><b>${esc(p.name)}</b><div class="note">${Object.entries(p.sizes || {}).filter(([z]) => z !== '-').map(([z, q]) => `${esc(z)} ${fmt(q)}`).join(' · ') || esc(p.coll || '')}</div></div><span class="num">${fmt(p.qty)} ชิ้น</span><span class="num"><b>${baht(p.net)}</b>${p.cost ? `<div class="note">ทุน ${baht(p.cost)}</div>` : ''}</span></div>`).join('')}</div>`;
+  $('ev-csv').onclick = () => downloadCsv([['สินค้า', 'Collection', 'ไซซ์', 'ชิ้น', 'ยอดขาย (' + vatTxt() + ')', 'ทุนรวม'], ...d.products.map(p => [p.name, p.coll || '', Object.entries(p.sizes || {}).map(([z, q]) => z + ' ' + q).join(' / '), p.qty, Math.round(p.net), p.cost ? Math.round(p.cost) : ''])], `event_${(e.title || k.l).replace(/[^\wก-๙]+/g, '-')}_${k.s}.csv`);
+  if ($('ev-edit')) $('ev-edit').onclick = () => openModal('แก้ไขงาน', `<div class="field"><label class="lbl" for="em-t">ชื่องาน</label><input class="inp" id="em-t" value="${esc(e.title || '')}"><span class="note">สาขา POS: ${esc(k.l)}</span></div>
+      <div class="field"><label class="lbl" for="em-n">หมายเหตุ</label><textarea class="inp" id="em-n" rows="2" style="font:inherit">${esc(e.note || '')}</textarea></div>
+      <label style="display:flex;gap:8px;align-items:center;min-height:40px"><input type="checkbox" id="em-h" ${e.hidden ? 'checked' : ''}> ซ่อนงานนี้ (ไม่ใช่งาน Event / ขายหน้าร้าน)</label>`,
+    async () => { await API.eventMetaSave(k.l, k.s, $('em-t').value, $('em-n').value, $('em-h').checked); setTimeout(() => loadEvents(true), 0); });
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-lv]'); if (a) { openLive(JSON.parse(a.dataset.lv)); return; }
+  const r = e.target.closest('[data-lvreview]'); if (r) { reviewLive(r.dataset.lvreview); return; }
+  const v = e.target.closest('[data-ev]'); if (v) { openEvent(JSON.parse(v.dataset.ev)); return; }
+});
+const syncVat = v => { st.vat = v; try { localStorage.setItem('cb_vat', v); } catch(e){} $('vat').value = v; st.data = null; };
+$('lv-days').onchange = e => { lv.days = +e.target.value; loadLive(); };
+$('lv-pl').onclick = e => { const b = e.target.closest('[data-k]'); if (b) { lv.pl = b.dataset.k; renderLive(); } };
+$('lv-add').onclick = () => editLiveSession(null);
+$('lv-vat').onchange = e => { syncVat(e.target.value); loadLive(); };
+$('lv-reload').onclick = () => loadLive(true);
+$('ev-vat').onchange = e => { syncVat(e.target.value); loadEvents(); };
+$('ev-q').oninput = e => { evs.q = e.target.value; renderEvents(); };
+$('ev-hid').onchange = e => { evs.showHidden = e.target.checked; renderEvents(); };
+$('ev-reload').onclick = () => loadEvents(true);
 
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
