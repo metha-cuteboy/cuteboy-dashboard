@@ -532,6 +532,26 @@ button.tdrow{cursor:pointer}button.tdrow:hover{background:var(--soft)}
   .evprow{grid-template-columns:36px minmax(0,1fr) 90px}.evprow>span:nth-of-type(1){display:none}
   .lvrv{grid-template-columns:1fr 1fr}.lvrv>div:first-child{grid-column:1/-1}
 }
+.lvcus{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}.lvcus[hidden]{display:none}
+.lvch-h{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:flex-start}
+.lvch-leg{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0 4px;font-size:12.5px;color:var(--muted)}
+.lvch-leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.lvch-w{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.lvch-w svg{display:block}
+.lvch-t{font-size:10.5px;fill:var(--muted)}
+.lvch-b{cursor:pointer}.lvch-b:hover{opacity:.8}
+.lvtop{display:grid;grid-template-columns:28px minmax(0,1fr) 70px 60px 120px;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--line2);min-height:60px}
+.lvtop.hd{min-height:40px;border-top:0;font-size:12px;color:var(--muted);font-weight:500}
+.lvrk{font-weight:600;color:var(--muted);text-align:center}
+@media (max-width:760px){.lvtop{grid-template-columns:22px minmax(0,1fr) 96px;padding:10px 14px}.lvtop>span:nth-child(3),.lvtop>span:nth-child(4){display:none}.lvtop.hd{display:none}}
+/* ===== รอบ 14: E-Commerce ===== */
+.eclink{grid-template-columns:110px 170px minmax(0,1fr)}
+.ecurl{display:flex;gap:6px;min-width:0}.ecurl .inp{flex:1;min-width:0}
+.ecby{grid-column:2/-1;margin-top:-4px}
+.echip.skip{color:var(--muted);text-decoration:line-through}
+.ecai{display:grid;gap:10px}
+.ecai .aiout pre{max-height:220px;overflow:auto}
+@media (max-width:760px){.eclink{grid-template-columns:1fr 1fr}.eclink .ecurl{grid-column:1/-1}.ecby{grid-column:1/-1;margin-top:0}}
 </style>
 </head>
 <body>
@@ -578,7 +598,7 @@ button.tdrow{cursor:pointer}button.tdrow:hover{background:var(--soft)}
     <div class="logo"><div class="m">CB</div><div><b>CUTEBOY</b><span>Team Dashboard</span></div></div>
     <div class="me"><div id="me-av" class="av">?</div><div style="min-width:0"><div class="n" id="me-name">-</div><div class="r" id="me-role">-</div></div><button id="btn-logout" type="button">ออก</button></div>
     <div><div class="grp-l">ทั่วไป</div><div class="nav"><a href="#/me" id="nav-me">งานของฉัน</a><a href="#/overview" id="nav-overview">Overview</a><a href="#/team" id="nav-team">ทีมงาน (Workload)</a><a href="#/archive" id="nav-archive">คลังงานที่เสร็จแล้ว</a></div></div>
-    <div><div class="grp-l">PROJECT</div><div class="nav"><a href="#/projects" id="nav-projects">Project</a><a href="#/design" id="nav-design">Design</a><a href="#/supplier" id="nav-supplier">Supplier</a><a href="#/forecast" id="nav-forecast">Forecast</a><a href="#/incoming" id="nav-incoming">Inventory (Project)</a><a href="#/marketing" id="nav-marketing">Marketing & PR</a><a href="#/ecom" id="nav-ecom" hidden>E-Commerce (Mockup)</a></div></div>
+    <div><div class="grp-l">PROJECT</div><div class="nav"><a href="#/projects" id="nav-projects">Project</a><a href="#/design" id="nav-design">Design</a><a href="#/supplier" id="nav-supplier">Supplier</a><a href="#/forecast" id="nav-forecast">Forecast</a><a href="#/incoming" id="nav-incoming">Inventory (Project)</a><a href="#/marketing" id="nav-marketing">Marketing & PR</a><a href="#/ecom" id="nav-ecom">E-Commerce</a></div></div>
     <div><div class="grp-l">รายงานรวม</div><div class="nav"><a href="#/sales" id="nav-sales">Total Sales</a><a href="#/stock" id="nav-stock">Inventory คงเหลือ</a><a href="#/live" id="nav-live">Live</a><a href="#/event" id="nav-event">Event</a><a href="#/oem" id="nav-oem">ยอดขาย OEM</a><a href="#/recovery" id="nav-recovery">คืนทุน & โปรโมชัน</a><a href="#/todo" id="nav-todo">ข้อมูลที่ต้องเติม</a></div></div>
     <div id="nav-admin-grp" hidden><div class="grp-l">ADMIN</div><div class="nav"><a href="#/members" id="nav-members" class="adm">จัดการสมาชิก</a><a href="#/admin" id="nav-admin" class="adm">หลังบ้าน · ประวัติแก้ไข</a></div></div>
     <div class="syncbox" id="syncbox"><b>สถานะการซิงก์ข้อมูล</b><div>กำลังโหลด…</div></div>
@@ -818,10 +838,12 @@ button.tdrow{cursor:pointer}button.tdrow:hover{background:var(--soft)}
   </div>
   <div id="page-live" class="pg" hidden>
     <header class="top"><div style="min-width:0"><h1>ยอดขาย Live</h1><div class="muted" style="margin-top:4px">ยอดขายแต่ละรอบ Live · FB / IG จากออเดอร์ Shipnity · Shopee Live จากช่วงเวลาที่บันทึก</div></div>
-      <div class="controls"><select class="sel" id="lv-days" aria-label="ช่วงเวลา"><option value="30">30 วัน</option><option value="90">90 วัน</option><option value="180">6 เดือน</option><option value="365">1 ปี</option></select><select class="sel" id="lv-vat" aria-label="VAT"><option value="inc">รวม VAT</option><option value="ex">ไม่รวม VAT</option></select><button class="btn" id="lv-reload" type="button">โหลดใหม่</button><button class="btn btn-p" id="lv-add" type="button" hidden>+ เพิ่มรอบ Live</button></div></header>
+      <div class="controls"><select class="sel" id="lv-days" aria-label="ช่วงเวลา"></select><span id="lv-custom" class="lvcus" hidden><input class="inp" type="date" id="lv-from" aria-label="ตั้งแต่วันที่"><span class="note">ถึง</span><input class="inp" type="date" id="lv-to" aria-label="ถึงวันที่"></span><select class="sel" id="lv-vat" aria-label="VAT"><option value="inc">รวม VAT</option><option value="ex">ไม่รวม VAT</option></select><button class="btn" id="lv-reload" type="button">โหลดใหม่</button><button class="btn btn-p" id="lv-add" type="button" hidden>+ เพิ่มรอบ Live</button></div></header>
     <div id="lv-pending"></div>
     <section class="kpis" id="lv-kpis"></section>
     <div class="controls"><div class="seg" id="lv-pl" role="group" aria-label="ช่องทาง"></div></div>
+    <div id="lv-chart"></div>
+    <div class="controls"><div class="seg" id="lv-tabs" role="group" aria-label="มุมมอง"></div></div>
     <div id="lv-body"></div>
   </div>
   <div id="page-event" class="pg" hidden>
@@ -839,9 +861,10 @@ button.tdrow{cursor:pointer}button.tdrow:hover{background:var(--soft)}
     <div id="td-body"></div>
   </div>
   <div id="page-ecom" class="pg" hidden>
-    <header class="top"><div style="min-width:0"><h1>E-Commerce · ลงขาย & ลิงก์</h1><div class="muted" style="margin-top:4px">ทีม Admin สร้างลิงก์ขายทุกช่องทาง เตรียมข้อมูลสินค้า แล้วส่งลิงก์ให้ทีม PR / Marketing ในที่เดียว</div></div></header>
-    <div class="mockflag">MOCKUP · ตัวอย่างหน้าจอเพื่อให้ตรวจเนื้อหาก่อนสร้างจริง ข้อมูลลิงก์เป็นตัวอย่าง ยังไม่บันทึก</div>
+    <header class="top"><div style="min-width:0"><h1>E-Commerce · ลงขาย & ลิงก์</h1><div class="muted" style="margin-top:4px">ทีม Admin สร้างลิงก์ขายทุกช่องทาง เตรียมข้อมูลสินค้า แล้วส่งลิงก์ให้ทีม PR / Marketing ในที่เดียว</div></div>
+      <div class="controls"><button class="btn" id="ec-reload" type="button">โหลดใหม่</button></div></header>
     <section class="kpis" id="ec-kpis"></section>
+    <div class="controls"><div class="seg" id="ec-tabs" role="group" aria-label="สถานะ"></div><input class="inp" id="ec-q" style="width:240px;max-width:100%" placeholder="ค้นหาสินค้า / Project" aria-label="ค้นหาสินค้า"></div>
     <div id="ec-list" style="display:grid;gap:14px"></div>
   </div>
   <div id="page-archive" class="pg" hidden>
@@ -982,6 +1005,11 @@ const API = DEMO ? DEMO.api : {
   live: (f, t, vat) => rpc('dash_live', { p_from:f, p_to:t, p_vat:vat || 'inc' }),
   liveDetail: (p, d, sid, vat) => rpc('live_detail', { p_platform:p, p_date:d, p_session:sid, p_vat:vat || 'inc' }),
   liveReview: f => rpc('live_review', { p_file:f }),
+  ecomBoard: () => rpc('ecom_board', {}),
+  ecomLink: (item, ch, status, url) => rpc('ecom_link_save', { p_item:item, p_channel:ch, p_status:status, p_url:url }),
+  ecomInfo: (item, d) => rpc('ecom_info_save', { p_item:item, d }),
+  ecomSendPr: (pid, text) => rpc('ecom_send_pr', { p_project:pid, p_text:text }),
+  liveTop: (f, t, p, vat) => rpc('live_top_products', { p_from:f, p_to:t, p_platform:p, p_vat:vat || 'inc' }),
   liveAssign: (refs, p, d) => rpc('live_assign_save', { p_refs:refs, p_platform:p, p_date:d }),
   liveSessionSave: x => rpc('live_session_save', { d:x }),
   liveSessionDelete: id => rpc('live_session_delete', { p_id:id }),
@@ -1058,7 +1086,7 @@ function route(){ const pg = st.page;
   if (pg==='todo') { document.title = 'ข้อมูลที่ต้องเติม · CuteBoy'; if (!proj.data) loadProjects(); loadTodo(); return; }
   if (pg==='live') { document.title = 'Live · CuteBoy'; $('lv-vat').value = st.vat; loadLive(); return; }
   if (pg==='event') { document.title = 'Event · CuteBoy'; $('ev-vat').value = st.vat; loadEvents(); return; }
-  if (pg==='ecom') { document.title = 'E-Commerce · CuteBoy'; renderEcom(); return; }
+  if (pg==='ecom') { document.title = 'E-Commerce · CuteBoy'; loadEcom(); return; }
   if (pg==='admin') { document.title = 'หลังบ้าน · CuteBoy'; $('ad-from').value = adm.from; $('ad-to').value = adm.to; loadAdmin(); return; }
   if (pg==='recovery') { document.title = 'คืนทุน & โปรโมชัน · CuteBoy'; loadRecovery(); return; }
   if (pg==='stock') { document.title = 'Inventory คงเหลือ · CuteBoy'; loadStock(); }
@@ -3429,28 +3457,44 @@ const LPT = { 'FB Live':['#0B4FB3','#E8F0FD'], 'IG Live':['#8E1F66','#FBEAF4'], 
 const plPill = p => { const [c, bg] = LPT[p] || ['#4A4953', '#EEEEEA']; return `<span class="lpill" style="color:${c};background:${bg}">${esc(p.replace(' Live', ''))}</span>`; };
 
 // ---------- Live ----------
-const lv = { data:null, days:90, pl:'', key:null };
+const lv = { data:null, range:'90', from:null, to:null, pl:'', key:null, tab:'sessions', metric:'net', top:null, topKey:null, topN:20 };
+const TMF = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+function lvRangeOpts(){
+  const o = [['30','30 วันล่าสุด'],['90','90 วันล่าสุด'],['180','6 เดือนล่าสุด'],['365','1 ปีล่าสุด']], [y, m] = today.split('-').map(Number);
+  const ms = []; for (let i = 0; i < 18; i++){ const d = new Date(Date.UTC(y, m - 1 - i, 1)); ms.push([`m:${d.toISOString().slice(0, 7)}`, `${TMF[d.getUTCMonth()]} ${d.getUTCFullYear()}`]); }
+  return `${o.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}<optgroup label="รายเดือน">${ms.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</optgroup><option value="custom">กำหนดช่วงเอง…</option>`;
+}
+function lvRange(){
+  if (lv.range.startsWith('m:')) { const [y, m] = lv.range.slice(2).split('-').map(Number); const f = `${lv.range.slice(2)}-01`, t = new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
+    return { from: f, to: t > today ? today : t, label: `${TMF[m - 1]} ${y}` }; }
+  if (lv.range === 'custom' && lv.from && lv.to) return { from: lv.from <= lv.to ? lv.from : lv.to, to: lv.from <= lv.to ? lv.to : lv.from, label: `${shortDate(lv.from)} – ${shortDate(lv.to)}` };
+  const n = +lv.range || 90; return { from: addDays(today, -n + 1), to: today, label: `${n} วันล่าสุด` };
+}
 async function loadLive(force){
-  if (!force && lv.data && lv.key === lv.days + st.vat) { renderLive(); return; }
-  $('lv-body').innerHTML = '<div class="card"><div class="sk" style="height:260px"></div></div>';
-  try { lv.data = await API.live(addDays(today, -lv.days + 1), today, st.vat); lv.key = lv.days + st.vat; renderLive(); }
+  const r = lvRange(), key = r.from + r.to + st.vat;
+  if (!force && lv.data && lv.key === key) { renderLive(); return; }
+  $('lv-body').innerHTML = '<div class="card"><div class="sk" style="height:260px"></div></div>'; $('lv-chart').innerHTML = '';
+  try { lv.data = await API.live(r.from, r.to, st.vat); lv.key = key; lv.top = null; renderLive(); }
   catch(e){ $('lv-body').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message || e)}</div></div><button class="btn btn-p" type="button" onclick="loadLive(true)">ลองอีกครั้ง</button></div>`; }
 }
 function renderLive(){
-  const d = lv.data; if (!d) return;
-  $('lv-days').value = String(lv.days); $('lv-add').hidden = !d.can_edit;
+  const d = lv.data; if (!d) return; const r = lvRange();
+  $('lv-days').value = lv.range; $('lv-custom').hidden = lv.range !== 'custom'; $('lv-from').value = r.from; $('lv-to').value = r.to; $('lv-add').hidden = !d.can_edit;
   const plats = [...new Set(d.sessions.map(s => s.platform))];
   $('lv-pl').innerHTML = segHtml([['', 'ทุกช่องทาง'], ...plats.map(p => [p, p])], lv.pl, 'data-k');
+  $('lv-tabs').innerHTML = segHtml([['sessions', 'รอบ Live'], ['products', 'สินค้าขายดี']], lv.tab, 'data-k');
   const S = d.sessions.filter(s => !lv.pl || s.platform === lv.pl), withSales = S.filter(s => +s.net > 0);
   const tot = withSales.reduce((a, s) => a + +s.net, 0), ord = withSales.reduce((a, s) => a + +s.orders, 0), best = [...withSales].sort((a, b) => b.net - a.net)[0];
   $('lv-kpis').innerHTML = `
-    <div class="card"><div class="lbl">จำนวนรอบ Live</div><div class="kpi">${fmt(withSales.length)}</div><div class="delta">${lv.days} วันล่าสุด</div></div>
+    <div class="card"><div class="lbl">จำนวนรอบ Live</div><div class="kpi">${fmt(withSales.length)}</div><div class="delta">${esc(r.label)}</div></div>
     <div class="card"><div class="lbl">ยอดขายจาก Live (${vatTxt()})</div><div class="kpi">${baht(tot)}</div><div class="delta">${fmt(ord)} ออเดอร์</div></div>
     <div class="card"><div class="lbl">เฉลี่ยต่อรอบ</div><div class="kpi">${baht(withSales.length ? tot / withSales.length : 0)}</div><div class="delta">${withSales.length ? fmt(Math.round(ord / withSales.length)) : 0} ออเดอร์ต่อรอบ</div></div>
     <div class="card"><div class="lbl">รอบที่ขายดีที่สุด</div><div class="kpi" style="font-size:20px">${best ? baht(best.net) : '-'}</div><div class="delta">${best ? `${esc(best.platform)} · ${esc(shortDate(best.live_date))}${best.title ? ' · ' + esc(best.title) : ''}` : ''}</div></div>`;
-  const pend = (d.pending || []).filter(p => !p.to || p.to >= addDays(today, -lv.days + 1));
+  const pend = (d.pending || []).filter(p => !p.to || (p.to >= r.from && (!p.from || p.from <= r.to)));
   $('lv-pending').innerHTML = pend.length ? `<div class="banner" style="background:#FFF8E6;border-color:#F0D9A0"><span>📋 ออเดอร์ Live จาก Shipnity ที่ยังไม่ได้ตรวจวัน Live: ${pend.slice(0, 3).map(p => `<b>${esc(p.file)}</b> (${fmt(p.orders)})`).join(' · ')}${pend.length > 3 ? ` และอีก ${pend.length - 3} ไฟล์` : ''}</span>
       <span class="bka">${pend.slice(0, 3).map(p => `<button class="btn btn-sm btn-p" type="button" data-lvreview="${esc(p.file)}">ตรวจ ${esc(p.file.replace(/^Shipnity_|\.xlsx$/gi, ''))}</button>`).join('')}</span></div>` : '';
+  renderLiveChart(withSales);
+  if (lv.tab === 'products') { renderLiveTop(); return; }
   const mx = Math.max(1, ...S.map(s => +s.net));
   $('lv-body').innerHTML = `<section class="card" style="padding:0"><div class="lvrow hd"><span>วัน Live</span><span>รอบ</span><span class="num">ออเดอร์</span><span class="num">ชิ้น</span><span class="num">ยอดขาย</span></div>
     ${S.map(s => { const up = s.base != null && +s.base > 0 ? (s.net / s.base - 1) * 100 : null;
@@ -3462,6 +3506,48 @@ function renderLive(){
         <span class="num">${fmt(s.orders)}</span><span class="num">${fmt(s.units)}</span>
         <span class="num"><b>${baht(s.net)}</b>${up != null ? `<div class="note" title="ยอดเฉลี่ยช่วงเวลาเดียวกันใน 4 สัปดาห์ก่อน ${baht(s.base)}">ปกติ ${baht(s.base)} · <b style="color:${up >= 0 ? 'var(--good,#1F7A4D)' : 'var(--bad)'}">${up >= 0 ? '+' : ''}${Math.round(up)}%</b></div>` : ''}</span></button>`; }).join('') || '<div class="empty">ยังไม่มีรอบ Live ในช่วงนี้</div>'}</section>
     <p class="note">FB / IG Live: นับจากออเดอร์ Shipnity ช่องทาง Live (ระบบเดาวัน Live ให้ ตรวจ/ย้ายได้ที่ปุ่ม "ตรวจ") · Shopee Live: นับออเดอร์ Shopee ทั้งหมดในช่วงเวลาที่กรอก (+${d.after_min} นาทีหลังจบ) เทียบกับยอดปกติช่วงเวลาเดียวกันใน 4 สัปดาห์ก่อน</p>`;
+}
+// กราฟแนวโน้ม: 1 แท่ง = 1 รอบ Live เรียงตามวัน · สีตามช่องทาง · เส้น = ค่าเฉลี่ย 4 รอบล่าสุด
+const LMET = { net:['ยอดขาย', s => +s.net, baht], orders:['ออเดอร์', s => +s.orders, fmt], aov:['เฉลี่ย/ออเดอร์', s => s.orders ? s.net / s.orders : 0, baht], units:['ชิ้น', s => +s.units, fmt] };
+function renderLiveChart(L){
+  const box = $('lv-chart'); const [mn, val, fm] = LMET[lv.metric]; const S = [...L].sort((a, b) => (a.live_date + (a.start_at || '')).localeCompare(b.live_date + (b.start_at || '')));
+  const head = `<div class="lvch-h"><div><b>แนวโน้มแต่ละรอบ Live</b><div class="note">1 แท่ง = 1 รอบ · เส้นประ = ค่าเฉลี่ย 4 รอบล่าสุด · แตะแท่งเพื่อดูรายละเอียด</div></div><div class="seg" id="lv-met" role="group" aria-label="ตัวชี้วัด">${segHtml(Object.entries(LMET).map(([k, v]) => [k, v[0]]), lv.metric, 'data-k')}</div></div>`;
+  if (!S.length) { box.innerHTML = `<section class="card">${head}<div class="empty">ไม่มีรอบ Live ที่มียอดขายในช่วงนี้</div></section>`; return; }
+  const cw = Math.max(300, (box.clientWidth || 600) - 42), V = S.map(val), mx = Math.max(1, ...V) * 1.08, H = 220, pt = 10, pb = 26, pl = 44, slot = Math.max(13, Math.min(80, (cw - pl - 10) / S.length)), bw = slot * .72, gap = slot - bw, W = Math.max(cw, pl + S.length * slot + 10);
+  const y = v => pt + (H - pt - pb) * (1 - v / mx), ticks = [0, .25, .5, .75, 1].map(f => mx / 1.08 * f);
+  const ma = V.map((_, i) => { const a = V.slice(Math.max(0, i - 3), i + 1); return a.reduce((p, c) => p + c, 0) / a.length; });
+  const x = i => pl + i * (bw + gap) + gap / 2, lblEvery = Math.ceil(S.length / Math.max(1, Math.floor((W - pl) / 64)));
+  const avg = V.reduce((a, b) => a + b, 0) / V.length;
+  const short = v => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : v >= 1e3 ? Math.round(v / 1e3) + 'k' : Math.round(v);
+  box.innerHTML = `<section class="card">${head}
+    <div class="lvch-leg">${[...new Set(S.map(s => s.platform))].map(p => `<span><i style="background:${LPL[p] || '#888'}"></i>${esc(p)}</span>`).join('')}<span>เฉลี่ยทั้งช่วง <b>${fm(avg)}</b></span></div>
+    <div class="lvch-w"><svg width="${W}" height="${H}" role="img" aria-label="กราฟ${mn}แต่ละรอบ Live">
+      ${ticks.map(t => `<line x1="${pl}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line2)"/><text x="${pl - 6}" y="${y(t) + 4}" text-anchor="end" class="lvch-t">${short(t)}</text>`).join('')}
+      ${S.map((s, i) => `<rect class="lvch-b" data-lv='${esc(JSON.stringify({ p: s.platform, d: s.live_date, id: s.id }))}' x="${x(i)}" y="${y(V[i])}" width="${bw}" height="${Math.max(1, H - pb - y(V[i]))}" rx="2" fill="${LPL[s.platform] || '#888'}"><title>${esc(shortDate(s.live_date))} ${dowOf(s.live_date)} · ${esc(s.platform)}${s.title ? ' · ' + esc(s.title) : ''}\n${mn}: ${fm(V[i])} · ${fmt(s.orders)} ออเดอร์ · ${baht(s.net)}</title></rect>`).join('')}
+      <polyline points="${ma.map((v, i) => `${x(i) + bw / 2},${y(v)}`).join(' ')}" fill="none" stroke="var(--ink,#1A1A1F)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      ${S.map((s, i) => i % lblEvery ? '' : `<text x="${x(i) + bw / 2}" y="${H - 8}" text-anchor="middle" class="lvch-t">${esc(shortDate(s.live_date).replace(/ \d+$/, ''))}</text>`).join('')}
+    </svg></div></section>`;
+  const w = box.querySelector('.lvch-w'); w.scrollLeft = w.scrollWidth;
+}
+async function renderLiveTop(){
+  const r = lvRange(), key = r.from + r.to + lv.pl + st.vat;
+  if (lv.topKey !== key || !lv.top) {
+    $('lv-body').innerHTML = '<div class="card"><div class="sk" style="height:260px"></div></div>';
+    try { lv.top = await API.liveTop(r.from, r.to, lv.pl || null, st.vat); lv.topKey = key; }
+    catch(e){ $('lv-body').innerHTML = `<div class="errbox">${esc(e.message || e)}</div>`; return; }
+    if (lv.tab !== 'products') return;
+  }
+  const P = lv.top, tq = P.reduce((a, p) => a + +p.qty, 0), tn = P.reduce((a, p) => a + +p.net, 0), mx = Math.max(1, ...P.map(p => +p.net));
+  $('lv-body').innerHTML = `<section class="card" style="padding:0"><div class="lvtop hd"><span></span><span>สินค้า · ${esc(r.label)}${lv.pl ? ' · ' + esc(lv.pl) : ''}</span><span class="num">ขายใน</span><span class="num">ชิ้น</span><span class="num">ยอดขาย</span></div>
+    ${P.slice(0, lv.topN).map((p, i) => `<div class="lvtop"><span class="lvrk">${i + 1}</span><div style="display:flex;gap:10px;align-items:center;min-width:0">${thumb(p.img, p.name)}<div style="min-width:0"><b>${esc(p.name)}</b>
+        <div class="note">${Object.entries(p.sizes || {}).filter(([z]) => z !== '-').sort((a, b) => b[1] - a[1]).map(([z, q]) => `${esc(z)} ${fmt(q)}`).join(' · ') || esc(p.coll || '')}</div>
+        ${!lv.pl && Object.keys(p.plat || {}).length > 1 ? `<div class="note">${Object.entries(p.plat).map(([k, q]) => `${esc(k.replace(' Live', ''))} ${fmt(q)}`).join(' · ')}</div>` : ''}
+        <span class="lvbar"><i style="width:${(p.net / mx * 100).toFixed(1)}%"></i></span></div></div>
+      <span class="num">${fmt(p.lives)} รอบ</span><span class="num">${fmt(p.qty)}</span><span class="num"><b>${baht(p.net)}</b><div class="note">${fmt(p.qty)} ชิ้น · ${tn ? (p.net / tn * 100).toFixed(1) : 0}%</div></span></div>`).join('') || '<div class="empty">ไม่มีสินค้าขายใน Live ช่วงนี้</div>'}
+    ${P.length > lv.topN ? `<div style="padding:12px 20px;border-top:1px solid var(--line2)"><button class="btn btn-sm" type="button" id="lv-more">ดูเพิ่ม (${P.length - lv.topN})</button></div>` : ''}</section>
+    <div class="bka"><button class="btn btn-sm" type="button" id="lv-topcsv">Export CSV</button><span class="note">รวม ${fmt(tq)} ชิ้น · ${baht(tn)} (${vatTxt()}) · แสดงสูงสุด 100 รายการ</span></div>`;
+  if ($('lv-more')) $('lv-more').onclick = () => { lv.topN += 30; renderLiveTop(); };
+  $('lv-topcsv').onclick = () => downloadCsv([['อันดับ', 'สินค้า', 'Collection', 'ไซซ์', 'ช่องทาง', 'จำนวนรอบที่ขาย', 'ชิ้น', 'ยอดขาย (' + vatTxt() + ')'], ...P.map((p, i) => [i + 1, p.name, p.coll || '', Object.entries(p.sizes || {}).map(([z, q]) => z + ' ' + q).join(' / '), Object.entries(p.plat || {}).map(([k, q]) => k + ' ' + q).join(' / '), p.lives, p.qty, Math.round(p.net)])], `live_top_${r.from}_${r.to}.csv`);
 }
 async function openLive(k){
   const s = lv.data.sessions.find(x => x.platform === k.p && x.live_date === k.d && (k.p !== 'Shopee Live' || x.id === k.id)) || {};
@@ -3560,8 +3646,13 @@ document.addEventListener('click', e => {
   const v = e.target.closest('[data-ev]'); if (v) { openEvent(JSON.parse(v.dataset.ev)); return; }
 });
 const syncVat = v => { st.vat = v; try { localStorage.setItem('cb_vat', v); } catch(e){} $('vat').value = v; st.data = null; };
-$('lv-days').onchange = e => { lv.days = +e.target.value; loadLive(); };
-$('lv-pl').onclick = e => { const b = e.target.closest('[data-k]'); if (b) { lv.pl = b.dataset.k; renderLive(); } };
+$('lv-days').innerHTML = lvRangeOpts();
+$('lv-days').onchange = e => { lv.range = e.target.value; if (lv.range === 'custom') { lv.from = lv.from || addDays(today, -29); lv.to = lv.to || today; } loadLive(); };
+$('lv-from').onchange = e => { lv.from = e.target.value; if (lv.from && lv.to) loadLive(); };
+$('lv-to').onchange = e => { lv.to = e.target.value; if (lv.from && lv.to) loadLive(); };
+$('lv-pl').onclick = e => { const b = e.target.closest('[data-k]'); if (b) { lv.pl = b.dataset.k; lv.topN = 20; renderLive(); } };
+$('lv-tabs').onclick = e => { const b = e.target.closest('[data-k]'); if (b) { lv.tab = b.dataset.k; renderLive(); } };
+$('lv-chart').addEventListener('click', e => { const b = e.target.closest('#lv-met [data-k]'); if (b) { lv.metric = b.dataset.k; renderLiveChart(lv.data.sessions.filter(s => (!lv.pl || s.platform === lv.pl) && +s.net > 0)); } });
 $('lv-add').onclick = () => editLiveSession(null);
 $('lv-vat').onchange = e => { syncVat(e.target.value); loadLive(); };
 $('lv-reload').onclick = () => loadLive(true);
@@ -3569,6 +3660,147 @@ $('ev-vat').onchange = e => { syncVat(e.target.value); loadEvents(); };
 $('ev-q').oninput = e => { evs.q = e.target.value; renderEvents(); };
 $('ev-hid').onchange = e => { evs.showHidden = e.target.checked; renderEvents(); };
 $('ev-reload').onclick = () => loadEvents(true);
+
+// ===== รอบ 14: หน้า E-Commerce ใช้งานจริง (ลิงก์ขายทุกช่องทาง · ข้อมูลสินค้า · prompt AI · ส่งลิงก์ให้ PR) =====
+const ecs = { data:null, tab:'todo', q:'', mtab:'links', draft:null, prompt:'' };
+const EST = [['live', 'ขายอยู่'], ['draft', 'ร่าง / รอตรวจ'], ['none', 'ยังไม่ลง'], ['skip', 'ไม่ขายช่องทางนี้']];
+const EINFO = [['name_th', 'ชื่อสินค้า (ไทย)'], ['name_en', 'ชื่อสินค้า (อังกฤษ)'], ['price', 'ราคาขาย'], ['material', 'วัสดุ / เนื้อผ้า'], ['weight_g', 'น้ำหนักพัสดุ (กรัม)'], ['description', 'คำอธิบายสินค้า'], ['size_chart_url', 'ตารางไซซ์'], ['tags', 'แท็ก / คีย์เวิร์ด']];
+async function loadEcom(force){
+  if (!proj.data) { $('ec-list').innerHTML = '<div class="card"><div class="sk" style="height:200px"></div></div>'; await loadProjects(); }
+  if (force || !ecs.data) {
+    try { ecs.data = await API.ecomBoard(); }
+    catch(e){ $('ec-list').innerHTML = `<div class="errbox"><div><b>โหลดไม่สำเร็จ</b><div class="note">${esc(e.message || e)}</div></div><button class="btn btn-p" type="button" onclick="loadEcom(true)">ลองอีกครั้ง</button></div>`; return; }
+  }
+  renderEcom();
+}
+const ecLinks = id => { const o = {}; for (const l of ecs.data.links) if (l.item === id) o[l.ch] = l; return o; };
+const ecInfo = id => ecs.data.info.find(x => x.item_id === id) || {};
+function ecState(it){
+  const L = ecLinks(it.id), I = ecInfo(it.id), ch = ecs.data.channels;
+  const sold = ch.filter(c => (L[c.k]?.status || 'none') !== 'skip');
+  const done = sold.length > 0 && sold.every(c => L[c.k]?.status === 'live');
+  const info = EINFO.filter(([k]) => I[k] != null && String(I[k]).trim() !== '').length;
+  return { L, I, done, live: sold.filter(c => L[c.k]?.status === 'live').length, total: sold.length, info };
+}
+function renderEcom(){
+  if (!ecs.data || !proj.data) { loadEcom(); return; }
+  const d = ecs.data, q = ecs.q.trim().toLowerCase();
+  const all = proj.data.items.filter(i => !i.archived).map(it => ({ it, s: ecState(it) }));
+  const open = all.filter(x => x.it.status !== 'Completed' || !x.s.done);
+  const M = (ecs.tab === 'todo' ? open.filter(x => !x.s.done) : ecs.tab === 'done' ? all.filter(x => x.s.done) : all)
+    .filter(x => !q || `${x.it.item_name} ${x.it.variant || ''} ${pById(x.it.project_id).name}`.toLowerCase().includes(q));
+  const pids = [...new Set(all.map(x => x.it.project_id))], sent = d.projects.filter(p => pids.includes(p.id)).length;
+  $('ec-tabs').innerHTML = segHtml([['todo', `ยังไม่ครบ (${open.filter(x => !x.s.done).length})`], ['done', `ครบแล้ว (${all.filter(x => x.s.done).length})`], ['all', 'ทั้งหมด']], ecs.tab, 'data-k');
+  $('ec-kpis').innerHTML = `<div class="card"><div class="lbl">รายการที่ยังลงขายไม่ครบ</div><div class="kpi">${fmt(open.filter(x => !x.s.done).length)}</div><div class="delta">จาก ${fmt(all.length)} รายการใน Project</div></div>
+    <div class="card"><div class="lbl">ลิงก์ครบทุกช่องทางที่ขาย</div><div class="kpi">${fmt(all.filter(x => x.s.done).length)}/${fmt(all.length)}</div><div class="delta">${d.channels.map(c => c.n).join(' · ')}</div></div>
+    <div class="card"><div class="lbl">ข้อมูลสินค้าครบ</div><div class="kpi">${all.length ? Math.round(all.reduce((a, x) => a + x.s.info, 0) / (all.length * EINFO.length) * 100) : 0}%</div><div class="delta">${EINFO.length} ช่อง: ชื่อ · ราคา · คำอธิบาย · ไซซ์ ฯลฯ</div></div>
+    <div class="card"><div class="lbl">ส่งลิงก์ให้ PR แล้ว</div><div class="kpi">${fmt(sent)}/${fmt(pids.length)}</div><div class="delta">Project</div></div>`;
+  const byP = {}; for (const x of M) (byP[x.it.project_id] ??= []).push(x);
+  $('ec-list').innerHTML = Object.entries(byP).map(([pid, L]) => { const ps = d.projects.find(p => p.id === +pid);
+    return `<section class="card" style="padding:0"><div class="card-hd" style="padding:14px 20px;flex-wrap:wrap;gap:8px"><div style="min-width:0"><h2 class="sec">${esc(pById(+pid).name)}</h2>${ps ? `<div class="note">ส่งลิงก์ให้ PR แล้ว ${esc(ago(ps.sent_at))}${ps.sent_by ? ' โดย ' + esc(ps.sent_by) : ''}</div>` : ''}</div>
+      <div class="bka"><button class="btn btn-sm" type="button" data-eccopy="${pid}">📋 คัดลอกลิงก์ทั้งหมด</button>${d.can_edit ? `<button class="btn btn-sm" type="button" data-ecsend="${pid}">📣 ส่งเข้า Discord ทีม PR</button>` : ''}</div></div>
+    ${L.map(({ it, s }) => `<button type="button" class="ecrow" data-ecit="${it.id}">${mthumb(it, 'mth') || `<span class="mth ph2">${esc((it.item_name || '?').slice(0, 1))}</span>`}<div style="min-width:0"><b>${esc(it.item_name)}</b>${it.variant ? ` <span class="muted">· ${esc(it.variant)}</span>` : ''}${it.status === 'Completed' ? ' <span class="pill p-idle">ปิดงานแล้ว</span>' : ''}
+        <div class="ecch">${d.channels.map(c => { const v = s.L[c.k]?.status || 'none'; return `<span class="echip ${v}">${v === 'live' ? '✓' : v === 'draft' ? '…' : v === 'skip' ? '×' : '–'} ${esc(c.n)}</span>`; }).join('')}</div></div>
+      <div class="note" style="text-align:right">ข้อมูล ${s.info}/${EINFO.length}<div class="wbar" style="width:80px;margin-top:4px;margin-left:auto"><i style="width:${s.info / EINFO.length * 100}%;background:var(--accent)"></i></div></div></button>`).join('')}</section>`; }).join('')
+    || `<div class="card"><div class="empty">${ecs.tab === 'todo' ? 'ลงขายครบทุกรายการแล้ว 🎉' : 'ไม่พบรายการ'}</div></div>`;
+}
+function ecLinkText(pid){
+  const its = proj.data.items.filter(i => i.project_id === pid && !i.archived), ch = ecs.data.channels; const out = [];
+  for (const it of its) { const L = ecLinks(it.id), ls = ch.filter(c => L[c.k]?.status === 'live' && L[c.k]?.url);
+    if (ls.length) out.push(`▪ ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''}\n` + ls.map(c => `  ${c.n}: ${L[c.k].url}`).join('\n')); }
+  return out.length ? `${pById(pid).name}\n\n${out.join('\n\n')}` : '';
+}
+async function ecCopy(text){
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch(e){ const t = document.createElement('textarea'); t.value = text; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch(e2){} t.remove(); return ok; }
+}
+function ecPrompt(it, I, tone, chan){
+  const p = pById(it.project_id), sizes = it.size_qty && typeof it.size_qty === 'object' ? Object.keys(it.size_qty).join(', ') : '';
+  const facts = [['สินค้า', I.name_th || `${it.item_name}${it.variant ? ' ' + it.variant : ''}`], ['ชื่ออังกฤษ', I.name_en], ['Project / คอลเลกชัน', p.name], ['ราคาขาย', I.price || it.sell_price ? `${fmt(String(I.price || it.sell_price).replace(/,/g, ''))} บาท` : ''],
+    ['ราคาก่อนลด', I.compare_price ? `${fmt(String(I.compare_price).replace(/,/g, ''))} บาท` : ''], ['วัสดุ', I.material], ['ไซซ์', sizes], ['รายละเอียดที่ทีมเขียนไว้', I.description], ['คีย์เวิร์ด', I.tags], ['คอนเซปต์ดีไซน์', it.design_concept]]
+    .filter(([, v]) => v != null && String(v).trim() !== '').map(([k, v]) => `- ${k}: ${v}`).join('\n');
+  return `คุณเป็นแอดมินร้านออนไลน์ของแบรนด์ CuteBoy (เสื้อผ้า streetwear และสินค้าลิขสิทธิ์ทีม esports)
+ช่วยเขียนข้อความลงขายสินค้านี้ สำหรับช่องทาง: ${chan}
+โทนภาษา: ${tone}
+
+ข้อมูลสินค้า:
+${facts}
+
+ขอผลลัพธ์เป็นหัวข้อ ดังนี้
+1. ชื่อสินค้าสำหรับ Shopee / Lazada / TikTok Shop (ไม่เกิน 120 ตัวอักษร ใส่คีย์เวิร์ดที่คนค้นหา)
+2. Shopify: SEO title (ไม่เกิน 60 ตัวอักษร) และ meta description (ไม่เกิน 155 ตัวอักษร)
+3. คำอธิบายสินค้าแบบ bullet 4–6 ข้อ
+4. แฮชแท็ก 5–8 อัน
+
+ใช้เฉพาะข้อมูลที่ให้ไว้ ห้ามแต่งสเปกที่ไม่มีในข้อมูล ถ้าข้อมูลไหนขาด ให้เขียน [ต้องเติม: ...] แทน`;
+}
+function ecDetail(it){
+  const st0 = ecState(it), can = ecs.data.can_edit, ro = can ? '' : 'disabled';
+  if (!ecs.draft || ecs.draft.id !== it.id) ecs.draft = { id: it.id, links: Object.fromEntries(ecs.data.channels.map(c => [c.k, { status: st0.L[c.k]?.status || 'none', url: st0.L[c.k]?.url || '' }])), info: { ...st0.I } };
+  const D = ecs.draft, tab = ecs.mtab, p = pById(it.project_id);
+  if (D.info.name_th == null && !st0.I.item_id) D.info.name_th = `${it.item_name}${it.variant ? ' ' + it.variant : ''}`;
+  if (D.info.price == null && it.sell_price) D.info.price = it.sell_price;
+  const iv = k => esc(D.info[k] ?? '');
+  const finalImg = it.final_photo_link || p.final_photo_link;
+  const checks = [['รูป Mockup', !!it.mockup_url], ['รูป Final (Shooting)', !!finalImg], ['ราคาขาย', !!(D.info.price || it.sell_price)], ['ทุนต่อชิ้น', !!it.est_cost], ['จำนวนแยกไซซ์', !!(it.size_qty && Object.keys(it.size_qty).length)]];
+  const body = tab === 'links' ? `<div class="eclinks">${ecs.data.channels.map(c => { const v = D.links[c.k]; return `<div class="eclink"><b>${esc(c.n)}</b>
+        <select class="sel" data-ecst="${c.k}" aria-label="สถานะ ${esc(c.n)}" ${ro}>${EST.map(([k, l]) => `<option value="${k}" ${v.status === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
+        <span class="ecurl"><input class="inp" data-ecurl="${c.k}" value="${esc(v.url)}" placeholder="วางลิงก์สินค้า https://…" aria-label="ลิงก์ ${esc(c.n)}" ${ro}>${v.url ? `<a class="btn btn-sm" href="${esc(v.url)}" target="_blank" rel="noopener" aria-label="เปิดลิงก์ ${esc(c.n)}">↗</a>` : ''}</span>
+        ${st0.L[c.k]?.by ? `<span class="note ecby">แก้ล่าสุด ${esc(st0.L[c.k].by)} · ${esc(ago(st0.L[c.k].at))}</span>` : ''}</div>`; }).join('')}</div>
+      <p class="note" style="margin:0">วางลิงก์แล้วระบบเปลี่ยนเป็น "ขายอยู่" ให้ · สถานะ "ลงขายเว็บ / Shopee" ของรายการอัปเดตตาม · ทีม PR กด "คัดลอกลิงก์ทั้งหมด" ได้จากหน้านี้ หรือรอรับทาง Discord</p>`
+    : tab === 'info' ? `<div class="fgrid">
+        <div class="field"><label class="lbl" for="ei-name_th">ชื่อสินค้า (ไทย)</label><input class="inp" id="ei-name_th" data-ei="name_th" value="${iv('name_th')}" ${ro}></div>
+        <div class="field"><label class="lbl" for="ei-name_en">ชื่อสินค้า (อังกฤษ)</label><input class="inp" id="ei-name_en" data-ei="name_en" value="${iv('name_en')}" ${ro}></div>
+        <div class="field"><label class="lbl" for="ei-price">ราคาขาย (บาท)</label><input class="inp" id="ei-price" data-ei="price" inputmode="decimal" value="${iv('price')}" ${ro}></div>
+        <div class="field"><label class="lbl" for="ei-compare_price">ราคาก่อนลด (ถ้ามี)</label><input class="inp" id="ei-compare_price" data-ei="compare_price" inputmode="decimal" value="${iv('compare_price')}" ${ro}></div>
+        <div class="field"><label class="lbl" for="ei-material">วัสดุ / เนื้อผ้า</label><input class="inp" id="ei-material" data-ei="material" value="${iv('material')}" placeholder="เช่น Cotton 100% 20s" ${ro}></div>
+        <div class="field"><label class="lbl" for="ei-weight_g">น้ำหนักพัสดุ (กรัม)</label><input class="inp" id="ei-weight_g" data-ei="weight_g" inputmode="decimal" value="${iv('weight_g')}" ${ro}></div>
+        <div class="field wide"><label class="lbl" for="ei-description">คำอธิบายสินค้า</label><textarea class="inp" id="ei-description" data-ei="description" rows="4" style="font:inherit" ${ro}>${iv('description')}</textarea></div>
+        <div class="field"><label class="lbl" for="ei-size_chart_url">ตารางไซซ์ (ลิงก์รูป)</label><input class="inp" id="ei-size_chart_url" data-ei="size_chart_url" value="${iv('size_chart_url')}" ${ro}></div>
+        <div class="field"><label class="lbl" for="ei-tags">แท็ก / คีย์เวิร์ด</label><input class="inp" id="ei-tags" data-ei="tags" value="${iv('tags')}" placeholder="เสื้อยืด, MiTH, esports" ${ro}></div></div>
+      <div><div class="lbl" style="margin-bottom:4px">ข้อมูลจากทีมอื่น (แก้ที่หน้า Project)</div><div class="ecchk">${checks.map(([t, ok]) => `<span class="echip ${ok ? 'live' : 'none'}">${ok ? '✓' : '–'} ${t}</span>`).join('')}${finalImg ? ` <a class="note" href="${esc(finalImg)}" target="_blank" rel="noopener">เปิดรูป Final ↗</a>` : ''}</div></div>`
+    : `<div class="ecai"><div class="bka"><select class="sel" id="ec-tone" aria-label="โทนภาษา"><option>สนุก เป็นกันเอง ภาษาแฟนเกม</option><option>พรีเมียม สุภาพ</option><option>ขายตรง กระชับ เน้นโปร</option></select>
+        <select class="sel" id="ec-chan" aria-label="ช่องทาง"><option>ทุกช่องทาง</option>${ecs.data.channels.map(c => `<option>${esc(c.n)}</option>`).join('')}</select>
+        <button class="btn btn-p" type="button" id="ec-gen">✨ สร้าง prompt + คัดลอก</button></div>
+        <p class="note" style="margin:0">ระบบเอาข้อมูลสินค้าที่กรอกไว้มาสร้างข้อความสั่งงาน → ไปวางใน Claude ที่ใช้อยู่ → คัดลอกผลกลับมาวางช่องล่างแล้วกดบันทึก (ไม่มีค่าใช้จ่ายเพิ่ม)</p>
+        ${ecs.prompt ? `<div class="aiout"><div class="lbl">Prompt (คัดลอกแล้ว)</div><pre>${esc(ecs.prompt)}</pre><button class="btn btn-sm" type="button" id="ec-cp">คัดลอกอีกครั้ง</button></div>` : ''}
+        <div class="field"><label class="lbl" for="ei-ai_text">ผลจาก AI (ตรวจ/แก้ก่อนใช้)</label><textarea class="inp" id="ei-ai_text" data-ei="ai_text" rows="8" style="font:inherit" placeholder="วางข้อความที่ได้จาก AI ตรงนี้ เพื่อเก็บไว้ใช้ลงทุกช่องทาง" ${ro}>${iv('ai_text')}</textarea></div>
+        ${D.info.ai_text ? '<div class="bka"><button class="btn btn-sm" type="button" id="ec-cpai">คัดลอกผล AI</button></div>' : ''}</div>`;
+  openModal(`${p.name} · ${it.item_name}${it.variant ? ' (' + it.variant + ')' : ''}`, `<div class="seg" id="ec-mtabs" role="group" aria-label="ส่วน">${segHtml([['links', `ลิงก์ขาย (${st0.live}/${st0.total})`], ['info', `ข้อมูลสินค้า (${EINFO.filter(([k]) => D.info[k] != null && String(D.info[k]).trim() !== '').length}/${EINFO.length})`], ['ai', '✨ AI ช่วยเขียน']], tab, 'data-k')}</div>${body}
+    ${can ? '' : '<p class="note">ดูได้อย่างเดียว · แก้ได้เฉพาะทีม E-Commerce / Project / management หรือ admin</p>'}`, can ? () => ecSave(it) : null);
+  if (!can) $('m-save').hidden = true;
+  $('modal').querySelector('.box2').classList.add('wide');
+  const mb = $('m-body');
+  mb.oninput = e => { const t = e.target;
+    if (t.dataset.ecurl) { D.links[t.dataset.ecurl].url = t.value; if (t.value.trim() && D.links[t.dataset.ecurl].status === 'none') { D.links[t.dataset.ecurl].status = 'live'; mb.querySelector(`[data-ecst="${t.dataset.ecurl}"]`).value = 'live'; } }
+    if (t.dataset.ei) D.info[t.dataset.ei] = t.value; };
+  mb.onchange = e => { if (e.target.dataset.ecst) D.links[e.target.dataset.ecst].status = e.target.value; };
+  $('ec-mtabs').onclick = e => { const b = e.target.closest('[data-k]'); if (b) { ecs.mtab = b.dataset.k; ecDetail(it); } };
+  if ($('ec-gen')) $('ec-gen').onclick = async () => { ecs.prompt = ecPrompt(it, D.info, $('ec-tone').value, $('ec-chan').value); const ok = await ecCopy(ecs.prompt); ecDetail(it); toast(ok ? 'คัดลอก prompt แล้ว ไปวางใน Claude ได้เลย' : 'คัดลอกอัตโนมัติไม่ได้ ให้กดค้างที่ข้อความแล้วคัดลอกเอง'); };
+  if ($('ec-cp')) $('ec-cp').onclick = async () => toast(await ecCopy(ecs.prompt) ? 'คัดลอกแล้ว' : 'คัดลอกไม่ได้');
+  if ($('ec-cpai')) $('ec-cpai').onclick = async () => toast(await ecCopy(D.info.ai_text) ? 'คัดลอกแล้ว' : 'คัดลอกไม่ได้');
+}
+async function ecSave(it){
+  const D = ecs.draft, L = ecLinks(it.id), I = ecInfo(it.id);
+  for (const c of ecs.data.channels) { const v = D.links[c.k];
+    if (v.url.trim() && !/^https?:\/\//i.test(v.url.trim())) throw new Error(`ลิงก์ ${c.n} ต้องขึ้นต้นด้วย https://`); }
+  for (const c of ecs.data.channels) { const v = D.links[c.k], o = L[c.k] || { status:'none', url:'' };
+    if (v.status !== o.status || v.url.trim() !== (o.url || '')) await API.ecomLink(it.id, c.k, v.status, v.url.trim()); }
+  const keys = [...EINFO.map(([k]) => k), 'compare_price', 'ai_text'];
+  if (keys.some(k => String(D.info[k] ?? '').trim() !== String(I[k] ?? '').trim())) await API.ecomInfo(it.id, Object.fromEntries(keys.map(k => [k, D.info[k] == null ? '' : String(D.info[k])])));
+  ecs.draft = null; ecs.prompt = ''; setTimeout(() => loadEcom(true), 0);
+}
+document.addEventListener('click', async e => {
+  if (e.target.closest('[data-ecit]')) { ecs.mtab = 'links'; ecs.draft = null; ecs.prompt = ''; }
+  const c = e.target.closest('[data-eccopy]'); if (c) { const t = ecLinkText(+c.dataset.eccopy); if (!t) { toast('Project นี้ยังไม่มีลิงก์ที่ "ขายอยู่"'); return; } toast(await ecCopy(t) ? 'คัดลอกลิงก์ทั้งหมดแล้ว วางในโพสต์ได้เลย' : 'คัดลอกไม่ได้'); return; }
+  const s = e.target.closest('[data-ecsend]'); if (s) { const pid = +s.dataset.ecsend, t = ecLinkText(pid); if (!t) { toast('Project นี้ยังไม่มีลิงก์ที่ "ขายอยู่"'); return; }
+    if (!s.dataset.sure) { s.dataset.sure = 1; s.textContent = 'กดอีกครั้งเพื่อส่ง'; setTimeout(() => { if (s.isConnected) { delete s.dataset.sure; s.textContent = '📣 ส่งเข้า Discord ทีม PR'; } }, 4000); return; }
+    s.disabled = true; try { await API.ecomSendPr(pid, t); toast('ส่งลิงก์เข้า Discord ทีม PR แล้ว'); loadEcom(true); } catch(err){ s.disabled = false; toast(err.message || String(err)); } }
+}, true);
+$('ec-tabs').onclick = e => { const b = e.target.closest('[data-k]'); if (b) { ecs.tab = b.dataset.k; renderEcom(); } };
+$('ec-q').oninput = e => { ecs.q = e.target.value; renderEcom(); };
+$('ec-reload').onclick = () => loadEcom(true);
 
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
@@ -3578,7 +3810,7 @@ $('m-cancel').onclick = closeModal;
 $('modal').onclick = e => { if (e.target.id==='modal') closeModal(); };
 addEventListener('keydown', e => { if (e.key==='Escape' && !$('modal').hidden) closeModal(); });
 $('m-save').onclick = async () => { if (!modalSave) return; const b = $('m-save'); const lbl = b.textContent; b.disabled = true; b.textContent = 'กำลังบันทึก…';
-  try { await modalSave(); closeModal(); cache.clear(); if (st.page==='team') loadMkBoard().then(() => { if (proj.data) renderTeam(); }); inv.data = null; toast('บันทึกแล้ว'); if (st.page==='stock') loadStock(true); else if (st.page==='oem') loadOem(); else if (PJPAGES.includes(st.page)) loadProjects(true); else if (st.page==='marketing') loadPromos(true); else if (st.page==='recovery') { mk.t = 0; loadRecovery(true); } else if (st.page==='members') loadMembers(); else load(); }
+  try { await modalSave(); closeModal(); cache.clear(); if (st.page==='team') loadMkBoard().then(() => { if (proj.data) renderTeam(); }); inv.data = null; toast('บันทึกแล้ว'); if (st.page==='stock') loadStock(true); else if (st.page==='oem') loadOem(); else if (PJPAGES.includes(st.page)) loadProjects(true); else if (st.page==='marketing') loadPromos(true); else if (st.page==='recovery') { mk.t = 0; loadRecovery(true); } else if (st.page==='members') loadMembers(); else if (['ecom','live','event'].includes(st.page)) {} else load(); }
   catch(e){ const m = e.message||String(e); $('m-err').textContent = /no_permission:/.test(m) ? m.replace(/^.*no_permission:\s*/, 'ไม่มีสิทธิ์: ') : /no_permission/.test(m) ? 'บัญชีนี้ไม่มีสิทธิ์แก้ไข (ต้องเป็น admin หรือ editor)' : m; $('m-err').hidden = false; }
   finally { b.disabled = false; b.textContent = lbl; } };
 async function fillCollections(){ try { const [c, g] = await Promise.all([API.collections(), API.groups()]); $('coll-list').innerHTML = c.map(x=>`<option value="${esc(x)}">`).join(''); $('group-list').innerHTML = g.map(x=>`<option value="${esc(x)}">`).join(''); } catch(e){} }
@@ -3654,7 +3886,6 @@ async function boot2(){
   st.canEdit = !!prof.can_edit;
   if (meta.avatar_url) $('me-av').outerHTML = `<img src="${esc(meta.avatar_url)}" alt="" width="36" height="36">`; else $('me-av').textContent = (prof.name || name).slice(0,1);
   show('v-app'); parseHash(); renderControls(); route(); loadSources();
-  $('nav-ecom').hidden = !DEMO;
   API.todo().then(d => { td.data = d; updateTodoBadge(); }).catch(() => {});
   if (DEMO) { $('demo-note').hidden = false; $('demo-note').textContent = DEMO.note; }
 }
