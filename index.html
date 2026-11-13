@@ -552,6 +552,25 @@ button.tdrow{cursor:pointer}button.tdrow:hover{background:var(--soft)}
 .ecai{display:grid;gap:10px}
 .ecai .aiout pre{max-height:220px;overflow:auto}
 @media (max-width:760px){.eclink{grid-template-columns:1fr 1fr}.eclink .ecurl{grid-column:1/-1}.ecby{grid-column:1/-1;margin-top:0}}
+/* ===== รอบ 15: Inventory ตาม Group / Collection ===== */
+.iscope{padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.isrow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}.isrow>.lbl{width:72px;flex:none}
+.ischips{display:flex;flex-wrap:wrap;gap:6px;min-width:0;flex:1}
+.ischip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border:1px solid #D6D5CE;border-radius:999px;background:#fff;color:var(--ink2);font-size:13px;white-space:nowrap}
+.ischip b{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.ischip:hover{border-color:#B9B8B0;color:var(--ink)}
+.ischip[aria-current="true"]{background:var(--ink);border-color:var(--ink);color:#fff}.ischip[aria-current="true"] b{color:#fff}
+#inv-cscope{max-width:100%;min-width:0;flex:1 1 220px}
+.ivhd{display:flex;flex-wrap:wrap;gap:8px}
+.gsrow{display:grid;grid-template-columns:minmax(0,1fr) 72px 72px 72px 86px 120px 120px;gap:12px;align-items:center;padding:10px 20px;border-top:1px solid var(--line2);min-height:64px;color:inherit}
+a.gsrow:hover{background:var(--soft);color:inherit}
+.gsrow.hd{min-height:0;padding-top:8px;padding-bottom:8px;font-size:12px;color:var(--muted);font-weight:500}
+.gsrow.tot{background:var(--soft);min-height:48px}
+.gsrow .nm{font-weight:600}.gsrow .sub{font-size:12px;color:var(--muted)}
+.gsbar{height:5px;border-radius:99px;background:#EEEEEA;overflow:hidden;margin-top:6px;max-width:280px}.gsbar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+@media (max-width:1100px){.gsrow{grid-template-columns:minmax(0,1fr) 86px 120px 110px}.gsrow .c-loc{display:none}}
+@media (max-width:860px){.gsrow{grid-template-columns:minmax(0,1fr) 80px 104px;padding:10px 16px}.gsrow .c-s{display:none}.gsrow.hd{display:none}.isrow>.lbl{width:auto}.iscope{padding:12px 14px}
+  .ischips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}}
 </style>
 </head>
 <body>
@@ -674,24 +693,25 @@ button.tdrow{cursor:pointer}button.tdrow:hover{background:var(--soft)}
   <div id="page-stock" style="display:flex;flex-direction:column;gap:18px" hidden>
     <header class="top">
       <div style="min-width:0">
-        <h1>Inventory คงเหลือ</h1>
+        <div class="crumb" id="inv-crumb" hidden></div>
+        <h1 id="inv-title">Inventory คงเหลือ</h1>
         <div class="muted" style="margin-top:4px" id="inv-sub">สต็อกทั้งบริษัท: สินค้าไหนเหลือเท่าไหร่ อยู่คลังไหน มูลค่าเท่าไหร่</div>
       </div>
       <div class="controls"><button class="btn" id="inv-csv" type="button">Export CSV</button></div>
     </header>
     <div id="inv-err" hidden><div class="errbox"><div><b>โหลดข้อมูลไม่สำเร็จ</b><div class="note" id="inv-errmsg"></div></div><button class="btn btn-p" id="inv-reload" type="button">ลองอีกครั้ง</button></div></div>
+    <section class="card iscope" id="inv-scope" aria-label="เลือก Group / Collection"></section>
     <section class="kpis" id="inv-kpis"></section>
     <section class="locs" id="inv-locs"></section>
     <details class="card issues" id="inv-issues" hidden><summary></summary><div class="issue-body"></div></details>
     <section class="card" style="padding:0">
       <div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px">
         <div class="card-hd">
-          <div class="seg" id="inv-tabs" role="group" aria-label="มุมมอง"></div>
+          <div class="ivhd"><div class="seg" id="inv-by" role="group" aria-label="ดูตาม"></div><div class="seg" id="inv-tabs" role="group" aria-label="สถานะสินค้า"></div></div>
           <input class="inp" id="inv-q" style="width:240px;max-width:100%" placeholder="ค้นหาสินค้า / SKU" aria-label="ค้นหาสินค้า">
         </div>
         <div class="controls">
           <div class="seg" id="inv-locsel" role="group" aria-label="คลัง"></div>
-          <select class="sel" id="inv-coll" aria-label="Collection"><option value="">ทุก Collection</option></select>
           <select class="sel" id="inv-idle" aria-label="ไม่เคลื่อนไหวกี่วัน"><option value="60">ไม่ขายเกิน 60 วัน</option><option value="90" selected>ไม่ขายเกิน 90 วัน</option><option value="180">ไม่ขายเกิน 180 วัน</option></select>
         </div>
         <div class="note" id="inv-hint"></div>
@@ -1300,7 +1320,17 @@ $('file').onchange = async e => {
 const LOCS = [['all','ทุกคลัง'],['wh','MyCloud (คลัง)'],['office','ออฟฟิศพระราม 2'],['event','EVENT']];
 const LOCNAME = { wh:'คลัง MyCloud', office:'ออฟฟิศพระราม 2', event:'EVENT' };
 const ITABS = [['all','ทั้งหมด'],['low','เหลือน้อย'],['out','หมดแต่ยังขาย'],['idle','ไม่เคลื่อนไหว'],['nocost','ยังไม่มีทุน']];
-const inv = { data:null, t:0, loc:'all', tab:'all', coll:'', q:'', idle:90, limit:40, open:new Set() };
+const inv = { data:null, t:0, loc:'all', tab:'all', coll:'', grp:'', by:'', q:'', idle:90, limit:40, open:new Set() };
+const invGName = g => !g || g === '-' ? 'ยังไม่ระบุ Group' : g;
+function invScopeFromHash(){   // #/stock · #/stock/g/<group> · #/stock/g/<group>/c/<collection> · #/stock/c/<collection>
+  const h = location.hash.replace(/^#\/?/, ''), dc = x => { try { return decodeURIComponent(x); } catch(e){ return x; } }; let m;
+  inv.grp = (m = h.match(/^stock\/g\/([^/]+)/)) ? dc(m[1]) : '';
+  inv.coll = (m = h.match(/\/c\/([^/]+)$/)) ? dc(m[1]) : '';
+  const sc = inv.grp + '|' + inv.coll; if (sc !== inv.lastScope) { inv.lastScope = sc; inv.byTouched = false; inv.q = ''; inv.limit = 40; if ($('inv-q')) $('inv-q').value = ''; }
+}
+const invHash = (g, c) => '#/stock' + (g ? '/g/' + encodeURIComponent(g) : '') + (c ? '/c/' + encodeURIComponent(c) : '');
+const invInScope = p => (!inv.grp || (p.group || '-') === inv.grp) && (!inv.coll || p.coll === inv.coll);
+const invByDefault = () => inv.coll ? 'prod' : inv.grp ? 'coll' : 'group';
 const daysAgo = d => d ? Math.floor((Date.now() - new Date(d)) / 864e5) : null;
 const shortDate = d => { const x = new Date(d); return `${x.getDate()} ${TM[x.getMonth()]} ${String(x.getFullYear()).slice(2)}`; };
 async function loadStock(force){
@@ -1322,22 +1352,27 @@ function renderStock(){
   const d = inv.data; if (!d) return;
   if (!d.as_of) { $('inv-kpis').innerHTML = ''; $('inv-locs').innerHTML = ''; $('inv-list').innerHTML = '<div class="empty">ยังไม่มีข้อมูลสต็อก ระบบจะดึงจาก Shopify รอบแรกภายใน 15–30 นาทีหลังติดตั้ง</div>'; return; }
   $('inv-sub').textContent = `สต็อกจาก Shopify ณ ${thDate(d.as_of)} ${new Date(d.as_of).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})} · นับเฉพาะคลัง MyCloud, ออฟฟิศพระราม 2 และ EVENT · ${d.cost ? 'มูลค่าคิดจากต้นทุนต่อ SKU' : 'มูลค่าคิดจากราคาขาย (รอต้นทุนจริง)'}`;
-  const C = d.cost, cpct = C && C.all_units ? Math.round(C.units / C.all_units * 100) : 0;
-  const P = d.products, L = d.locations || {};
+  invScopeFromHash(); if (!inv.by || !inv.byTouched) inv.by = invByDefault();
+  const scoped = !!(inv.grp || inv.coll), P = d.products.filter(invInScope), SO = d.selling_out.filter(invInScope);
   const units = P.reduce((s,p)=>s+p.total,0), value = P.reduce((s,p)=>s+ +p.value,0);
-  const nIdle = P.filter(p => statusOf(p)[0]==='idle').length, nOut = d.selling_out.length, nSku = Object.values(L).reduce((s,l)=>s+l.skus,0);
+  const L = {}; for (const p of P) for (const r of p.rows) { const l = L[r.loc] ??= { units:0, cost:0, skus:0 }; l.units += r.q; l.cost += r.c != null ? r.c * r.q : 0; l.skus++; }
+  const cU = P.reduce((s,p)=>s+ +(p.cost_units||0),0), cV = P.reduce((s,p)=>s+ +(p.cost_value||0),0);
+  const C = d.cost ? { value:cV, units:cU, all_units:units } : null, cpct = C && units ? Math.round(cU / units * 100) : 0;
+  const nIdle = P.filter(p => statusOf(p)[0]==='idle').length, nOut = SO.length, nSku = Object.values(L).reduce((s,l)=>s+l.skus,0);
+  const allU = d.products.reduce((s,p)=>s+p.total,0);
+  renderInvScope(d, allU);
   $('inv-kpis').innerHTML = [
-    ['ชิ้นคงเหลือ', fmt(units), `${fmt(P.length)} สินค้า · ${fmt(nSku)} SKU`],
+    ['ชิ้นคงเหลือ' + (scoped ? ' (ที่เลือก)' : ''), fmt(units), `${fmt(P.length)} สินค้า · ${fmt(nSku)} SKU${scoped && allU ? ` · ${(units/allU*100).toFixed(1)}% ของทั้งหมด` : ''}`],
     C ? ['มูลค่าคงคลัง (ต้นทุน)', baht(C.value), `มีทุนแล้ว ${cpct}% ของชิ้น · ราคาขายรวม ${baht(value)}`] : ['มูลค่าคงคลัง (ราคาขาย)', baht(value), 'จะเปลี่ยนเป็นต้นทุนเมื่อกรอก Cost เสร็จ'],
     ['หมดแต่ยังขาย', fmt(nOut), 'มีคนซื้อใน 30 วัน แต่สต็อกเป็น 0'],
     [`ไม่เคลื่อนไหว ${inv.idle} วัน`, fmt(nIdle), 'มีสต็อกแต่ไม่มียอดขาย'],
   ].map(([l,v,s]) => `<div class="card"><div class="lbl">${l}</div><div class="kpi">${v}</div><div class="delta">${s}</div></div>`).join('');
   $('inv-locs').innerHTML = ['wh','office','event'].map(k => { const l = L[k] || {units:0,value:0,skus:0};
-    return `<div class="card"><div class="card-hd"><b>${LOCNAME[k]}</b><span class="muted">${units?Math.round(l.units/units*100):0}%</span></div><div class="bar" style="margin:10px 0 8px"><div style="width:${units?(l.units/units*100).toFixed(1):0}%;background:var(--accent)"></div></div><div class="num" style="text-align:left">${fmt(l.units)} ชิ้น · ${C ? 'ทุน ' + baht(l.cost || 0) : baht(l.value)}</div></div>`; }).join('');
+    return `<div class="card"><div class="card-hd"><b>${LOCNAME[k]}</b><span class="muted">${units?Math.round(l.units/units*100):0}%</span></div><div class="bar" style="margin:10px 0 8px"><div style="width:${units?(l.units/units*100).toFixed(1):0}%;background:var(--accent)"></div></div><div class="num" style="text-align:left">${fmt(l.units)} ชิ้น · ${C ? 'ทุน ' + baht(l.cost || 0) : baht(l.value || 0)}</div></div>`; }).join('');
   // ต้องแก้ใน Shopify
   const I = d.issues || {}, sus = I.suspect||[], neg = I.negative||[], oth = I.other||[];
   const nIssue = sus.length + neg.length + oth.length;
-  $('inv-issues').hidden = !nIssue;
+  $('inv-issues').hidden = !nIssue || scoped;
   if (nIssue) {
     $('inv-issues').querySelector('summary').textContent = `⚠ สต็อกที่ควรแก้ใน Shopify ${nIssue} รายการ (ไม่ถูกนับในตัวเลขด้านบน)`;
     const li = (arr, f) => `<ul>${arr.slice(0,8).map(f).join('')}${arr.length>8?`<li>และอีก ${arr.length-8} รายการ</li>`:''}</ul>`;
@@ -1349,12 +1384,14 @@ function renderStock(){
   // filters
   $('inv-tabs').innerHTML = ITABS.filter(([k]) => k !== 'nocost' || d.cost).map(([k,l]) => `<button type="button" data-t="${k}" aria-pressed="${inv.tab===k}">${l}</button>`).join('');
   $('inv-locsel').innerHTML = LOCS.map(([k,l]) => `<button type="button" data-l="${k}" aria-pressed="${inv.loc===k}">${l}</button>`).join('');
-  const colls = [...new Set(P.map(p=>p.coll).concat(d.selling_out.map(p=>p.coll)))].sort();
-  $('inv-coll').innerHTML = '<option value="">ทุก Collection</option>' + colls.map(c=>`<option ${c===inv.coll?'selected':''}>${esc(c)}</option>`).join('');
   renderStockList();
 }
 function renderStockList(){
   const d = inv.data, q = inv.q.trim().toLowerCase();
+  $('inv-by').innerHTML = [['group','Group'],['coll','Collection'],['prod','สินค้า']].filter(([k]) => !(k === 'group' && (inv.grp || inv.coll)) && !(k === 'coll' && inv.coll)).map(([k,l]) => `<button type="button" data-by="${k}" aria-pressed="${inv.by===k}">ดูตาม ${l}</button>`).join('');
+  $('inv-tabs').hidden = inv.by !== 'prod';
+  if (inv.by !== 'prod') { renderInvSummary(); return; }
+  $('inv-locsel').hidden = false;
   let items;
   if (inv.tab==='out') items = d.selling_out.map(p => ({...p, out:true}));
   else {
@@ -1363,7 +1400,7 @@ function renderStockList(){
     if (inv.tab==='idle') items = items.filter(p => p.stt[0]==='idle').sort((a,b) => b.value - a.value);
     if (inv.tab==='nocost') items = items.filter(p => (+p.cost_units||0) < p.total).sort((a,b) => (b.total - (+b.cost_units||0)) - (a.total - (+a.cost_units||0)));
   }
-  if (inv.coll) items = items.filter(p => p.coll===inv.coll);
+  items = items.filter(invInScope);
   if (q) items = items.filter(p => p.name.toLowerCase().includes(q) || (p.coll||'').toLowerCase().includes(q) || (p.rows||[]).some(r => (r.sku||'').toLowerCase().includes(q)));
   $('inv-hint').textContent = { all:'เรียงตามมูลค่าคงคลัง กดที่สินค้าเพื่อดูแยกไซซ์และคลัง',
     low:'สินค้าที่ยังขายอยู่ เรียงจากเหลือน้อยที่สุด (คิดจากยอดขาย 30 วันล่าสุด)',
@@ -1390,16 +1427,16 @@ $('inv-list').onclick = e => { const ed = e.target.closest('[data-edit]'); if (e
   const b = e.target.closest('button.irow'); if (!b) return; const k = b.dataset.k; inv.open.has(k) ? inv.open.delete(k) : inv.open.add(k); renderStockList(); };
 $('inv-tabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; inv.tab = b.dataset.t; inv.limit = 40; document.querySelectorAll('#inv-tabs button').forEach(x=>x.setAttribute('aria-pressed', x===b)); renderStockList(); };
 $('inv-locsel').onclick = e => { const b = e.target.closest('button'); if (!b) return; inv.loc = b.dataset.l; document.querySelectorAll('#inv-locsel button').forEach(x=>x.setAttribute('aria-pressed', x===b)); renderStockList(); };
-$('inv-coll').onchange = e => { inv.coll = e.target.value; inv.limit = 40; renderStockList(); };
 $('inv-idle').onchange = e => { inv.idle = +e.target.value; renderStock(); };
 $('inv-q').oninput = e => { inv.q = e.target.value; inv.limit = 40; renderStockList(); };
 $('inv-reload').onclick = () => loadStock(true);
 $('inv-csv').onclick = () => { const d = inv.data; if (!d) return;
   const rows = [['สินค้า','Collection','ไซซ์','SKU','MyCloud','ออฟฟิศ','EVENT','รวม','ขาย 30 วัน','ทุน/ชิ้น','มูลค่าทุน']];
-  for (const p of d.products) { const by = {}; for (const r of p.rows) { const k = r.sku||r.size; (by[k] ??= { size:r.size, sku:r.sku, c:r.c, wh:0, office:0, event:0 })[r.loc] += r.q; }
-    for (const r of Object.values(by)) { const t = r.wh+r.office+r.event; rows.push([p.name, p.coll, r.size, r.sku, r.wh, r.office, r.event, t, d.sku30?.[r.sku]||0, r.c ?? '', r.c != null ? Math.round(r.c*t) : '']); } }
+  rows[0].splice(1, 0, 'Group');
+  for (const p of d.products.filter(invInScope)) { const by = {}; for (const r of p.rows) { const k = r.sku||r.size; (by[k] ??= { size:r.size, sku:r.sku, c:r.c, wh:0, office:0, event:0 })[r.loc] += r.q; }
+    for (const r of Object.values(by)) { const t = r.wh+r.office+r.event; rows.push([p.name, invGName(p.group), p.coll, r.size, r.sku, r.wh, r.office, r.event, t, d.sku30?.[r.sku]||0, r.c ?? '', r.c != null ? Math.round(r.c*t) : '']); } }
   const csv = '﻿' + rows.map(r => r.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = `cuteboy-stock_${String(d.as_of).slice(0,10)}.csv`; a.click(); };
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = `cuteboy-stock_${inv.coll || inv.grp ? (inv.coll || inv.grp).replace(/[^\wก-๙]+/g, '-') + '_' : ''}${String(d.as_of).slice(0,10)}.csv`; a.click(); };
 
 
 
@@ -3801,6 +3838,55 @@ document.addEventListener('click', async e => {
 $('ec-tabs').onclick = e => { const b = e.target.closest('[data-k]'); if (b) { ecs.tab = b.dataset.k; renderEcom(); } };
 $('ec-q').oninput = e => { ecs.q = e.target.value; renderEcom(); };
 $('ec-reload').onclick = () => loadEcom(true);
+
+// ===== รอบ 15: Inventory คงเหลือ แยกตาม Group / Collection =====
+function renderInvScope(d, allU){
+  const G = {}; for (const p of d.products) { const g = p.group || '-'; (G[g] ??= { u:0, n:0 }).u += p.total; G[g].n++; }
+  const gs = Object.entries(G).sort((a, b) => b[1].u - a[1].u);
+  const inG = d.products.filter(p => !inv.grp || (p.group || '-') === inv.grp), CO = {};
+  for (const p of inG) (CO[p.coll] ??= { u:0, n:0 }).u += p.total, CO[p.coll].n++;
+  const cs = Object.entries(CO).sort((a, b) => b[1].u - a[1].u);
+  $('inv-scope').innerHTML = `<div class="isrow"><span class="lbl">Group</span><div class="ischips">
+      <a class="ischip" href="${invHash('', '')}" aria-current="${!inv.grp && !inv.coll ? 'true' : 'false'}">ทั้งหมด <b>${fmt(allU)}</b></a>
+      ${gs.map(([g, x]) => `<a class="ischip" href="${invHash(g, '')}" aria-current="${inv.grp === g ? 'true' : 'false'}">${esc(invGName(g))} <b>${fmt(x.u)}</b></a>`).join('')}</div></div>
+    <div class="isrow"><label class="lbl" for="inv-cscope">Collection</label><select class="sel" id="inv-cscope"><option value="">${inv.grp ? `ทุก Collection ใน ${esc(invGName(inv.grp))}` : 'ทุก Collection'} (${fmt(cs.length)})</option>
+      ${cs.map(([c, x]) => `<option value="${esc(c)}" ${c === inv.coll ? 'selected' : ''}>${esc(c)} · ${fmt(x.u)} ชิ้น</option>`).join('')}</select>
+      ${inv.grp || inv.coll ? `<a class="btn btn-sm" href="${invHash('', '')}">✕ ล้างตัวกรอง</a>` : ''}</div>`;
+  $('inv-cscope').onchange = e => { location.hash = invHash(inv.grp, e.target.value); };
+  const scoped = inv.grp || inv.coll;
+  $('inv-crumb').hidden = !scoped;
+  $('inv-crumb').innerHTML = `<a href="${invHash('', '')}">Inventory คงเหลือ</a>${inv.grp ? ` <span>/</span> ${inv.coll ? `<a href="${invHash(inv.grp, '')}">${esc(invGName(inv.grp))}</a>` : `<span>${esc(invGName(inv.grp))}</span>`}` : ''}${inv.coll ? ` <span>/</span> <span>Collection</span>` : ''}`;
+  $('inv-title').textContent = inv.coll || (inv.grp ? invGName(inv.grp) : 'Inventory คงเหลือ');
+  document.title = `${scoped ? (inv.coll || invGName(inv.grp)) + ' · ' : ''}Inventory คงเหลือ · CuteBoy`;
+}
+function renderInvSummary(){
+  const d = inv.data, q = inv.q.trim().toLowerCase(), by = inv.by, P = d.products.filter(invInScope), A = {};
+  for (const p of P) { const k = by === 'group' ? (p.group || '-') : p.coll;
+    const a = A[k] ??= { k, g:{}, colls:new Set(), n:0, u:0, wh:0, office:0, event:0, cv:0, cu:0, val:0, u30:0, nocost:0, idle:0 };
+    a.n++; a.u += p.total; a.wh += p.wh; a.office += p.office; a.event += p.event; a.cv += +(p.cost_value || 0); a.cu += +(p.cost_units || 0); a.val += +p.value; a.u30 += +p.u30;
+    a.colls.add(p.coll); a.g[p.group || '-'] = (a.g[p.group || '-'] || 0) + p.total; if (+(p.cost_units || 0) < p.total) a.nocost++; if (statusOf(p)[0] === 'idle') a.idle++; }
+  let L = Object.values(A); const tot = L.reduce((s, a) => s + a.u, 0), cost = !!d.cost;
+  if (q) L = L.filter(a => (by === 'group' ? invGName(a.k) : a.k).toLowerCase().includes(q));
+  L.sort((a, b) => cost ? b.cv - a.cv || b.u - a.u : b.u - a.u);
+  $('inv-locsel').hidden = true;
+  $('inv-hint').textContent = `${by === 'group' ? 'Group' : 'Collection'} เรียงตาม${cost ? 'มูลค่าทุน' : 'จำนวนชิ้น'} · กดเพื่อดูข้างใน · "พอขาย" คิดจากยอดขาย 30 วันล่าสุด`;
+  const z = v => v ? fmt(v) : '<span style="color:#C3C2BB">–</span>';
+  const cover = a => a.u30 > 0 ? (a.u / (a.u30 / 30) > 365 ? 'พอขายเกิน 1 ปี' : `พอขาย ~${fmt(a.u / (a.u30 / 30))} วัน`) : 'ไม่มียอด 30 วัน';
+  const href = a => by === 'group' ? invHash(a.k, '') : invHash(inv.grp || Object.entries(a.g).sort((x, y) => y[1] - x[1])[0][0], a.k);
+  $('inv-list').innerHTML = L.length ? `<div class="gsrow hd"><div>${by === 'group' ? 'Group' : 'Collection'}</div><div class="num c-loc">MyCloud</div><div class="num c-loc">ออฟฟิศ</div><div class="num c-loc">EVENT</div><div class="num">รวม</div><div class="num c-v">${cost ? 'มูลค่าทุน' : 'มูลค่า'}</div><div class="num c-s">ขาย 30 วัน</div></div>
+    ${L.map(a => `<a class="gsrow" href="${href(a)}"><div style="min-width:0"><div class="nm">${esc(by === 'group' ? invGName(a.k) : a.k)}</div>
+        <div class="sub">${by === 'group' ? `${fmt(a.colls.size)} Collection · ` : ''}${fmt(a.n)} สินค้า${a.idle ? ` · ไม่เคลื่อนไหว ${fmt(a.idle)}` : ''}${cost && a.nocost ? ` · ไม่มีทุน ${fmt(a.nocost)}` : ''}</div>
+        <div class="gsbar" title="${tot ? (a.u / tot * 100).toFixed(1) : 0}% ของชิ้นที่เลือก"><i style="width:${tot ? (a.u / tot * 100).toFixed(1) : 0}%"></i></div></div>
+      <div class="num c-loc">${z(a.wh)}</div><div class="num c-loc">${z(a.office)}</div><div class="num c-loc">${z(a.event)}</div>
+      <div class="num"><b>${fmt(a.u)}</b><div class="note">${tot ? (a.u / tot * 100).toFixed(1) : 0}%</div></div>
+      <div class="num c-v">${cost ? (a.cu ? baht(a.cv) + (a.cu < a.u ? '<span class="muted" title="บางสินค้ายังไม่มีทุน">*</span>' : '') : '<span class="muted">ไม่มีทุน</span>') : baht(a.val)}</div>
+      <div class="num c-s">${fmt(a.u30)}<div class="note">${cover(a)}</div></div></a>`).join('')}
+    <div class="gsrow tot"><div><b>รวม${inv.grp || inv.coll ? 'ที่เลือก' : 'ทั้งหมด'}</b></div><div class="num c-loc">${fmt(L.reduce((s, a) => s + a.wh, 0))}</div><div class="num c-loc">${fmt(L.reduce((s, a) => s + a.office, 0))}</div><div class="num c-loc">${fmt(L.reduce((s, a) => s + a.event, 0))}</div>
+      <div class="num"><b>${fmt(L.reduce((s, a) => s + a.u, 0))}</b></div><div class="num c-v"><b>${cost ? baht(L.reduce((s, a) => s + a.cv, 0)) : baht(L.reduce((s, a) => s + a.val, 0))}</b></div><div class="num c-s">${fmt(L.reduce((s, a) => s + a.u30, 0))}</div></div>`
+    : '<div class="empty">ไม่พบรายการ</div>';
+  $('inv-more').innerHTML = `${fmt(L.length)} ${by === 'group' ? 'Group' : 'Collection'}`;
+}
+$('inv-by').onclick = e => { const b = e.target.closest('[data-by]'); if (!b) return; inv.by = b.dataset.by; inv.byTouched = true; inv.limit = 40; renderStockList(); };
 
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
