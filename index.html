@@ -571,6 +571,19 @@ a.gsrow:hover{background:var(--soft);color:inherit}
 @media (max-width:1100px){.gsrow{grid-template-columns:minmax(0,1fr) 86px 120px 110px}.gsrow .c-loc{display:none}}
 @media (max-width:860px){.gsrow{grid-template-columns:minmax(0,1fr) 80px 104px;padding:10px 16px}.gsrow .c-s{display:none}.gsrow.hd{display:none}.isrow>.lbl{width:auto}.iscope{padding:12px 14px}
   .ischips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}}
+/* ===== รอบ 16: ต้นทุนแฝง ===== */
+.tcbox{display:flex;flex-direction:column;gap:12px}
+.tch{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:space-between;align-items:flex-start}
+.tct{border:1px solid var(--line2);border-radius:10px;overflow:hidden;font-size:13.5px}
+.tcr{display:grid;grid-template-columns:minmax(110px,1fr) 96px 96px 104px 96px 104px 80px;gap:10px;align-items:center;padding:8px 12px;border-top:1px solid var(--line2)}
+.tcr.hd{border-top:0;background:var(--soft);font-size:12px;color:var(--muted);font-weight:500}
+.tcr2{display:grid;grid-template-columns:auto minmax(0,1fr) 100px auto;gap:10px;align-items:center;padding:8px 12px;border-top:1px solid var(--line2);font-size:13.5px}
+.tct .tcr2:first-child{border-top:0}
+.tcsp summary{cursor:pointer;min-height:36px;display:flex;align-items:center}
+.tcsp .tcr2{grid-template-columns:70px minmax(0,1fr) 100px 52px}
+.hidd{font-size:12px;color:#7A4B00}
+@media (max-width:860px){.tcr{grid-template-columns:minmax(0,1fr) 90px 90px}.tcr>span:nth-child(3),.tcr>span:nth-child(4),.tcr>span:nth-child(5){display:none}.tcr>span:last-child{grid-column:1/-1}.tcr>span:last-child:empty{display:none}
+  .tcsp .tcr2{grid-template-columns:56px minmax(0,1fr) 84px}.tcsp .tcr2>span:last-child{grid-column:2/-1}}
 </style>
 </head>
 <body>
@@ -786,6 +799,7 @@ a.gsrow:hover{background:var(--soft);color:inherit}
     <header class="top"><div style="min-width:0"><h1>คืนทุน & โปรโมชัน</h1><div class="muted" style="margin-top:4px">ยอดขายสะสมเทียบเงินลงทุน (ทุน × จำนวนที่ผลิต = ขายไปแล้ว + เหลือในสต็อก) · ใช้ตัดสินใจว่าลดราคาได้ถึงเท่าไหร่</div></div><div class="controls"><button class="btn" id="rc-csv" type="button">Export CSV</button></div></header>
     <div id="rc-err" hidden><div class="errbox"><div><b>โหลดข้อมูลไม่สำเร็จ</b><div class="note" id="rc-errmsg"></div></div><button class="btn btn-p" id="rc-reload" type="button">ลองอีกครั้ง</button></div></div>
     <section class="kpis" id="rc-kpis"></section>
+    <section class="card tcbox" id="rc-tc"></section>
     <section class="card" style="padding:0">
       <div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px">
         <div class="card-hd"><div class="seg" id="rc-tabs" role="group" aria-label="มุมมอง"></div><input class="inp" id="rc-q" style="width:220px;max-width:100%" placeholder="ค้นหาสินค้า" aria-label="ค้นหาสินค้า"></div>
@@ -979,6 +993,11 @@ addEventListener('online', () => toast('กลับมาออนไลน์�
 const API = DEMO ? DEMO.api : {
   projects: () => rpc('dash_projects'),
   recovery: () => rpc('dash_recovery'),
+  trueCost: () => rpc('dash_true_cost'),
+  mycloudSave: p => rpc('mycloud_bill_save', { p }),
+  mycloudDelete: m => rpc('mycloud_bill_delete', { p_month:m }),
+  mktSave: p => rpc('mkt_spend_save', { p }),
+  mktDelete: id => rpc('mkt_spend_delete', { p_id:id }),
   adminLog: f => rpc('admin_log', { p_from:f.from, p_to:f.to, p_actor:f.actor, p_tbl:f.tbl, p_limit:500 }),
   adminRestore: id => rpc('admin_restore', { p_id:id }),
   members: () => rpc('admin_members'),
@@ -1907,21 +1926,27 @@ const segHtml = (opts, cur, attr) => opts.map(([k,l]) => `<button type="button" 
 
 // ---------- คืนทุน & โปรโมชัน ----------
 const rec = { data:null, t:0, tab:'promo', grp:'', q:'', sort:'rec', limit:40 };
-const RTABS = [['promo','คืนทุนแล้ว · ยังมีของ'],['near','ใกล้คืนทุน 70–99%'],['far','ยังห่าง < 70%'],['all','ทั้งหมด']];
+const RTABS = [['promo','คืนทุนแล้ว · ยังมีของ'],['near','ใกล้คืนทุน 70–99%'],['far','ยังห่าง < 70%'],['hold','ค่าเก็บสูง · ขายช้า'],['all','ทั้งหมด']];
 async function loadRecovery(force){
   if (!force && rec.data && Date.now() - rec.t < 5*60e3) { renderRecovery(); return; }
   if (!rec.data) $('rc-list').innerHTML = '<div style="padding:16px 20px;display:grid;gap:10px">' + '<div class="sk" style="height:52px"></div>'.repeat(6) + '</div>';
   $('rc-err').hidden = true;
-  try { rec.data = await API.recovery(); rec.t = Date.now(); renderRecovery(); }
+  try { const [r, t] = await Promise.all([API.recovery(), API.trueCost().catch(e => ({ __err: e.message || String(e) }))]);
+        rec.data = r; rec.t = Date.now();
+        if (t && t.__err) { tcx.data = null; tcx.map = {}; tcx.err = /function|does not exist|schema cache/i.test(t.__err) ? 'ยังไม่มีฟังก์ชัน dash_true_cost' : t.__err; }
+        else { tcx.data = t; tcx.err = null; tcx.map = Object.fromEntries((t.products || []).map(x => [x.id, x])); }
+        renderRecovery(); }
   catch(e){ $('rc-errmsg').textContent = e.message || String(e); $('rc-err').hidden = false; }
 }
-function recOf(p){
-  const r = pct(p.revenue, p.invest), floor = p.stock > 0 ? Math.max(0, (p.invest - p.revenue) / p.stock) : null;
-  return { r, floor, gap: Math.max(0, p.invest - p.revenue), cls: r >= 100 ? 'ok' : r >= 70 ? 'near' : 'far' };
+function recOf(p){   // ถ้าเปิดต้นทุนแฝง: เงินที่ต้องคืน = เงินลงทุน + ค่าเก็บที่จ่ายไปแล้ว + Marketing + ส่วนกลางคลัง · ราคาขั้นต่ำบวกค่าแพ็ก-ส่งต่อชิ้น
+  const hid = tcHidden(p.id), fu = tcx.on ? tcFulfil() : 0, need = +p.invest + hid, r = pct(p.revenue, need);
+  const floor = p.stock > 0 ? Math.max(0, (need - p.revenue) / p.stock) + fu : null;
+  return { r, floor, hid, fu, need, gap: Math.max(0, need - p.revenue), cls: r >= 100 ? 'ok' : r >= 70 ? 'near' : 'far' };
 }
 function renderRecovery(){
   const d = rec.data; if (!d) return;
-  const P = d.products.map(p => ({ ...p, ...recOf(p) }));
+  renderTrueCostBox();
+  const P = d.products.map(p => { const t = tcx.map[p.id]; return { ...p, ...recOf(p), tc:t, fwd: t ? tcFwd(t) : { f12:0, months:null } }; });
   const done = P.filter(p => p.r >= 100), promo = done.filter(p => p.stock > 0), not = P.filter(p => p.r < 100);
   $('rc-kpis').innerHTML = `
     <div class="card"><div class="lbl">คืนทุนแล้ว</div><div class="kpi up">${fmt(done.length)} <span style="font-size:16px;color:var(--muted)">/ ${fmt(P.length)}</span></div><div class="delta">สินค้าที่มีทุนในระบบ</div></div>
@@ -1933,22 +1958,26 @@ function renderRecovery(){
   $('rc-grp').innerHTML = '<option value="">ทุก Group</option>' + groups.map(g => `<option ${g===rec.grp?'selected':''}>${esc(g)}</option>`).join('');
   let L = P;
   if (rec.tab === 'promo') L = promo; else if (rec.tab === 'near') L = P.filter(p => p.r >= 70 && p.r < 100); else if (rec.tab === 'far') L = P.filter(p => p.r < 70);
+  else if (rec.tab === 'hold') L = P.filter(p => p.fwd.f12 > 0);
   if (rec.grp) L = L.filter(p => p.group === rec.grp);
   const q = rec.q.trim().toLowerCase(); if (q) L = L.filter(p => (p.name + ' ' + p.coll).toLowerCase().includes(q));
-  const S = { rec:(a,b)=> rec.tab==='promo' ? b.stock*b.cost - a.stock*a.cost : b.r - a.r, invest:(a,b)=>b.invest-a.invest, stock:(a,b)=>b.stock-a.stock, gap:(a,b)=>b.gap-a.gap }[rec.sort];
+  const S = { rec:(a,b)=> rec.tab==='hold' ? b.fwd.f12 - a.fwd.f12 : rec.tab==='promo' ? b.stock*b.cost - a.stock*a.cost : b.r - a.r, invest:(a,b)=>b.invest-a.invest, stock:(a,b)=>b.stock-a.stock, gap:(a,b)=>b.gap-a.gap }[rec.sort];
   L = [...L].sort(S);
   $('rc-hint').textContent = { promo:'คืนทุนทั้งล็อตแล้ว ของที่เหลือขายราคาเท่าไหร่ก็ไม่ขาดทุนทั้งล็อต (แต่ไม่ควรต่ำกว่าทุนต่อชิ้น) เรียงตามมูลค่าทุนของสต็อกที่เหลือ',
-    near:'อีกนิดจะคืนทุน ลดราคาได้แต่ต้องไม่ต่ำกว่า "ราคาต่ำสุดที่ยังคืนทุน"', far:'ยังห่างจากทุน ระวังการลดราคา ดู "ราคาต่ำสุดที่ยังคืนทุน" ก่อนตั้งโปร', all:'สินค้าทั้งหมดที่มีทุนในระบบ' }[rec.tab];
+    near:'อีกนิดจะคืนทุน ลดราคาได้แต่ต้องไม่ต่ำกว่า "ราคาต่ำสุดที่ยังคืนทุน"', far:'ยังห่างจากทุน ระวังการลดราคา ดู "ราคาต่ำสุดที่ยังคืนทุน" ก่อนตั้งโปร', all:'สินค้าทั้งหมดที่มีทุนในระบบ',
+    hold:'สินค้าที่เสียค่าเก็บ MyCloud ทุกเดือน เรียงตาม "ค่าเก็บที่จะเสียอีก 12 เดือน" ถ้ายังขายช้าเท่าเดิม · เคลียร์เร็วเท่าไหร่ยิ่งประหยัด' }[rec.tab]
+    + (tcx.on && tcx.data && rec.tab !== 'hold' ? ' · รวมต้นทุนแฝงแล้ว (ปิดได้ที่กล่องด้านบน)' : '');
   const list = L.slice(0, rec.limit), canP = !!st.canPromo;
   $('rc-list').innerHTML = list.length ? `<div class="rrow hd"><div></div><div>สินค้า</div><div>คืนทุน (ยอดขาย ÷ เงินลงทุน)</div><div class="num">ขาย / เหลือ</div><div>ทำโปรได้ถึง</div><div></div></div>` + list.map(p => {
-    const disc = p.price ? (1 - (p.r >= 100 ? +p.cost : p.floor) / p.price) * 100 : null;
-    const adv = p.stock <= 0 ? '<span class="muted">ขายหมดแล้ว</span>'
-      : p.r >= 100 ? `<b class="up">ลดได้ถึง ${baht(p.cost)}</b><div class="note">${disc!=null&&disc>0?`≈ ลด ${Math.round(disc)}% จากราคา ${baht(p.price)} · `:''}ราคาทุนต่อชิ้น</div>`
+    const minP = +p.cost + p.fu, disc = p.price ? (1 - (p.r >= 100 ? minP : p.floor) / p.price) * 100 : null;
+    const adv = rec.tab === 'hold' ? `<b class="down">เสียค่าเก็บอีก ~${baht(p.fwd.f12)}</b><div class="note">ใน 12 เดือน · ${p.fwd.months == null ? 'ไม่มียอดขาย 90 วัน' : p.fwd.months > 24 ? 'ขายหมดใช้เวลา > 2 ปี' : `ขายหมดใน~${Math.ceil(p.fwd.months)} เดือน`}${p.r >= 100 ? ` · ลดได้ถึง ${baht(minP)}` : p.floor != null && p.floor < (p.price || Infinity) ? ` · ไม่ขาดทุนถ้าไม่ต่ำกว่า ${baht(p.floor)}` : ''}</div>`
+      : p.stock <= 0 ? '<span class="muted">ขายหมดแล้ว</span>'
+      : p.r >= 100 ? `<b class="up">ลดได้ถึง ${baht(minP)}</b><div class="note">${disc!=null&&disc>0?`≈ ลด ${Math.round(disc)}% จากราคา ${baht(p.price)} · `:''}${p.fu ? `ทุน + ค่าแพ็ก-ส่ง ${baht(p.fu)}` : 'ราคาทุนต่อชิ้น'}</div>`
       : p.floor >= (p.price || Infinity) ? `<b class="down">ห้ามลด</b><div class="note">ขายหมดราคาปกติยังขาด ${baht(p.gap - p.stock * (p.price||0))}</div>`
       : `<b>${baht(p.floor)}</b><div class="note">${disc!=null?`≈ ลดได้ ${Math.max(0,Math.round(disc))}% จาก ${baht(p.price)} · `:''}ต่ำกว่านี้ไม่คืนทุน</div>`;
     return `<div class="rrow"><a href="#/sales/p/${p.id}" style="display:contents">${thumb(p.img, p.name)}</a>
-      <div style="min-width:0"><a class="nm" href="#/sales/p/${p.id}" style="color:inherit;font-weight:500">${esc(p.name)}</a><div class="sub">${esc(p.coll)} · ทุน ${baht(p.cost)}/ชิ้น</div></div>
-      <div><div class="rbar"><i class="${p.cls}" style="width:${Math.min(100, p.r).toFixed(1)}%"></i></div><div class="note" style="margin-top:4px"><b class="${p.r>=100?'up':p.r<70?'down':''}">${pctTxt(p.r)}</b> · ขายได้ ${baht(p.revenue)} / ลงทุน ${baht(p.invest)}</div></div>
+      <div style="min-width:0"><a class="nm" href="#/sales/p/${p.id}" style="color:inherit;font-weight:500">${esc(p.name)}</a><div class="sub">${esc(p.coll)} · ทุน ${baht(p.cost)}/ชิ้น</div>${p.tc && tcx.on && (p.hid || +p.tc.stor_last) ? `<div class="hidd" title="ค่าเก็บที่จ่ายแล้ว ${baht(p.tc.stor_paid)} · Marketing ${baht(p.tc.mkt)} · ส่วนกลางคลัง ${baht(p.tc.ovh)}">แฝง ${baht(p.hid)}${+p.tc.mkt ? ` (การตลาด ${baht(p.tc.mkt)})` : ''}${+p.tc.stor_last ? ` · ค่าเก็บ ${baht(p.tc.stor_last)}/ด.${+p.tc.mc_units ? ` ≈ ${baht(p.tc.stor_last / p.tc.mc_units)}/ชิ้น` : ''}` : ''}</div>` : ''}</div>
+      <div><div class="rbar"><i class="${p.cls}" style="width:${Math.min(100, p.r).toFixed(1)}%"></i></div><div class="note" style="margin-top:4px"><b class="${p.r>=100?'up':p.r<70?'down':''}">${pctTxt(p.r)}</b> · ขายได้ ${baht(p.revenue)} / ลงทุน ${baht(p.invest)}${p.hid ? ` + แฝง ${baht(p.hid)}` : ''}</div></div>
       <div class="num"><div>${fmt(p.sold)} / <b>${fmt(p.stock)}</b></div><div class="note">30 วัน ${fmt(p.u30)}</div></div>
       <div class="adv">${adv}</div>
       <div>${canP && p.stock > 0 ? `<button class="btn btn-sm" type="button" data-promo-p="${p.id}">+ โปร</button>` : ''}</div></div>`; }).join('')
@@ -1962,8 +1991,9 @@ $('rc-sort').onchange = e => { rec.sort = e.target.value; renderRecovery(); };
 $('rc-q').oninput = e => { rec.q = e.target.value; rec.limit = 40; renderRecovery(); };
 $('rc-reload').onclick = () => loadRecovery(true);
 $('rc-csv').onclick = () => { if (!rec.data) return;
-  const rows = [['สินค้า','Collection','Group','ทุน/ชิ้น','ราคาปกติ','ขายแล้ว (ชิ้น)','ยอดขายสะสม','สต็อกเหลือ','เงินลงทุน','% คืนทุน','ราคาต่ำสุดที่ยังคืนทุน','ขาย 30 วัน']];
-  for (const p of rec.data.products) { const x = recOf(p); rows.push([p.name, p.coll, p.group, p.cost, p.price ?? '', p.sold, p.revenue, p.stock, p.invest, Math.round(x.r), x.r >= 100 ? p.cost : x.floor != null ? Math.ceil(x.floor) : '', p.u30]); }
+  const rows = [['สินค้า','Collection','Group','ทุน/ชิ้น','ราคาปกติ','ขายแล้ว (ชิ้น)','ยอดขายสะสม','สต็อกเหลือ','เงินลงทุน','ค่าเก็บ MyCloud ที่จ่ายแล้ว','Marketing (เฉลี่ย)','ส่วนกลางคลัง (เฉลี่ย)','ต้นทุนแฝงรวม','% คืนทุน','ราคาต่ำสุดที่ยังคืนทุน','ค่าเก็บล่าสุด/เดือน','ค่าเก็บอีก 12 เดือน (ถ้าขายเท่าเดิม)','ขาย 30 วัน']];
+  for (const p of rec.data.products) { const x = recOf(p), t = tcOf(p.id), f = t ? tcFwd(t) : { f12:0 };
+    rows.push([p.name, p.coll, p.group, p.cost, p.price ?? '', p.sold, p.revenue, p.stock, p.invest, t ? t.stor_paid : 0, t ? t.mkt : 0, t ? t.ovh : 0, Math.round(x.hid), Math.round(x.r), x.r >= 100 ? Math.ceil(+p.cost + x.fu) : x.floor != null ? Math.ceil(x.floor) : '', t ? t.stor_last : 0, Math.round(f.f12), p.u30]); }
   downloadCsv(rows, `cuteboy-recovery_${today}.csv`); };
 function downloadCsv(rows, name){ const csv = '﻿' + rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' })); a.download = name; a.click(); }
@@ -3887,6 +3917,108 @@ function renderInvSummary(){
   $('inv-more').innerHTML = `${fmt(L.length)} ${by === 'group' ? 'Group' : 'Collection'}`;
 }
 $('inv-by').onclick = e => { const b = e.target.closest('[data-by]'); if (!b) return; inv.by = b.dataset.by; inv.byTouched = true; inv.limit = 40; renderStockList(); };
+
+// ===== รอบ 16: ต้นทุนแฝง (คลัง MyCloud + Marketing) ในหน้า คืนทุน & โปรโมชัน =====
+const tcx = { data:null, map:{}, on:true, err:null };
+const tcOf = id => tcx.on && tcx.map[id] || null;
+const tcHidden = id => { const t = tcOf(id); return t ? +t.stor_paid + +t.mkt + +t.ovh : 0; };
+const tcFulfil = () => tcx.data && tcx.data.per_order ? +tcx.data.per_order / Math.max(1, +tcx.data.units_per_order || 1) : 0;
+function tcFwd(t){   // ค่าเก็บที่จะจ่ายต่อใน 12 เดือน ถ้าขายด้วยความเร็วเท่าเดิม (สต็อกลดลงเรื่อยๆ ค่าเก็บก็ลดตาม)
+  const fee = +t.stor_last; if (!fee) return { f12:0, months:null };
+  const rate = +t.u90 / 3, m = rate > 0 ? +t.mc_units / rate : Infinity;
+  const f12 = !isFinite(m) ? fee * 12 : m >= 12 ? fee * 12 * (1 - 6 / m) : fee * m / 2;
+  return { f12, months: isFinite(m) ? m : null };
+}
+const TMS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const monTh = m => { const [y, mo] = String(m).slice(0, 7).split('-').map(Number); return `${TMS[mo - 1]} ${String(y + 543).slice(2)}`; };
+const SCOPE_T = { all:'ทุกสินค้า', group:'Group', collection:'Collection', product:'สินค้า' };
+function renderTrueCostBox(){
+  const box = $('rc-tc'); if (!box) return;
+  if (tcx.err) { box.innerHTML = `<div class="tch"><b>ต้นทุนแฝง (คลัง MyCloud + Marketing)</b></div><p class="note" style="margin:0">ยังใช้ไม่ได้ · ให้รันไฟล์ <code>33_true_cost.sql</code> ก่อน <span class="muted">(${esc(tcx.err)})</span></p>`; return; }
+  const d = tcx.data; if (!d) { box.innerHTML = '<div class="sk" style="height:60px"></div>'; return; }
+  const M = {}; for (const b of d.bills) Object.assign(M[b.month] ??= { month:b.month, mkt:0 }, { bill:b });
+  for (const s of d.spend) (M[s.month] ??= { month:s.month, mkt:0 }).mkt += +s.amount;
+  const rows = Object.values(M).sort((a, b) => b.month.localeCompare(a.month)), lb = d.bills[0];
+  const hid = Object.values(tcx.map).reduce((s, t) => s + +t.stor_paid + +t.mkt + +t.ovh, 0);
+  box.innerHTML = `<div class="tch"><div style="min-width:0"><b>ต้นทุนแฝง (คลัง MyCloud + Marketing)</b>
+      <div class="note">${lb ? `ค่าเก็บล่าสุด <b>${baht(lb.storage)}</b>/เดือน (${monTh(lb.month)}) · ค่าแพ็ก-ส่ง <b>${baht(d.per_order || 0)}</b>/ออเดอร์ (≈ ${baht(tcFulfil())}/ชิ้น)` : 'ยังไม่มีบิล MyCloud'} · เฉลี่ยเข้าสินค้าแล้วรวม ${baht(hid)}${+d.unallocated ? ` · <span style="color:var(--bad)">ยังเฉลี่ยไม่ได้ ${baht(d.unallocated)}</span> (เดือน/ขอบเขตนั้นไม่มียอดขาย)` : ''}</div></div>
+      <div class="bka"><label class="tgl"><input type="checkbox" id="tc-on" ${tcx.on ? 'checked' : ''}> คิดต้นทุนแฝงในการคืนทุน</label>
+      ${d.can_edit ? `<button class="btn btn-sm" type="button" id="tc-up">📄 อัปโหลดบิล MyCloud (.xlsx)</button><button class="btn btn-sm" type="button" id="tc-mk">+ ค่า Marketing</button><input type="file" id="tc-file" accept=".xlsx" hidden>` : ''}</div></div>
+    ${rows.length ? `<div class="tct"><div class="tcr hd"><span>เดือน</span><span class="num">ค่าเก็บ</span><span class="num">แพ็ก-ส่ง</span><span class="num">ส่วนกลางคลัง</span><span class="num">Marketing</span><span class="num">รวม</span><span></span></div>
+      ${rows.map(r => { const b = r.bill; return `<div class="tcr"><span><b>${monTh(r.month)}</b>${b ? `<div class="note">${fmt(b.orders)} ออเดอร์${+b.unmapped ? ` · <span title="SKU ในบิลที่ยังไม่อยู่ในระบบ">ไม่รู้จัก SKU ${baht(b.unmapped)}</span>` : ''}</div>` : '<div class="note">ยังไม่มีบิล MyCloud</div>'}</span>
+        <span class="num">${b ? baht(b.storage) : '–'}</span><span class="num">${b ? baht(b.per_order) : '–'}</span><span class="num">${b ? baht(b.overhead) : '–'}</span><span class="num">${r.mkt ? baht(r.mkt) : '–'}</span>
+        <span class="num"><b>${baht((b ? +b.total : 0) + r.mkt)}</b></span><span>${b && d.can_edit ? `<button class="btn btn-sm" type="button" data-tcdel="${b.month}" title="ลบบิลเดือนนี้">ลบบิล</button>` : ''}</span></div>`; }).join('')}</div>` : '<p class="note" style="margin:0">อัปโหลดบิล MyCloud รายเดือน และกรอกค่า Marketing เพื่อดูต้นทุนจริงของสินค้าแต่ละตัว</p>'}
+    ${d.spend.length ? `<details class="tcsp"><summary class="lbl">▸ รายการค่า Marketing (${d.spend.length})</summary>${d.spend.map(s => `<div class="tcr2"><span>${monTh(s.month)}</span><span style="min-width:0"><b>${esc(s.channel)}</b> <span class="note">· ${SCOPE_T[s.scope_type]}${s.scope_value ? ': ' + esc(s.scope_type === 'product' ? (rec.data?.products.find(p => String(p.id) === s.scope_value)?.name || s.scope_value) : s.scope_value) : ''}${s.note ? ' · ' + esc(s.note) : ''}</span></span><span class="num">${baht(s.amount)}</span>
+        <span>${d.can_edit ? `<button class="btn btn-sm" type="button" data-mked="${s.id}">แก้</button>` : ''}</span></div>`).join('')}</details>` : ''}`;
+  $('tc-on').onchange = e => { tcx.on = e.target.checked; renderRecovery(); };
+  if ($('tc-up')) { $('tc-up').onclick = () => $('tc-file').click(); $('tc-file').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) tcUpload(f); }; $('tc-mk').onclick = () => tcSpendEdit(null); }
+}
+// ----- อ่านไฟล์ .xlsx (zip ของ XML) โดยไม่ต้องใช้ไลบรารีเพิ่ม -----
+async function xlsxSheets(buf){
+  const z = await zipRead(buf), P = s => new DOMParser().parseFromString(s, 'application/xml');
+  const ss = z['sharedStrings.xml'] ? [...P(z['sharedStrings.xml']).getElementsByTagName('si')].map(n => n.textContent) : [];
+  const rels = {}; for (const r of P(z['workbook.xml.rels'] || '<x/>').getElementsByTagName('Relationship')) rels[r.getAttribute('Id')] = r.getAttribute('Target').split('/').pop();
+  const out = {}, col = ref => { let n = 0; for (const ch of ref.replace(/\d+/g, '')) n = n * 26 + ch.charCodeAt(0) - 64; return n - 1; };
+  for (const sh of P(z['workbook.xml']).getElementsByTagName('sheet')) {
+    const xml = z[rels[sh.getAttribute('r:id') || sh.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id')]]; if (!xml) continue;
+    const rows = []; for (const r of P(xml).getElementsByTagName('row')) { const a = []; for (const c of r.getElementsByTagName('c')) {
+        const t = c.getAttribute('t'), v = c.getElementsByTagName('v')[0]?.textContent;
+        a[col(c.getAttribute('r'))] = t === 's' ? ss[+v] : t === 'inlineStr' ? c.textContent : t === 'str' || t === 'b' ? v : v != null && v !== '' ? +v : null; }
+      rows.push(a); }
+    out[sh.getAttribute('name')] = rows; }
+  return out;
+}
+const tnum = v => v == null || v === '' ? null : typeof v === 'number' ? v : (n => isNaN(n) ? null : n)(+String(v).replace(/,/g, ''));
+function parseMycloud(S, fileName){
+  const sum = S.Summary || S[Object.keys(S)[0]]; if (!sum) throw new Error('ไม่พบชีต Summary');
+  const kv = k => sum.find(r => String(r[0] || '').trim() === k)?.[1];
+  const per = String(kv('รอบการคิดค่าบริการ') || ''), mm = per.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (!mm) throw new Error('อ่าน "รอบการคิดค่าบริการ" ไม่ได้ · ไฟล์นี้ใช่บิลจาก MyCloud ไหม');
+  const month = `${mm[3]}-${String(mm[2]).padStart(2, '0')}-01`, total = tnum(kv('ยอดรวมค่าบริการทั้งสิ้น'));
+  const skip = /^(ค่าบริการหลัก|ค่าบริการพิเศษ|อื่นๆ|Grand Total|อัพเดทเมื่อ|ชื่อพาร์ทเนอร์|คลัง|รอบการคิดค่าบริการ|ยอดรวมค่าบริการทั้งสิ้น)$/;
+  const detail = []; for (const r of sum) { const n = String(r[0] || '').trim(), a = tnum(r[5]); if (!n || skip.test(n) || a == null) continue;
+    detail.push({ name:n, amount:a, kind: /พื้นที่จัดเก็บ/.test(n) ? 'storage' : /จัดการออเดอร์|บรรจุภัณฑ์|ส่งออกพัสดุ EMS/.test(n) ? 'per_order' : 'overhead' }); }
+  const by = k => detail.filter(x => x.kind === k).reduce((s, x) => s + x.amount, 0);
+  const skus = []; for (const [n, rows] of Object.entries(S)) if (/^storage/i.test(n)) for (const r of rows.slice(1)) if (r[2] && tnum(r[7]) != null) skus.push({ sku:String(r[2]).trim(), vol:tnum(r[5]) || 0, fee:tnum(r[7]) });
+  const ob = (S.outbound || []).slice(1).filter(r => r[0] && !String(r[2] || '').trim());
+  return { month, period:per, total: total ?? detail.reduce((s, x) => s + x.amount, 0), storage:by('storage'), per_order:by('per_order'), overhead:by('overhead'),
+    orders: ob.length, boxes: ob.reduce((s, r) => s + (tnum(r[3]) || 1), 0), detail, skus, file:fileName };
+}
+async function tcUpload(f){
+  let b; try { b = parseMycloud(await xlsxSheets(await f.arrayBuffer()), f.name); } catch(e){ toast('อ่านไฟล์ไม่ได้: ' + (e.message || e)); return; }
+  const sk = b.skus.reduce((s, x) => s + x.fee, 0), diff = Math.abs(b.storage + b.per_order + b.overhead - b.total), old = tcx.data?.bills.find(x => x.month === b.month);
+  openModal(`บิล MyCloud · ${monTh(b.month)}`, `<div class="note">${esc(b.period)} · ${esc(f.name)}</div>
+    ${old ? `<div class="warnbox">มีบิลเดือนนี้อยู่แล้ว (${baht(old.total)}) · บันทึกแล้วจะแทนที่ของเดิม</div>` : ''}
+    <div class="tct">${b.detail.map(x => `<div class="tcr2"><span class="pill ${x.kind === 'storage' ? 'p-low' : x.kind === 'per_order' ? 'p-ok' : 'p-idle'}">${x.kind === 'storage' ? 'ค่าเก็บ' : x.kind === 'per_order' ? 'แพ็ก-ส่ง' : 'ส่วนกลาง'}</span><span>${esc(x.name)}</span><span class="num">${baht(x.amount)}</span><span></span></div>`).join('')}
+      <div class="tcr2"><span></span><b>รวม</b><span class="num"><b>${baht(b.total)}</b></span><span></span></div></div>
+    <p class="note" style="margin:0">ค่าเก็บราย SKU ${fmt(b.skus.length)} รายการ รวม ${baht(sk)} ${Math.abs(sk - b.storage) > 1 ? `<b style="color:var(--bad)">ไม่ตรงกับหน้าสรุป ${baht(b.storage)}</b>` : '✓ ตรงกับหน้าสรุป'} · ${fmt(b.orders)} ออเดอร์ ${fmt(b.boxes)} กล่อง → ค่าแพ็ก-ส่ง ${baht(b.orders ? b.per_order / b.orders : 0)}/ออเดอร์${diff > 1 ? ` · <b style="color:var(--bad)">ผลรวมรายการไม่ตรงกับยอดรวม (ต่าง ${baht(diff)})</b>` : ''}</p>`,
+    async () => { const r = await API.mycloudSave(b); setTimeout(() => { loadRecovery(true); if (+r.unmapped) toast(`บันทึกแล้ว · มี ${r.unmapped} SKU ในบิลที่ยังไม่อยู่ในระบบ (ค่าเก็บส่วนนั้นยังไม่ถูกนับเข้าสินค้า)`); }, 0); });
+  $('m-save').textContent = 'บันทึกบิล'; $('modal').querySelector('.box2').classList.add('wide');
+}
+function tcSpendEdit(s){
+  const v = s || { month: today.slice(0, 7) + '-01', scope_type:'all' }, P = rec.data?.products || [];
+  const opts = t => t === 'group' ? [...new Set(P.map(p => p.group).filter(g => g && g !== '-'))].sort().map(g => [g, g])
+    : t === 'collection' ? [...new Set(P.map(p => p.coll))].sort().map(c => [c, c]) : t === 'product' ? [...P].sort((a, b) => a.name.localeCompare(b.name)).map(p => [String(p.id), p.name]) : [];
+  openModal(s ? 'แก้ค่า Marketing' : 'เพิ่มค่า Marketing', `<div class="fgrid">
+      <div class="field"><label class="lbl" for="ms-m">เดือน</label><input class="inp" type="month" id="ms-m" value="${esc(String(v.month).slice(0, 7))}"></div>
+      <div class="field"><label class="lbl" for="ms-a">จำนวนเงิน (บาท)</label><input class="inp" id="ms-a" inputmode="decimal" value="${esc(v.amount ?? '')}" placeholder="เช่น 20000"></div>
+      <div class="field"><label class="lbl" for="ms-c">ช่องทาง / ประเภท</label><input class="inp" id="ms-c" list="ms-cl" value="${esc(v.channel || '')}" placeholder="เช่น Meta Ads"><datalist id="ms-cl">${['Meta Ads', 'TikTok Ads', 'Google Ads', 'Shopee Ads', 'KOL / Influencer', 'Boost Post', 'ของแจก / Giveaway', 'Production วิดีโอ'].map(x => `<option>${x}</option>`).join('')}</datalist></div>
+      <div class="field"><label class="lbl" for="ms-t">ใช้โปรโมต</label><select class="sel" id="ms-t">${Object.entries(SCOPE_T).map(([k, l]) => `<option value="${k}" ${k === v.scope_type ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+      <div class="field wide" id="ms-vw"><label class="lbl" for="ms-v">เลือก</label><select class="sel" id="ms-v"></select></div>
+      <div class="field wide"><label class="lbl" for="ms-n">หมายเหตุ</label><input class="inp" id="ms-n" value="${esc(v.note || '')}" placeholder="เช่น แคมเปญเปิดตัว MiTH No.41"></div></div>
+    <p class="note" style="margin:0">ระบบเฉลี่ยเงินก้อนนี้ให้สินค้าตามสัดส่วนยอดขายในเดือนนั้น (เฉพาะสินค้าในขอบเขตที่เลือก) · "ทุกสินค้า" ใช้กับค่าโฆษณาแบรนด์ / ร้านโดยรวม</p>
+    ${s ? '<div class="bka"><button class="btn btn-sm" type="button" id="ms-del">ลบรายการนี้</button></div>' : ''}`,
+    async () => { await API.mktSave({ id: v.id || null, month: $('ms-m').value + '-01', amount: $('ms-a').value, channel: $('ms-c').value, scope_type: $('ms-t').value, scope_value: $('ms-t').value === 'all' ? '' : $('ms-v').value, note: $('ms-n').value }); setTimeout(() => loadRecovery(true), 0); });
+  const fill = () => { const t = $('ms-t').value, o = opts(t); $('ms-vw').hidden = t === 'all'; $('ms-v').innerHTML = o.map(([k, l]) => `<option value="${esc(k)}" ${k === String(v.scope_value) ? 'selected' : ''}>${esc(l)}</option>`).join(''); };
+  $('ms-t').onchange = fill; fill();
+  if ($('ms-del')) $('ms-del').onclick = async () => { const b = $('ms-del'); if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = 'กดอีกครั้งเพื่อยืนยัน'; return; }
+    try { await API.mktDelete(v.id); closeModal(); toast('ลบแล้ว'); loadRecovery(true); } catch(e){ toast(e.message || String(e)); } };
+}
+document.addEventListener('click', async e => {
+  const ed = e.target.closest('[data-mked]'); if (ed) { tcSpendEdit(tcx.data.spend.find(s => String(s.id) === ed.dataset.mked)); return; }
+  const dl = e.target.closest('[data-tcdel]'); if (dl) { if (!dl.dataset.sure) { dl.dataset.sure = 1; dl.textContent = 'ยืนยันลบ?'; return; }
+    try { await API.mycloudDelete(dl.dataset.tcdel); toast('ลบบิลแล้ว'); loadRecovery(true); } catch(err){ toast(err.message || String(err)); } }
+});
 
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
