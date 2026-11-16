@@ -584,6 +584,21 @@ a.gsrow:hover{background:var(--soft);color:inherit}
 .hidd{font-size:12px;color:#7A4B00}
 @media (max-width:860px){.tcr{grid-template-columns:minmax(0,1fr) 90px 90px}.tcr>span:nth-child(3),.tcr>span:nth-child(4),.tcr>span:nth-child(5){display:none}.tcr>span:last-child{grid-column:1/-1}.tcr>span:last-child:empty{display:none}
   .tcsp .tcr2{grid-template-columns:56px minmax(0,1fr) 84px}.tcsp .tcr2>span:last-child{grid-column:2/-1}}
+/* ===== รอบ 17: ราคา & ควรลดไหม ===== */
+.prf{padding:0 20px 12px}
+.prow2{display:grid;grid-template-columns:44px minmax(0,1.3fr) 170px 150px 110px minmax(200px,1.4fr);gap:12px;align-items:center;width:100%;padding:10px 20px;border:0;border-top:1px solid var(--line2);background:none;text-align:left;font:inherit;color:inherit;cursor:pointer;min-height:64px}
+.prow2:hover{background:var(--soft)}.prow2.hd{min-height:0;padding-top:8px;padding-bottom:8px;cursor:default;font-size:12px;color:var(--muted);font-weight:500}
+.prow2 .nm{font-weight:500;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.prow2 .sub{font-size:12px;color:var(--muted)}
+.prdet{padding:6px 20px 16px 76px;background:var(--soft);display:flex;flex-direction:column;gap:10px}
+.prgrid{display:grid;grid-template-columns:1fr 1.3fr;gap:16px}
+.prl{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:baseline;padding:4px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.prm{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.prmc{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:11.5px;text-align:center}
+.prmb{height:56px;width:22px;background:#E9E8E2;border-radius:4px;display:flex;align-items:flex-end;overflow:hidden}.prmb i{display:block;width:100%;background:var(--accent);border-radius:4px}
+@media (max-width:1100px){.prow2{grid-template-columns:44px minmax(0,1fr) 150px 140px minmax(170px,1fr)}.prow2>:nth-child(5){display:none}}
+@media (max-width:860px){.prow2{grid-template-columns:44px minmax(0,1fr);padding:10px 16px}.prow2.hd{display:none}.prow2>:nth-child(n+3){grid-column:2}.prow2>:nth-child(5){display:block;text-align:left}
+  .prdet{padding:6px 16px 14px}.prgrid{grid-template-columns:minmax(0,1fr)}.prf{padding:0 16px 12px}}
 </style>
 </head>
 <body>
@@ -994,6 +1009,7 @@ const API = DEMO ? DEMO.api : {
   projects: () => rpc('dash_projects'),
   recovery: () => rpc('dash_recovery'),
   trueCost: () => rpc('dash_true_cost'),
+  pricing: () => rpc('dash_pricing'),
   mycloudSave: p => rpc('mycloud_bill_save', { p }),
   mycloudDelete: m => rpc('mycloud_bill_delete', { p_month:m }),
   mktSave: p => rpc('mkt_spend_save', { p }),
@@ -1926,7 +1942,7 @@ const segHtml = (opts, cur, attr) => opts.map(([k,l]) => `<button type="button" 
 
 // ---------- คืนทุน & โปรโมชัน ----------
 const rec = { data:null, t:0, tab:'promo', grp:'', q:'', sort:'rec', limit:40 };
-const RTABS = [['promo','คืนทุนแล้ว · ยังมีของ'],['near','ใกล้คืนทุน 70–99%'],['far','ยังห่าง < 70%'],['hold','ค่าเก็บสูง · ขายช้า'],['all','ทั้งหมด']];
+const RTABS = [['promo','คืนทุนแล้ว · ยังมีของ'],['near','ใกล้คืนทุน 70–99%'],['far','ยังห่าง < 70%'],['hold','ค่าเก็บสูง · ขายช้า'],['price','💡 ราคา & ควรลดไหม'],['all','ทั้งหมด']];
 async function loadRecovery(force){
   if (!force && rec.data && Date.now() - rec.t < 5*60e3) { renderRecovery(); return; }
   if (!rec.data) $('rc-list').innerHTML = '<div style="padding:16px 20px;display:grid;gap:10px">' + '<div class="sk" style="height:52px"></div>'.repeat(6) + '</div>';
@@ -1956,6 +1972,8 @@ function renderRecovery(){
   $('rc-tabs').innerHTML = segHtml(RTABS, rec.tab, 'data-k');
   const groups = [...new Set(P.map(p => p.group).filter(g => g && g !== '-'))].sort();
   $('rc-grp').innerHTML = '<option value="">ทุก Group</option>' + groups.map(g => `<option ${g===rec.grp?'selected':''}>${esc(g)}</option>`).join('');
+  $('rc-sort').hidden = rec.tab === 'price';
+  if (rec.tab === 'price') { renderPricing(); return; }
   let L = P;
   if (rec.tab === 'promo') L = promo; else if (rec.tab === 'near') L = P.filter(p => p.r >= 70 && p.r < 100); else if (rec.tab === 'far') L = P.filter(p => p.r < 70);
   else if (rec.tab === 'hold') L = P.filter(p => p.fwd.f12 > 0);
@@ -1989,7 +2007,7 @@ $('rc-tabs').onclick = e => { const b = e.target.closest('button'); if (!b) retu
 $('rc-grp').onchange = e => { rec.grp = e.target.value; renderRecovery(); };
 $('rc-sort').onchange = e => { rec.sort = e.target.value; renderRecovery(); };
 $('rc-q').oninput = e => { rec.q = e.target.value; rec.limit = 40; renderRecovery(); };
-$('rc-reload').onclick = () => loadRecovery(true);
+$('rc-reload').onclick = () => { prc.data = null; loadRecovery(true); };
 $('rc-csv').onclick = () => { if (!rec.data) return;
   const rows = [['สินค้า','Collection','Group','ทุน/ชิ้น','ราคาปกติ','ขายแล้ว (ชิ้น)','ยอดขายสะสม','สต็อกเหลือ','เงินลงทุน','ค่าเก็บ MyCloud ที่จ่ายแล้ว','Marketing (เฉลี่ย)','ส่วนกลางคลัง (เฉลี่ย)','ต้นทุนแฝงรวม','% คืนทุน','ราคาต่ำสุดที่ยังคืนทุน','ค่าเก็บล่าสุด/เดือน','ค่าเก็บอีก 12 เดือน (ถ้าขายเท่าเดิม)','ขาย 30 วัน']];
   for (const p of rec.data.products) { const x = recOf(p), t = tcOf(p.id), f = t ? tcFwd(t) : { f12:0 };
@@ -4019,6 +4037,87 @@ document.addEventListener('click', async e => {
   const dl = e.target.closest('[data-tcdel]'); if (dl) { if (!dl.dataset.sure) { dl.dataset.sure = 1; dl.textContent = 'ยืนยันลบ?'; return; }
     try { await API.mycloudDelete(dl.dataset.tcdel); toast('ลบบิลแล้ว'); loadRecovery(true); } catch(err){ toast(err.message || String(err)); } }
 });
+
+// ===== รอบ 17: ราคา & ควรลดไหม (แท็บในหน้า คืนทุน & โปรโมชัน) =====
+const prc = { data:null, t:0, f:'act', open:new Set(), err:null };
+const to90 = x => { const y = Math.floor((x - 90) / 100) * 100 + 90; return y > 0 ? y : Math.max(0, Math.floor(x / 10) * 10); };   // ราคาลงท้าย 90 ที่ไม่เกิน x
+const PREC = { clear:['เคลียร์ออก', 'p-out', 1], cut:['ควรลดราคา', 'p-low', 2], more:['ลดเพิ่มได้', 'p-low', 3], light:['โปรเบาๆ', 'p-idle', 4], hold:['ยังไม่ต้องลด', 'p-ok', 5], new:['สินค้าใหม่', 'p-ok', 6] };
+async function loadPricing(force){
+  if (!force && prc.data && Date.now() - prc.t < 5 * 60e3) return;
+  try { prc.data = await API.pricing(); prc.t = Date.now(); prc.err = null; }
+  catch(e){ const m = e.message || String(e); prc.err = /function|does not exist|schema cache/i.test(m) ? 'ให้รันไฟล์ 34_pricing.sql ก่อน' : m; }
+}
+function priceAdvice(p){
+  const full = +p.full || +p.cur || 0, cur = +p.cur || full, disc = full ? 1 - cur / full : 0;
+  const rate = +p.u90 / 3, cover = rate > 0 ? +p.stock / rate : Infinity;
+  const fu = typeof tcFulfil === 'function' ? tcFulfil() : 0, floor = p.cost != null ? Math.ceil(+p.cost + fu) : null;
+  const age = p.first_sale ? daysTo(String(p.first_sale).slice(0, 10)) * -1 : null;
+  const ch = p.chg, after30 = ch ? ch.after / ch.days_after * 30 : null, moved = ch ? (ch.days_after >= 14 ? after30 > ch.before30 * 1.3 : null) : null;
+  const t = tcx?.map?.[p.id], f12 = t && typeof tcFwd === 'function' ? tcFwd(t).f12 : 0;
+  const step = s => { const v = to90(cur * (1 - s)); return floor != null ? Math.max(floor, v) : v; };
+  let k, why, price = null;
+  if (age != null && age < 60 && cover > 1) { k = 'new'; why = `เพิ่งเริ่มขาย ${age} วัน ยังไม่ควรสรุป`; }
+  else if (rate === 0) {
+    if (Math.round(disc * 100) >= 30) { k = 'clear'; why = `ลดแล้ว ${Math.round(disc * 100)}% แต่ 90 วันไม่มีคนซื้อ · ลดต่อไม่น่าช่วย ใช้บันเดิล / ของแถม / ขายในงาน Event / ขายส่ง`; price = floor; }
+    else { k = 'cut'; why = '90 วันไม่มีคนซื้อเลย ลองลดราคาก่อน'; price = step(0.25); }
+  } else if (cover > 12) {
+    if ((moved === false && Math.round(disc * 100) >= 20) || Math.round(disc * 100) >= 40) { k = 'clear'; why = `${moved === false ? 'ลดราคาแล้วยอดไม่ขยับ' : `ลดไปแล้ว ${Math.round(disc * 100)}%`} · ด้วยความเร็วตอนนี้ต้องใช้ ${cover > 36 ? 'มากกว่า 3 ปี' : `~${Math.round(cover)} เดือน`} กว่าจะหมด`; price = floor; }
+    else if (moved === true) { k = 'more'; why = `หลังลดเหลือ ${baht(ch.to)} ขายดีขึ้น (${fmt(after30)} vs ${fmt(ch.before30)} ชิ้น/30 วัน) แต่ยังเหลือขาย ~${Math.round(cover)} เดือน`; price = step(0.15); }
+    else { k = 'cut'; why = `เหลือพอขาย${cover > 36 ? 'มากกว่า 3 ปี' : ` ~${Math.round(cover)} เดือน`}${disc > 0.02 ? ` (ลดอยู่ ${Math.round(disc * 100)}%)` : ' และยังขายราคาเต็ม'}`; price = step(disc > 0.02 ? 0.15 : 0.2); }
+  } else if (cover > 6) { k = 'light'; why = `พอขาย ~${Math.round(cover)} เดือน · ใส่ในแคมเปญ / โปรเบาๆ 10–15% พอ`; price = step(0.1); }
+  else { k = 'hold'; why = isFinite(cover) ? `ขายได้เรื่อยๆ พอขาย ~${Math.max(1, Math.round(cover))} เดือน` : ''; }
+  if (price != null && price >= cur) price = null;
+  return { k, why, price, floor, disc, cover, rate, f12, moved };
+}
+function renderPricing(){
+  const box = $('rc-list');
+  if (!prc.data && !prc.err) { box.innerHTML = '<div style="padding:16px 20px;display:grid;gap:10px">' + '<div class="sk" style="height:52px"></div>'.repeat(6) + '</div>'; loadPricing().then(() => { if (rec.tab === 'price') renderPricing(); }); return; }
+  if (prc.err) { box.innerHTML = `<div class="empty">${esc(prc.err)}</div>`; $('rc-more').innerHTML = ''; return; }
+  const q = rec.q.trim().toLowerCase();
+  let L = prc.data.products.map(p => ({ ...p, a: priceAdvice(p) }));
+  if (rec.grp) L = L.filter(p => p.group === rec.grp);
+  if (q) L = L.filter(p => (p.name + ' ' + p.coll).toLowerCase().includes(q));
+  const cnt = k => L.filter(p => p.a.k === k).length;
+  const F = [['act', `ต้องทำอะไรสักอย่าง (${cnt('clear') + cnt('cut') + cnt('more')})`], ['clear', `เคลียร์ออก (${cnt('clear')})`], ['cut', `ควรลด (${cnt('cut') + cnt('more')})`], ['light', `โปรเบาๆ (${cnt('light')})`], ['ok', `ยังไม่ต้องลด (${cnt('hold') + cnt('new')})`], ['all', 'ทั้งหมด']];
+  L = L.filter(p => prc.f === 'all' || (prc.f === 'act' ? ['clear', 'cut', 'more'].includes(p.a.k) : prc.f === 'cut' ? ['cut', 'more'].includes(p.a.k) : prc.f === 'ok' ? ['hold', 'new'].includes(p.a.k) : p.a.k === prc.f));
+  L.sort((a, b) => PREC[a.a.k][2] - PREC[b.a.k][2] || b.stock * (b.cost || 0) - a.stock * (a.cost || 0));
+  $('rc-hint').textContent = 'ราคาเต็ม = ราคาบนเว็บสูงสุดที่เคยขายได้ · ตอนนี้ = ราคาที่ตั้งใน Shopify · ขายล่าสุด = ราคาต่อชิ้นที่ลูกค้าจ่ายจริงหลังส่วนลด · คำแนะนำคิดจากสต็อก ÷ ความเร็วขาย 90 วัน และการลดราคาที่ผ่านมา (กดที่สินค้าเพื่อดูประวัติ)';
+  const list = L.slice(0, rec.limit);
+  const pctTxt2 = (v, f) => f && v != null && Math.abs(1 - v / f) >= 0.01 ? ` <span class="${v < f ? 'down' : 'up'}">${v < f ? '−' : '+'}${Math.round(Math.abs(1 - v / f) * 100)}%</span>` : '';
+  box.innerHTML = `<div class="prf"><div class="seg" id="pr-f" role="group" aria-label="กรองคำแนะนำ">${segHtml(F, prc.f, 'data-k')}</div></div>
+    ${list.length ? `<div class="prow2 hd"><div></div><div>สินค้า</div><div>ราคาเต็ม → ตอนนี้</div><div>ขายล่าสุด</div><div class="num">เหลือ / ขาย 90 วัน</div><div>คำแนะนำ</div></div>` : ''}
+    ${list.map(p => { const a = p.a, open = prc.open.has(p.id), full = +p.full || null;
+      return `<button type="button" class="prow2" data-prc="${p.id}" aria-expanded="${open}">${thumb(p.img, p.name)}
+        <div style="min-width:0"><div class="nm">${esc(p.name)}</div><div class="sub">${esc(p.coll)}${p.cost != null ? ` · ทุน ${baht(p.cost)}` : ' · <span class="down">ยังไม่มีทุน</span>'}</div></div>
+        <div>${full ? `<span class="muted">${baht(full)}</span> → ` : ''}<b>${p.cur ? baht(p.cur) : '–'}</b>${pctTxt2(+p.cur, full)}</div>
+        <div>${p.last ? `<b>${baht(p.last.unit)}</b>${pctTxt2(+p.last.unit, full)}<div class="note">${esc(p.last.ch)} · ${esc(shortDate(p.last.d))}</div>` : '<span class="muted">ยังไม่เคยขาย</span>'}</div>
+        <div class="num"><b>${fmt(p.stock)}</b> / ${fmt(p.u90)}<div class="note">${a.rate > 0 ? (a.cover > 36 ? 'พอขาย > 3 ปี' : `พอขาย ~${Math.max(1, Math.round(a.cover))} ด.`) : 'ไม่มียอด 90 วัน'}</div></div>
+        <div style="min-width:0"><span class="pill ${PREC[a.k][1]}">${PREC[a.k][0]}</span>${a.price ? ` <b>${baht(a.price)}</b>` : a.k === 'clear' && a.floor ? ` <span class="note">ไม่ต่ำกว่า ${baht(a.floor)}</span>` : ''}<div class="note">${esc(a.why)}</div></div></button>
+        ${open ? priceDetail(p) : ''}`; }).join('') || '<div class="empty">ไม่มีสินค้าในมุมมองนี้</div>'}`;
+  $('rc-more').innerHTML = `แสดง ${list.length} จาก ${L.length} สินค้า (เฉพาะที่ยังมีสต็อก) · ข้อมูลสต็อก ณ ${prc.data.as_of ? thDate(String(prc.data.as_of).slice(0, 10)) : '-'}` + (L.length > list.length ? ' <button class="btn btn-sm" type="button" id="rc-morebtn">แสดงเพิ่มอีก 40</button>' : '') + ' <button class="btn btn-sm" type="button" id="pr-csv">Export CSV</button>';
+  if ($('rc-morebtn')) $('rc-morebtn').onclick = () => { rec.limit += 40; renderPricing(); };
+  $('pr-csv').onclick = () => downloadCsv([['สินค้า', 'Collection', 'Group', 'ทุน/ชิ้น', 'ราคาเต็ม', 'ราคาตอนนี้', 'ลดอยู่ %', 'ขายล่าสุด (บาท/ชิ้น)', 'ช่องทาง', 'วันที่', 'ต่ำสุด 1 ปี', 'สต็อก', 'ขาย 30 วัน', 'ขาย 90 วัน', 'พอขาย (เดือน)', 'คำแนะนำ', 'ราคาที่แนะนำ', 'เหตุผล'],
+    ...L.map(p => [p.name, p.coll, p.group, p.cost ?? '', p.full ?? '', p.cur ?? '', Math.round(p.a.disc * 100), p.last?.unit ?? '', p.last?.ch ?? '', p.last?.d ?? '', p.min365?.unit ?? '', p.stock, p.u30, p.u90, isFinite(p.a.cover) ? Math.round(p.a.cover) : '', PREC[p.a.k][0], p.a.price ?? (p.a.k === 'clear' ? p.a.floor ?? '' : ''), p.a.why])], `cuteboy-pricing_${today}.csv`);
+  $('pr-f').onclick = e => { const b = e.target.closest('[data-k]'); if (b) { prc.f = b.dataset.k; rec.limit = 40; renderPricing(); } };
+}
+function priceDetail(p){
+  const ms = p.months || [], mx = Math.max(1, ...ms.map(m => +m.units)), a = p.a;
+  return `<div class="prdet">
+    <div class="prgrid">
+      <div><div class="lbl">ราคาล่าสุดแยกช่องทาง</div>${Object.entries(p.by_ch || {}).sort((x, y) => String(y[1].d).localeCompare(String(x[1].d))).map(([c, v]) => `<div class="prl"><span>${esc(c)}</span><b>${baht(v.unit)}</b><span class="note">${esc(shortDate(v.d))}</span></div>`).join('') || '<div class="note">–</div>'}
+        ${p.min365 ? `<div class="prl"><span>ต่ำสุดใน 1 ปี</span><b>${baht(p.min365.unit)}</b><span class="note">${esc(shortDate(p.min365.d))}</span></div>` : ''}</div>
+      <div><div class="lbl">ตัวช่วยตัดสินใจ</div>
+        ${a.floor != null ? `<div class="prl"><span>ราคาต่ำสุดที่ไม่ขาดทุนต่อชิ้น</span><b>${baht(a.floor)}</b><span class="note">ทุน + ค่าแพ็ก-ส่ง</span></div>` : '<div class="note">ยังไม่มีทุน ใส่ทุนก่อนจะรู้ราคาต่ำสุด</div>'}
+        ${a.f12 ? `<div class="prl"><span>ค่าเก็บ MyCloud อีก 12 เดือน</span><b class="down">${baht(a.f12)}</b><span class="note">ถ้าขายเท่าเดิม</span></div>` : ''}
+        ${p.chg ? `<div class="prl"><span>เปลี่ยนราคาล่าสุด ${esc(shortDate(p.chg.d))}</span><b>${baht(p.chg.from)} → ${baht(p.chg.to)}</b><span class="note">ก่อน ${fmt(p.chg.before30)} / หลัง ${fmt(p.chg.after / p.chg.days_after * 30)} ชิ้นต่อ 30 วัน</span></div>`
+          : '<div class="note">ยังไม่มีประวัติเปลี่ยนราคา (ระบบเริ่มบันทึกราคาทุกวันหลังติดตั้ง 34 · ผ่านไปสักพักจะเห็นว่าลดราคาแล้วขายดีขึ้นไหม)</div>'}
+        ${(p.promos || []).length ? `<div class="lbl" style="margin-top:8px">โปรที่เคยใช้ (1 ปี)</div>${p.promos.slice(0, 4).map(x => `<div class="note">• ${esc(x.name)}${x.discount ? ' · ' + esc(x.discount) : ''} · ${esc(shortDate(x.start))}${x.end ? '–' + esc(shortDate(x.end)) : ''}</div>`).join('')}` : ''}</div>
+    </div>
+    <div class="lbl">12 เดือนล่าสุด: ขายได้กี่ชิ้น ที่ราคาเฉลี่ยเท่าไหร่</div>
+    <div class="prm">${ms.map(m => `<div class="prmc" title="${esc(monTh(m.m))}: ${fmt(m.units)} ชิ้น · เฉลี่ย ${baht(m.avg)}${m.list ? ' · ราคาเว็บ ' + baht(m.list) : ''}"><div class="prmb"><i style="height:${(m.units / mx * 100).toFixed(0)}%"></i></div><b>${fmt(m.units)}</b><span>${baht(m.avg)}</span><span class="note">${esc(monTh(m.m))}</span></div>`).join('') || '<div class="note">ไม่มียอดขาย 12 เดือน</div>'}</div>
+    <div class="bka"><a class="btn btn-sm" href="#/sales/p/${p.id}">ดูยอดขายสินค้านี้</a>${st.canPromo && p.stock > 0 ? `<button class="btn btn-sm" type="button" data-promo-p="${p.id}">+ ตั้งโปร</button>` : ''}</div></div>`;
+}
+document.addEventListener('click', e => { const r = e.target.closest('[data-prc]'); if (!r) return; const id = +r.dataset.prc; prc.open.has(id) ? prc.open.delete(id) : prc.open.add(id); renderPricing(); });
 
 // ===== Edit (ชื่อสินค้า / Collection / รูป) =====
 let modalSave = null;
